@@ -1,0 +1,24 @@
+{
+  "name": "freelanceos",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --recursive --parallel dev",
+    "build": "turbo run build --no-daemon",
+    "lint": "turbo run lint --no-daemon",
+    "format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
+    "format:fix": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
+    "test": "pnpm --recursive test",
+    "test:unit": "pnpm --recursive test:unit",
+    "test:e2e": "pnpm --recursive test:e2e"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "prettier": "^3.2.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.12.0"
+}

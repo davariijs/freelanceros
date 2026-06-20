@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "node16",
+    "moduleResolution": "node16",
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "types": ["node", "jest"],
+    "ignoreDeprecations": "5.0",
+    "isolatedModules": true
+  },
+  "include": ["index.ts", "__tests__/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
