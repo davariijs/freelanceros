@@ -1,0 +1,17 @@
+import type { Metadata } from "next";
+import { RegisterForm } from "@/components/organisms/RegisterForm";
+import { AuthHeader } from "@/components/organisms/AuthHeader";
+
+export const metadata: Metadata = {
+  title: "FreelanceOS - Sign Up",
+  description: "Create a secure FreelanceOS workspace account.",
+};
+
+export default function RegisterPage() {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-neutral-50 dark:bg-neutral-950 transition-colors duration-200 relative">
+      <AuthHeader />
+      <RegisterForm />
+    </main>
+  );
+}

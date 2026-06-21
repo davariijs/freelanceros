@@ -1,5 +1,4 @@
 @import "tailwindcss";
-
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -16,7 +15,13 @@
   }
 
   ::selection {
+    background-color: var(--color-neutral-200);
+    color: var(--color-neutral-950);
+  }
+
+  .dark ::selection {
     background-color: var(--color-neutral-800);
+    color: var(--color-neutral-50);
   }
 
   :focus-visible {
