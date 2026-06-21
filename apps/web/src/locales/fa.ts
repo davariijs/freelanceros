@@ -1,0 +1,20 @@
+export const fa = {
+  welcome: "به فریلنس‌اواس خوش آمدید",
+  description:
+    "سیستم مدیریت فعالیت‌های فریلنسری با اولویت کار تماماً کیبوردی در کلاس سازمانی.",
+  exploreKanban: "مشاهده کانبان",
+  viewTimeline: "نمایش تایم‌لاین",
+  workspace: "میز کار",
+  tasks: "کارها",
+  toggleTheme: "تغییر تم",
+  toggleLang: "EN",
+  workspaceConsole: "کنسول مدیریت",
+  email: "آدرس ایمیل",
+  password: "رمز عبور",
+  loginButton: "ورود به حساب",
+  emailRequired: "آدرس ایمیل معتبر نیست",
+  passwordRequired: "رمز عبور باید حداقل ۶ کاراکتر باشد",
+  loading: "در حال ورود...",
+  loginTitle: "ورود به کنسول مدیریت",
+  loginDescription: "برای دسترسی به کنسول مدیریت وارد حساب خود شوید.",
+};

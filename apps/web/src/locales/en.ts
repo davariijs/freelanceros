@@ -1,0 +1,20 @@
+export const en = {
+  welcome: "Welcome to FreelanceOS",
+  description:
+    "A keyboard-first freelance operations system in enterprise class.",
+  exploreKanban: "Explore Kanban",
+  viewTimeline: "View Timeline",
+  workspace: "Workspace",
+  tasks: "Tasks",
+  toggleTheme: "Toggle Theme",
+  toggleLang: "فا",
+  workspaceConsole: "Workspace Console",
+  email: "Email Address",
+  password: "Password",
+  loginButton: "Sign In",
+  emailRequired: "Invalid email address",
+  passwordRequired: "Password must be at least 6 characters",
+  loading: "Signing in...",
+  loginTitle: "Sign in to Workspace",
+  loginDescription: "Sign in to access your administrative console.",
+};
