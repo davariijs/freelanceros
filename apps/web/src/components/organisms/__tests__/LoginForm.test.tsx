@@ -1,18 +1,10 @@
 import * as React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "@/utils/test-utils";
 import { LoginForm } from "@/components/organisms/LoginForm";
-import { AppProvider } from "@/context/AppContext";
-import { QueryProvider } from "@/providers/QueryProvider";
 
 describe("LoginForm Organism Unit Spec (TDD)", () => {
   it("should render the login form fields and submit button correctly", () => {
-    render(
-      <QueryProvider>
-        <AppProvider>
-          <LoginForm />
-        </AppProvider>
-      </QueryProvider>,
-    );
+    render(<LoginForm />);
 
     expect(
       screen.getByLabelText("Email Address", { selector: "input" }),

@@ -9,10 +9,11 @@ import { useApp } from "@/context/AppContext";
 interface FormFieldProps extends Omit<InputProps, "error"> {
   label: string;
   errorMessage?: string;
+  required?: boolean;
 }
 
 export const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(
-  ({ label, errorMessage, id, type = "text", ...props }, ref) => {
+  ({ label, errorMessage, id, type = "text", required, ...props }, ref) => {
     const { dir } = useApp();
     const generatedId = React.useId();
     const inputId = id || generatedId;
@@ -29,6 +30,7 @@ export const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(
           className="text-xs font-semibold text-neutral-500 dark:text-neutral-400"
         >
           {label}
+          {required && <span className="text-red-500 ms-1">*</span>}
         </label>
         <div className="relative w-full">
           <Input

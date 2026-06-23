@@ -8,9 +8,13 @@ import { useUpdateTaskMutation } from "@/hooks/useTasks";
 
 interface KanbanBoardProps {
   tasks: Task[];
+  onTaskClick: (task: Task) => void;
 }
 
-export const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks }) => {
+export const KanbanBoard: React.FC<KanbanBoardProps> = ({
+  tasks,
+  onTaskClick,
+}) => {
   const { t } = useApp();
   const updateTaskMutation = useUpdateTaskMutation();
 
@@ -74,7 +78,9 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ tasks }) => {
                 </div>
               ) : (
                 columnTasks.map((task) => (
-                  <TaskCard key={task.id} task={task} />
+                  <div key={task.id} onClick={() => onTaskClick(task)}>
+                    <TaskCard task={task} />
+                  </div>
                 ))
               )}
             </div>

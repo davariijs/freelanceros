@@ -1,18 +1,10 @@
 import * as React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "@/utils/test-utils";
 import { KanbanBoard } from "@/components/organisms/KanbanBoard";
-import { AppProvider } from "@/context/AppContext";
-import { QueryProvider } from "@/providers/QueryProvider";
 
 describe("KanbanBoard Organism Spec", () => {
   it("should render all three kanban columns correctly", () => {
-    render(
-      <QueryProvider>
-        <AppProvider>
-          <KanbanBoard tasks={[]} />
-        </AppProvider>
-      </QueryProvider>,
-    );
+    render(<KanbanBoard tasks={[]} onTaskClick={jest.fn()} />);
 
     expect(screen.getByText(/to do/i)).toBeInTheDocument();
     expect(screen.getByText(/in progress/i)).toBeInTheDocument();

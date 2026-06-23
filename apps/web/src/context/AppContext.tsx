@@ -18,39 +18,55 @@ interface AppContextType {
 
 const AppContext = React.createContext<AppContextType | undefined>(undefined);
 
-export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
+interface AppProviderProps {
+  children: React.ReactNode;
+  initialLocale: Locale;
+  initialTheme: Theme;
+}
+
+export const AppProvider: React.FC<AppProviderProps> = ({
   children,
+  initialLocale,
+  initialTheme,
 }) => {
-  const [theme, setThemeState] = React.useState<Theme>("dark");
-  const [locale, setLocale] = React.useState<Locale>("en");
+  const [theme, setThemeState] = React.useState<Theme>(initialTheme);
+  const [locale, setLocale] = React.useState<Locale>(initialLocale);
 
   const t = locale === "en" ? en : fa;
   const dir = locale === "fa" ? "rtl" : "ltr";
 
   React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedTheme = localStorage.getItem("theme") as Theme;
+      const savedLocale = localStorage.getItem("locale") as Locale;
+      if (savedTheme) setThemeState(savedTheme);
+      if (savedLocale) setLocale(savedLocale);
+    }
+  }, []);
+
+  React.useEffect(() => {
     const root = window.document.documentElement;
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-    const applyTheme = (current: Theme) => {
-      root.classList.remove("light", "dark");
-      if (current === "system") {
-        const systemTheme = mediaQuery.matches ? "dark" : "light";
-        root.classList.add(systemManager(systemTheme));
-      } else {
-        root.classList.add(current);
-      }
-    };
-
-    const systemManager = (val: string) => val;
-    applyTheme(theme);
+    root.classList.remove("light", "dark");
+    root.classList.add(theme);
   }, [theme]);
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("theme", newTheme);
+      document.cookie = `theme=${newTheme}; path=/; max-age=31536000; SameSite=Lax; Secure`;
+    }
   };
 
   const toggleLocale = () => {
-    setLocale((prev) => (prev === "en" ? "fa" : "en"));
+    setLocale((prev) => {
+      const next = prev === "en" ? "fa" : "en";
+      if (typeof window !== "undefined") {
+        localStorage.setItem("locale", next);
+        document.cookie = `locale=${next}; path=/; max-age=31536000; SameSite=Lax; Secure`;
+      }
+      return next;
+    });
   };
 
   return (
