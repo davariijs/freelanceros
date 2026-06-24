@@ -6,6 +6,12 @@ import { FilterToolbar } from "@/components/molecules/FilterToolbar";
 import { Timeline } from "@/components/organisms/Timeline";
 import { CreateProjectModal } from "@/components/organisms/CreateProjectModal";
 import { EditProjectModal } from "@/components/organisms/EditProjectModal";
+import {
+  useProjectsQuery,
+  useCreateProjectMutation,
+  useUpdateProjectMutation,
+  useDeleteProjectMutation,
+} from "@/hooks/useProjects";
 import { Project, ProjectStatus } from "@/schemas/project";
 import { Button } from "@/components/atoms/Button";
 import { Plus } from "lucide-react";
@@ -23,40 +29,10 @@ export default function ProjectsPage() {
     null,
   );
 
-  const [localProjects, setLocalProjects] = React.useState<Project[]>([]);
-
-  React.useEffect(() => {
-    const mockProjects: Project[] = [
-      {
-        id: "p1",
-        title: "Enterprise Core E-Commerce",
-        status: "ACTIVE",
-        priority: "HIGH",
-        dueDate: new Date(Date.now() + 86400000 * 15).toISOString(),
-        client: { id: "c1", name: "TechCorp Inc." },
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: "p2",
-        title: "Mobile Wallet Expo App",
-        status: "PLANNING",
-        priority: "MEDIUM",
-        dueDate: new Date(Date.now() + 86400000 * 45).toISOString(),
-        client: { id: "c2", name: "Fintech Startup" },
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: "p3",
-        title: "Marketing Site Migration",
-        status: "COMPLETED",
-        priority: "LOW",
-        dueDate: new Date(Date.now() - 86400000 * 5).toISOString(),
-        client: { id: "c1", name: "TechCorp Inc." },
-        createdAt: new Date().toISOString(),
-      },
-    ];
-    setLocalProjects(mockProjects);
-  }, []);
+  const { data: projects = [], isLoading } = useProjectsQuery();
+  const createProjectMutation = useCreateProjectMutation();
+  const updateProjectMutation = useUpdateProjectMutation();
+  const deleteProjectMutation = useDeleteProjectMutation();
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -68,28 +44,34 @@ export default function ProjectsPage() {
     priority: TaskPriority;
     status: ProjectStatus;
   }) => {
-    const truncatedTitle =
-      data.title.length > 17 ? `${data.title.substring(0, 17)}...` : data.title;
-    const newProject: Project = {
-      id: `project-${Date.now()}`,
-      title: truncatedTitle,
-      status: data.status,
-      priority: data.priority,
-      dueDate: new Date(data.dueDate).toISOString(),
-      createdAt: new Date().toISOString(),
-    };
-    setLocalProjects([newProject, ...localProjects]);
+    createProjectMutation.mutate(data);
+  };
+
+  const handleUpdateProject = (
+    id: string,
+    data: {
+      title: string;
+      dueDate: string;
+      priority: TaskPriority;
+      status: ProjectStatus;
+    },
+  ) => {
+    updateProjectMutation.mutate({ id, ...data });
+  };
+
+  const handleDeleteProject = (id: string) => {
+    deleteProjectMutation.mutate(id);
   };
 
   const filteredProjects = React.useMemo(() => {
-    return localProjects.filter((project) => {
+    return projects.filter((project) => {
       if (filters.status !== "ALL" && project.status !== filters.status)
         return false;
       if (filters.priority !== "ALL" && project.priority !== filters.priority)
         return false;
       return true;
     });
-  }, [filters, localProjects]);
+  }, [filters, projects]);
 
   return (
     <div className="space-y-6 py-4 md:py-8">
@@ -113,10 +95,16 @@ export default function ProjectsPage() {
 
       <FilterToolbar filters={filters} onFilterChange={handleFilterChange} />
 
-      <Timeline
-        projects={filteredProjects}
-        onProjectClick={(proj) => setSelectedProject(proj)}
-      />
+      {isLoading ? (
+        <div className="h-64 flex items-center justify-center">
+          <p className="text-sm text-neutral-400">{t.mainloading}</p>
+        </div>
+      ) : (
+        <Timeline
+          projects={filteredProjects}
+          onProjectClick={(proj) => setSelectedProject(proj)}
+        />
+      )}
 
       <CreateProjectModal
         isOpen={isCreateOpen}
@@ -128,20 +116,8 @@ export default function ProjectsPage() {
         isOpen={!!selectedProject}
         onClose={() => setSelectedProject(null)}
         project={selectedProject}
-        onUpdateProject={(id, data) => {
-          const truncatedTitle =
-            data.title.length > 17
-              ? `${data.title.substring(0, 17)}...`
-              : data.title;
-          setLocalProjects((prev) =>
-            prev.map((p) =>
-              p.id === id ? { ...p, ...data, title: truncatedTitle } : p,
-            ),
-          );
-        }}
-        onDeleteProject={(id) => {
-          setLocalProjects((prev) => prev.filter((p) => p.id !== id));
-        }}
+        onUpdateProject={handleUpdateProject}
+        onDeleteProject={handleDeleteProject}
       />
     </div>
   );

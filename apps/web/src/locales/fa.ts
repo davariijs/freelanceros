@@ -98,4 +98,5 @@ export const fa = {
   write: "نوشتن",
   preview: "پیش‌نمایش",
   editClient: "ویرایش کارفرما",
+  mainloading: "در حال بارگذاری...",
 };

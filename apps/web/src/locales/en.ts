@@ -98,4 +98,5 @@ export const en = {
   write: "Write",
   preview: "Preview",
   editClient: "Edit Client",
+  mainloading: "Loading...",
 };

@@ -5,6 +5,12 @@ import { useApp } from "@/context/AppContext";
 import { Button } from "@/components/atoms/Button";
 import { CreateClientModal } from "@/components/organisms/CreateClientModal";
 import { EditClientModal } from "@/components/organisms/EditClientModal";
+import {
+  useClientsQuery,
+  useCreateClientMutation,
+  useUpdateClientMutation,
+  useDeleteClientMutation,
+} from "@/hooks/useClients";
 import { Client } from "@/schemas/client";
 import { Plus, Users, Pencil } from "lucide-react";
 
@@ -14,52 +20,25 @@ export default function ClientsPage() {
   const [selectedClient, setSelectedClient] = React.useState<Client | null>(
     null,
   );
-  const [localClients, setLocalClients] = React.useState<Client[]>([]);
 
-  React.useEffect(() => {
-    const mockClients: Client[] = [
-      {
-        id: "c1",
-        name: "TechCorp Inc.",
-        email: "billing@techcorp.com",
-        userId: "u1",
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: "c2",
-        name: "Fintech Startup",
-        email: "hello@finstart.io",
-        userId: "u1",
-        createdAt: new Date().toISOString(),
-      },
-    ];
-    setLocalClients(mockClients);
-  }, []);
+  const { data: clients = [], isLoading } = useClientsQuery();
+  const createClientMutation = useCreateClientMutation();
+  const updateClientMutation = useUpdateClientMutation();
+  const deleteClientMutation = useDeleteClientMutation();
 
   const handleCreateClient = (data: { name: string; email?: string }) => {
-    const newClient: Client = {
-      id: `client-${Date.now()}`,
-      name: data.name,
-      email: data.email || null,
-      userId: "u1",
-      createdAt: new Date().toISOString(),
-    };
-    setLocalClients([newClient, ...localClients]);
+    createClientMutation.mutate(data);
   };
 
   const handleUpdateClient = (
     id: string,
     data: { name: string; email?: string },
   ) => {
-    setLocalClients((prev) =>
-      prev.map((c) =>
-        c.id === id ? { ...c, name: data.name, email: data.email || null } : c,
-      ),
-    );
+    updateClientMutation.mutate({ id, ...data });
   };
 
   const handleDeleteClient = (id: string) => {
-    setLocalClients((prev) => prev.filter((c) => c.id !== id));
+    deleteClientMutation.mutate(id);
   };
 
   return (
@@ -83,7 +62,11 @@ export default function ClientsPage() {
       </div>
 
       <div className="border border-neutral-200 dark:border-neutral-800 rounded-2xl bg-white dark:bg-neutral-900 shadow-sm overflow-hidden">
-        {localClients.length === 0 ? (
+        {isLoading ? (
+          <div className="p-12 flex items-center justify-center">
+            <p className="text-sm text-neutral-400">{t.mainloading}</p>
+          </div>
+        ) : clients.length === 0 ? (
           <div className="p-12 flex flex-col items-center justify-center text-center">
             <Users className="h-8 w-8 text-neutral-400 mb-2" />
             <p className="text-sm text-neutral-500">{t.noClients}</p>
@@ -103,7 +86,7 @@ export default function ClientsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
-                {localClients.map((client) => (
+                {clients.map((client) => (
                   <tr
                     key={client.id}
                     className="hover:bg-neutral-50/50 dark:hover:bg-neutral-800/20 transition-colors"
