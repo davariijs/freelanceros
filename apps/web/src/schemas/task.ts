@@ -8,4 +8,5 @@ export interface Task {
   status: TaskStatus;
   priority: TaskPriority;
   order: number;
+  projectId?: string | null;
 }
