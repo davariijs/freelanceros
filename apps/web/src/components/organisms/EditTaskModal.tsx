@@ -1,4 +1,3 @@
-// apps/web/src/components/organisms/EditTaskModal.tsx
 "use client";
 
 import * as React from "react";
@@ -11,11 +10,13 @@ import { Select, SelectOption } from "@/components/atoms/Select";
 import { Button } from "@/components/atoms/Button";
 import { z } from "zod";
 import { Task, TaskPriority } from "@/schemas/task";
+import { useRouter } from "next/navigation";
 
 const editTaskSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
   priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
+  projectId: z.string().optional(),
 });
 
 type EditTaskInput = z.infer<typeof editTaskSchema>;
@@ -26,7 +27,12 @@ interface EditTaskModalProps {
   task: Task | null;
   onUpdateTask: (
     id: string,
-    data: { title: string; description: string; priority: TaskPriority },
+    data: {
+      title: string;
+      description: string;
+      priority: TaskPriority;
+      projectId?: string;
+    },
   ) => void;
   onDeleteTask: (id: string) => void;
 }
@@ -39,7 +45,13 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
   onDeleteTask,
 }) => {
   const { t } = useApp();
+  const router = useRouter();
   const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
+
+  const mockProjects = [
+    { id: "p1", title: "Enterprise Core E-Commerce" },
+    { id: "p2", title: "Mobile Wallet Expo App" },
+  ];
 
   const {
     control,
@@ -52,12 +64,28 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
   });
 
   const { field: priorityField } = useController({ name: "priority", control });
+  const { field: projectField } = useController({ name: "projectId", control });
 
   const priorityOptions: SelectOption[] = [
     { label: t.priorityLow, value: "LOW" },
     { label: t.priorityMedium, value: "MEDIUM" },
     { label: t.priorityHigh, value: "HIGH" },
   ];
+
+  const projectOptions: SelectOption[] = [
+    { label: t.noProjects, value: "NONE" },
+    ...mockProjects.map((p) => ({ label: p.title, value: p.id })),
+    { label: "+ Add Project", value: "REDIRECT" },
+  ];
+
+  const handleProjectSelect = (value: string) => {
+    if (value === "REDIRECT") {
+      onClose();
+      router.push("/dashboard/projects");
+    } else {
+      projectField.onChange(value);
+    }
+  };
 
   React.useEffect(() => {
     if (isOpen) setIsConfirmingDelete(false);
@@ -66,6 +94,7 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
         title: task.title,
         description: task.description || "",
         priority: task.priority,
+        projectId: task.projectId || "NONE",
       });
     }
   }, [task, reset, isOpen]);
@@ -77,6 +106,7 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
       title: data.title,
       description: data.description || "",
       priority: data.priority,
+      projectId: data.projectId === "NONE" ? undefined : data.projectId,
     });
     onClose();
   };
@@ -91,15 +121,27 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
         />
         <FormField label={t.descriptionTask} {...register("description")} />
 
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-            {t.priority}
-          </label>
-          <Select
-            value={priorityField.value}
-            onChange={priorityField.onChange}
-            options={priorityOptions}
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+              {t.priority}
+            </label>
+            <Select
+              value={priorityField.value}
+              onChange={priorityField.onChange}
+              options={priorityOptions}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+              {t.projects}
+            </label>
+            <Select
+              value={projectField.value}
+              onChange={handleProjectSelect}
+              options={projectOptions}
+            />
+          </div>
         </div>
 
         <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 mt-6">

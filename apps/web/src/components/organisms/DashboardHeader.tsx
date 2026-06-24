@@ -13,8 +13,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onMenuToggle,
 }) => {
   const { toggleLocale, setTheme, theme, locale, t } = useApp();
-
-  const activeLanguageLabel = locale === "en" ? "EN" : "فا";
+  const activeLanguageLabel = locale === "en" ? "English" : "فارسی";
 
   return (
     <header className="h-16 border-b border-neutral-200 dark:border-neutral-800 px-6 md:px-8 flex items-center justify-between bg-neutral-50 dark:bg-neutral-950 transition-colors duration-200">
@@ -24,16 +23,17 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             variant="ghost"
             size="sm"
             onClick={onMenuToggle}
-            className="md:hidden h-9 w-9 p-0"
+            className="lg:hidden h-9 w-9 p-0"
             aria-label="Toggle Menu"
           >
             <Menu className="h-5 w-5" />
           </Button>
         )}
-        <div className="font-semibold text-neutral-500 dark:text-neutral-400 text-sm hidden md:block">
+        <div className="font-semibold text-neutral-500 dark:text-neutral-400 text-sm hidden lg:block">
           {t.workspaceConsole}
         </div>
       </div>
+
       <div className="flex items-center gap-1 p-1 rounded-full border border-neutral-200 dark:border-neutral-800 bg-neutral-100/50 dark:bg-neutral-900/50 backdrop-blur-sm">
         <Button
           onClick={toggleLocale}
@@ -45,7 +45,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           <Globe className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" />
           <span className="text-xs font-semibold">{activeLanguageLabel}</span>
         </Button>
-        <div className="w-[1px] h-4 bg-neutral-200 dark:bg-neutral-800" />
+        <div className="w-px h-4 bg-neutral-200 dark:bg-neutral-800" />
         <Button
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           variant="ghost"
