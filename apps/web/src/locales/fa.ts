@@ -97,4 +97,6 @@ export const fa = {
   clientTableDate: "تاریخ ثبت",
   write: "نوشتن",
   preview: "پیش‌نمایش",
+  editClient: "ویرایش کارفرما",
+  mainloading: "در حال بارگذاری...",
 };

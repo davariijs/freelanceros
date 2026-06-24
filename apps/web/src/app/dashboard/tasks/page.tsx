@@ -2,7 +2,13 @@
 
 import * as React from "react";
 import { KanbanBoard } from "@/components/organisms/KanbanBoard";
-import { useTasksQuery } from "@/hooks/useTasks";
+import {
+  useTasksQuery,
+  useCreateTaskMutation,
+  useUpdateTaskMutation,
+  useDeleteTaskMutation,
+} from "@/hooks/useTasks";
+import { useProjectsQuery } from "@/hooks/useProjects";
 import { useApp } from "@/context/AppContext";
 import { Button } from "@/components/atoms/Button";
 import { CreateTaskModal } from "@/components/organisms/CreateTaskModal";
@@ -13,49 +19,16 @@ import { Plus } from "lucide-react";
 
 export default function TasksPage() {
   const { t } = useApp();
-  const { data: tasks, isLoading } = useTasksQuery();
+  const { data: tasks = [], isLoading } = useTasksQuery();
+  const { data: projects = [] } = useProjectsQuery();
+
+  const createTaskMutation = useCreateTaskMutation();
+  const updateTaskMutation = useUpdateTaskMutation();
+  const deleteTaskMutation = useDeleteTaskMutation();
 
   const [isCreateOpen, setIsCreateOpen] = React.useState(false);
   const [selectedTask, setSelectedTask] = React.useState<Task | null>(null);
-  const [localTasks, setLocalTasks] = React.useState<Task[]>([]);
   const [projectFilter, setProjectFilter] = React.useState("ALL");
-
-  const mockProjects = [
-    { id: "p1", title: "Enterprise Core E-Commerce" },
-    { id: "p2", title: "Mobile Wallet Expo App" },
-  ];
-
-  React.useEffect(() => {
-    if (isLoading) return;
-    const mockTasks: Task[] = [
-      {
-        id: "t1",
-        title: "Initialize Next.js v16 Client",
-        status: "DONE",
-        priority: "HIGH",
-        order: 1,
-        projectId: "p1",
-      },
-      {
-        id: "t2",
-        title: "Setup Tailwind CSS v4 Styles",
-        status: "IN_PROGRESS",
-        priority: "MEDIUM",
-        order: 2,
-        projectId: "p2",
-      },
-      {
-        id: "t3",
-        title: "Write Playwright E2E Integration Specs",
-        status: "TODO",
-        priority: "LOW",
-        order: 3,
-      },
-    ];
-
-    const resolvedTasks = tasks && tasks.length > 0 ? tasks : mockTasks;
-    setLocalTasks(resolvedTasks);
-  }, [tasks, isLoading]);
 
   const handleCreateTask = (data: {
     title: string;
@@ -64,16 +37,7 @@ export default function TasksPage() {
     status: TaskStatus;
     projectId?: string;
   }) => {
-    const newTask: Task = {
-      id: `task-${Date.now()}`,
-      title: data.title,
-      description: data.description,
-      status: data.status,
-      priority: data.priority,
-      order: localTasks.length + 1,
-      projectId: data.projectId,
-    };
-    setLocalTasks([newTask, ...localTasks]);
+    createTaskMutation.mutate(data);
   };
 
   const handleUpdateTask = (
@@ -85,34 +49,24 @@ export default function TasksPage() {
       projectId?: string;
     },
   ) => {
-    setLocalTasks((prev) =>
-      prev.map((t) =>
-        t.id === id
-          ? {
-              ...t,
-              ...data,
-              projectId: data.projectId === "NONE" ? undefined : data.projectId,
-            }
-          : t,
-      ),
-    );
+    updateTaskMutation.mutate({ id, ...data });
   };
 
   const handleDeleteTask = (id: string) => {
-    setLocalTasks((prev) => prev.filter((t) => t.id !== id));
+    deleteTaskMutation.mutate(id);
   };
 
   const filteredTasks = React.useMemo(() => {
-    return localTasks.filter((task) => {
+    return tasks.filter((task) => {
       if (projectFilter !== "ALL" && task.projectId !== projectFilter)
         return false;
       return true;
     });
-  }, [localTasks, projectFilter]);
+  }, [tasks, projectFilter]);
 
   const projectFilterOptions = [
     { label: t.all, value: "ALL" },
-    ...mockProjects.map((p) => ({ label: p.title, value: p.id })),
+    ...projects.map((p) => ({ label: p.title, value: p.id })),
   ];
 
   return (

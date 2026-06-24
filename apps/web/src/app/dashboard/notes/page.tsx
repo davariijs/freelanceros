@@ -6,82 +6,63 @@ import { Note } from "@/schemas/note";
 import { Button } from "@/components/atoms/Button";
 import { RichTextEditor } from "@/components/molecules/RichTextEditor";
 import { Select } from "@/components/atoms/Select";
+import {
+  useNotesQuery,
+  useCreateNoteMutation,
+  useUpdateNoteMutation,
+  useDeleteNoteMutation,
+} from "@/hooks/useNotes";
+import { useTasksQuery } from "@/hooks/useTasks";
 import { Plus, FileText, Trash2, Check, X, Save } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function NotesPage() {
   const { t, dir } = useApp();
-  const [localNotes, setLocalNotes] = React.useState<Note[]>([]);
+  const { data: notes = [], isLoading } = useNotesQuery();
+  const { data: tasks = [] } = useTasksQuery();
+
+  const createNoteMutation = useCreateNoteMutation();
+  const updateNoteMutation = useUpdateNoteMutation();
+  const deleteNoteMutation = useDeleteNoteMutation();
+
   const [selectedNote, setSelectedNote] = React.useState<Note | null>(null);
   const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
 
-  const mockTasks = [
-    { id: "t1", title: "Initialize Next.js v16 Client" },
-    { id: "t2", title: "Setup Tailwind CSS v4 Styles" },
-    { id: "t3", title: "Write Playwright E2E Specs" },
-  ];
-
   React.useEffect(() => {
-    const mockNotes: Note[] = [
-      {
-        id: "n1",
-        title: "TechCorp Kickoff Notes",
-        content: "Discussed timeline milestones.",
-        userId: "u1",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: "n2",
-        title: "React 19 Upgrade Guide",
-        content: "Ensure all peer-dependencies are resolved.",
-        userId: "u1",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ];
-    setLocalNotes(mockNotes);
-    if (mockNotes.length > 0) setSelectedNote(mockNotes[0]);
-  }, []);
+    if (notes.length > 0 && !selectedNote) {
+      setSelectedNote(notes[0]);
+    }
+  }, [notes, selectedNote]);
 
   const handleCreateNote = () => {
-    const newNote: Note = {
-      id: `note-${Date.now()}`,
-      title: "Untitled Note",
-      content: "",
-      userId: "u1",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    setLocalNotes([newNote, ...localNotes]);
-    setSelectedNote(newNote);
-    setIsConfirmingDelete(false);
+    createNoteMutation.mutate(undefined, {
+      onSuccess: (newNote) => {
+        setSelectedNote(newNote);
+        setIsConfirmingDelete(false);
+      },
+    });
   };
 
   const handleUpdateNote = (id: string, key: string, value: any) => {
-    setLocalNotes((prev) =>
-      prev.map((note) =>
-        note.id === id
-          ? { ...note, [key]: value, updatedAt: new Date().toISOString() }
-          : note,
-      ),
-    );
+    updateNoteMutation.mutate({ id, [key]: value });
     setSelectedNote((prev) =>
       prev && prev.id === id ? { ...prev, [key]: value } : prev,
     );
   };
 
   const handleDeleteNote = (id: string) => {
-    setLocalNotes((prev) => prev.filter((note) => note.id !== id));
-    setSelectedNote(
-      localNotes.length > 1 ? localNotes.filter((n) => n.id !== id)[0] : null,
-    );
-    setIsConfirmingDelete(false);
+    deleteNoteMutation.mutate(id, {
+      onSuccess: () => {
+        const remaining = notes.filter((n) => n.id !== id);
+        setSelectedNote(remaining.length > 0 ? remaining[0] : null);
+        setIsConfirmingDelete(false);
+      },
+    });
   };
 
   const taskOptions = [
     { label: "Unlinked", value: "NONE" },
-    ...mockTasks.map((t) => ({
+    ...tasks.map((t) => ({
       label: t.title.substring(0, 15) + "...",
       value: t.id,
     })),
@@ -105,12 +86,16 @@ export default function NotesPage() {
           {t.newNote}
         </Button>
         <div className="flex-1 overflow-y-auto space-y-2">
-          {localNotes.length === 0 ? (
+          {isLoading ? (
+            <p className="text-xs text-neutral-400 text-center py-8">
+              {t.mainloading}
+            </p>
+          ) : notes.length === 0 ? (
             <p className="text-xs text-neutral-400 text-center py-8">
               {t.noNotes}
             </p>
           ) : (
-            localNotes.map((note) => (
+            notes.map((note) => (
               <button
                 key={note.id}
                 onClick={() => {

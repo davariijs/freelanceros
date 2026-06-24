@@ -97,4 +97,6 @@ export const en = {
   clientTableDate: "Created Date",
   write: "Write",
   preview: "Preview",
+  editClient: "Edit Client",
+  mainloading: "Loading...",
 };
