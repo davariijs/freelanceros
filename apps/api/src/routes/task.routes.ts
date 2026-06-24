@@ -25,7 +25,7 @@ router.post('/', async (req: AuthenticatedRequest, res) => {
       priority: (priority as TaskPriority) || 'MEDIUM',
       dueDate: dueDate ? new Date(dueDate) : null,
       order: order || 0,
-      projectId,
+      projectId: projectId === 'NONE' ? null : projectId,
       clientId,
       userId: req.userId!,
     },
@@ -42,10 +42,17 @@ router.post('/', async (req: AuthenticatedRequest, res) => {
   return res.status(201).json(task);
 });
 
+router.get('/', async (req: AuthenticatedRequest, res) => {
+  const tasks = await prisma.task.findMany({
+    where: { userId: req.userId! },
+    orderBy: { order: 'asc' },
+  });
+  return res.status(200).json(tasks);
+});
+
 router.patch('/:id', async (req: AuthenticatedRequest, res) => {
   const { id } = req.params;
-  const { status, order, title, priority } = req.body;
-
+  const { status, order, title, priority, description, projectId } = req.body;
   const task = await prisma.task.update({
     where: { id, userId: req.userId! },
     data: {
@@ -53,18 +60,20 @@ router.patch('/:id', async (req: AuthenticatedRequest, res) => {
       priority: priority ? (priority as TaskPriority) : undefined,
       order: order !== undefined ? order : undefined,
       title: title || undefined,
+      description: description !== undefined ? description : undefined,
+      projectId: projectId === 'NONE' ? null : projectId || undefined,
     },
   });
 
   return res.status(200).json(task);
 });
 
-router.get('/', async (req: AuthenticatedRequest, res) => {
-  const tasks = await prisma.task.findMany({
-    where: { userId: req.userId! },
-    orderBy: { order: 'asc' },
+router.delete('/:id', async (req: AuthenticatedRequest, res) => {
+  const { id } = req.params;
+  await prisma.task.delete({
+    where: { id, userId: req.userId! },
   });
-  return res.status(200).json(tasks);
+  return res.status(204).send();
 });
 
 export { router as taskRouter };

@@ -4,12 +4,16 @@ import * as React from "react";
 import { useApp } from "@/context/AppContext";
 import { Button } from "@/components/atoms/Button";
 import { CreateClientModal } from "@/components/organisms/CreateClientModal";
+import { EditClientModal } from "@/components/organisms/EditClientModal";
 import { Client } from "@/schemas/client";
-import { Plus, Users } from "lucide-react";
+import { Plus, Users, Pencil } from "lucide-react";
 
 export default function ClientsPage() {
   const { t } = useApp();
   const [isCreateOpen, setIsCreateOpen] = React.useState(false);
+  const [selectedClient, setSelectedClient] = React.useState<Client | null>(
+    null,
+  );
   const [localClients, setLocalClients] = React.useState<Client[]>([]);
 
   React.useEffect(() => {
@@ -41,6 +45,21 @@ export default function ClientsPage() {
       createdAt: new Date().toISOString(),
     };
     setLocalClients([newClient, ...localClients]);
+  };
+
+  const handleUpdateClient = (
+    id: string,
+    data: { name: string; email?: string },
+  ) => {
+    setLocalClients((prev) =>
+      prev.map((c) =>
+        c.id === id ? { ...c, name: data.name, email: data.email || null } : c,
+      ),
+    );
+  };
+
+  const handleDeleteClient = (id: string) => {
+    setLocalClients((prev) => prev.filter((c) => c.id !== id));
   };
 
   return (
@@ -80,6 +99,7 @@ export default function ClientsPage() {
                   <th className="p-4">{t.clientTableName}</th>
                   <th className="p-4">{t.clientTableEmail}</th>
                   <th className="p-4">{t.clientTableDate}</th>
+                  <th className="p-4 text-right"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
@@ -97,6 +117,17 @@ export default function ClientsPage() {
                     <td className="p-4 text-neutral-400">
                       {new Date(client.createdAt).toLocaleDateString()}
                     </td>
+                    <td className="p-4 text-right">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 rounded-full"
+                        onClick={() => setSelectedClient(client)}
+                      >
+                        <Pencil className="h-3.5 w-3.5 text-neutral-500" />
+                      </Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -109,6 +140,14 @@ export default function ClientsPage() {
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
         onSubmitClient={handleCreateClient}
+      />
+
+      <EditClientModal
+        isOpen={!!selectedClient}
+        onClose={() => setSelectedClient(null)}
+        client={selectedClient}
+        onUpdateClient={handleUpdateClient}
+        onDeleteClient={handleDeleteClient}
       />
     </div>
   );
