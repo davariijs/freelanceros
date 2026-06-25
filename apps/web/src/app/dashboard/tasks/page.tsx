@@ -113,6 +113,7 @@ export default function TasksPage() {
       <CreateTaskModal
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
+        projects={projects}
         onSubmitTask={handleCreateTask}
       />
 
@@ -120,6 +121,7 @@ export default function TasksPage() {
         isOpen={!!selectedTask}
         onClose={() => setSelectedTask(null)}
         task={selectedTask}
+        projects={projects}
         onUpdateTask={handleUpdateTask}
         onDeleteTask={handleDeleteTask}
       />

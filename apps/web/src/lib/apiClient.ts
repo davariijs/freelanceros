@@ -8,18 +8,28 @@ export const apiClient = axios.create({
   },
 });
 
+const getCookie = (name: string): string | null => {
+  if (typeof document === "undefined") return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
+  return null;
+};
+
+const isDev = process.env.NODE_ENV !== "production";
+
 apiClient.interceptors.request.use(
   (config) => {
-    WebLogger.info(
-      `Outbound Request: [${config.method?.toUpperCase()}] ${config.url}`,
-      config.data,
-    );
+    if (isDev) {
+      WebLogger.info(
+        `Outbound Request: [${config.method?.toUpperCase()}] ${config.url}`,
+        config.data,
+      );
+    }
 
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    const token = getCookie("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -31,10 +41,12 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response) => {
-    WebLogger.info(
-      `Inbound Response: [${response.status}] ${response.config.url}`,
-      response.data,
-    );
+    if (isDev) {
+      WebLogger.info(
+        `Inbound Response: [${response.status}] ${response.config.url}`,
+        response.data,
+      );
+    }
     return response;
   },
   (error) => {
@@ -45,6 +57,13 @@ apiClient.interceptors.response.use(
       `API Error Intercepted: [${status || "NETWORK_ERROR"}] ${message}`,
       error,
     );
+
+    if (status === 401 && typeof window !== "undefined") {
+      document.cookie =
+        "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
+      window.location.href = "/login";
+    }
+
     return Promise.reject(error);
   },
 );

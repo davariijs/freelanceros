@@ -25,6 +25,7 @@ interface EditTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   task: Task | null;
+  projects: { id: string; title: string }[];
   onUpdateTask: (
     id: string,
     data: {
@@ -41,17 +42,13 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
   isOpen,
   onClose,
   task,
+  projects,
   onUpdateTask,
   onDeleteTask,
 }) => {
   const { t } = useApp();
   const router = useRouter();
   const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
-
-  const mockProjects = [
-    { id: "p1", title: "Enterprise Core E-Commerce" },
-    { id: "p2", title: "Mobile Wallet Expo App" },
-  ];
 
   const {
     control,
@@ -74,7 +71,7 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
 
   const projectOptions: SelectOption[] = [
     { label: t.noProjects, value: "NONE" },
-    ...mockProjects.map((p) => ({ label: p.title, value: p.id })),
+    ...projects.map((p) => ({ label: p.title, value: p.id })),
     { label: "+ Add Project", value: "REDIRECT" },
   ];
 

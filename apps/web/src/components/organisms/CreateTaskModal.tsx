@@ -24,6 +24,7 @@ type CreateTaskInput = z.infer<typeof createTaskSchema>;
 interface CreateTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
+  projects: { id: string; title: string }[];
   onSubmitTask: (data: {
     title: string;
     description: string;
@@ -36,14 +37,11 @@ interface CreateTaskModalProps {
 export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   isOpen,
   onClose,
+  projects,
   onSubmitTask,
 }) => {
   const { t } = useApp();
   const router = useRouter();
-  const mockProjects = [
-    { id: "p1", title: "Enterprise Core E-Commerce" },
-    { id: "p2", title: "Mobile Wallet Expo App" },
-  ];
 
   const {
     control,
@@ -72,7 +70,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
 
   const projectOptions: SelectOption[] = [
     { label: t.noProjects, value: "NONE" },
-    ...mockProjects.map((p) => ({ label: p.title, value: p.id })),
+    ...projects.map((p) => ({ label: p.title, value: p.id })),
     { label: "+ Add Project", value: "REDIRECT" },
   ];
 

@@ -3,6 +3,7 @@ export interface Note {
   title: string;
   content: string;
   userId: string;
+  taskId?: string | null;
   createdAt: string;
   updatedAt: string;
 }
