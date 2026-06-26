@@ -12,12 +12,14 @@ import { Button } from "@/components/atoms/Button";
 import { z } from "zod";
 import { TaskPriority } from "@/schemas/task";
 import { ProjectStatus } from "@/schemas/project";
+import { useRouter } from "next/navigation";
 
 const createProjectSchema = z.object({
   title: z.string().min(1, "Title is required"),
   dueDate: z.string().min(1, "Due date is required"),
   priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
   status: z.enum(["PLANNING", "ACTIVE", "COMPLETED", "PAUSED"]),
+  clientId: z.string().optional(),
 });
 
 type CreateProjectInput = z.infer<typeof createProjectSchema>;
@@ -25,20 +27,24 @@ type CreateProjectInput = z.infer<typeof createProjectSchema>;
 interface CreateProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
+  clients: { id: string; name: string }[];
   onSubmitProject: (data: {
     title: string;
     dueDate: string;
     priority: TaskPriority;
     status: ProjectStatus;
+    clientId?: string;
   }) => void;
 }
 
 export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   isOpen,
   onClose,
+  clients = [],
   onSubmitProject,
 }) => {
   const { t } = useApp();
+  const router = useRouter();
   const {
     control,
     register,
@@ -52,12 +58,14 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
       dueDate: "",
       priority: "MEDIUM",
       status: "PLANNING",
+      clientId: "NONE",
     },
   });
 
   const { field: dateField } = useController({ name: "dueDate", control });
   const { field: priorityField } = useController({ name: "priority", control });
   const { field: statusField } = useController({ name: "status", control });
+  const { field: clientField } = useController({ name: "clientId", control });
 
   const priorityOptions: SelectOption[] = [
     { label: t.priorityLow, value: "LOW" },
@@ -72,12 +80,28 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
     { label: t.statusCompleted, value: "COMPLETED" },
   ];
 
+  const clientOptions: SelectOption[] = [
+    { label: t.selectClient, value: "NONE" },
+    ...clients.map((c) => ({ label: c.name, value: c.id })),
+    { label: t.addClient, value: "REDIRECT" },
+  ];
+
+  const handleClientSelect = (value: string) => {
+    if (value === "REDIRECT") {
+      onClose();
+      router.push("/dashboard/clients");
+    } else {
+      clientField.onChange(value);
+    }
+  };
+
   const onSubmit = (data: CreateProjectInput) => {
     onSubmitProject({
       title: data.title,
       dueDate: data.dueDate,
       priority: data.priority,
       status: data.status,
+      clientId: data.clientId === "NONE" ? undefined : data.clientId,
     });
     reset();
     onClose();
@@ -128,6 +152,17 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
               options={statusOptions}
             />
           </div>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+            {t.clients}
+          </label>
+          <Select
+            value={clientField.value}
+            onChange={handleClientSelect}
+            options={clientOptions}
+          />
         </div>
 
         <div className="flex justify-end gap-3 pt-4 border-t border-neutral-200 dark:border-neutral-800">

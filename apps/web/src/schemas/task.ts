@@ -9,4 +9,5 @@ export interface Task {
   priority: TaskPriority;
   order: number;
   projectId?: string | null;
+  createdAt: string;
 }

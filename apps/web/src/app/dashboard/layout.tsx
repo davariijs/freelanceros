@@ -36,16 +36,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 "relative group w-full text-sm py-2",
                 isCollapsed
                   ? "justify-center px-0"
-                  : "justify-center xl:justify-start px-0 xl:px-3",
+                  : "justify-start lg:justify-center xl:justify-start px-3 lg:px-0 xl:px-3",
               )}
             >
               <LayoutDashboard
                 className={cn(
                   "h-4 w-4 text-neutral-500",
-                  !isCollapsed && (dir === "rtl" ? "xl:ml-3" : "xl:mr-3"),
+                  !isCollapsed &&
+                    (dir === "rtl"
+                      ? "ml-3 lg:ml-0 xl:ml-3"
+                      : "mr-3 lg:mr-0 xl:mr-3"),
                 )}
               />
-              <span className={cn(isCollapsed ? "hidden" : "hidden xl:inline")}>
+              <span
+                className={cn(
+                  isCollapsed ? "hidden" : "inline lg:hidden xl:inline",
+                )}
+              >
                 {t.dashboard}
               </span>
               <span
@@ -54,8 +61,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   "absolute top-1/2 -translate-y-1/2 z-50 px-2.5 py-1 rounded-md text-xs font-semibold whitespace-nowrap border bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 border-neutral-800 dark:border-neutral-200 shadow-md pointer-events-none invisible opacity-0 transition-all duration-200",
                   isCollapsed
                     ? "group-hover:visible group-hover:opacity-100"
-                    : "xl:group-hover:invisible xl:group-hover:opacity-0 group-hover:visible group-hover:opacity-100",
-                  dir === "rtl" ? "right-full me-2" : "left-full ms-2",
+                    : "hidden lg:group-hover:visible lg:group-hover:opacity-100 xl:group-hover:invisible xl:group-hover:opacity-0",
+                  dir === "rtl"
+                    ? "right-full me-2 translate-x-2 group-hover:translate-x-0"
+                    : "left-full ms-2 -translate-x-2 group-hover:translate-x-0",
                 )}
               >
                 {t.dashboard}
@@ -69,16 +78,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 "relative group w-full text-sm py-2",
                 isCollapsed
                   ? "justify-center px-0"
-                  : "justify-center xl:justify-start px-0 xl:px-3",
+                  : "justify-start lg:justify-center xl:justify-start px-3 lg:px-0 xl:px-3",
               )}
             >
               <ClipboardList
                 className={cn(
                   "h-4 w-4 text-neutral-500",
-                  !isCollapsed && (dir === "rtl" ? "xl:ml-3" : "xl:mr-3"),
+                  !isCollapsed &&
+                    (dir === "rtl"
+                      ? "ml-3 lg:ml-0 xl:ml-3"
+                      : "mr-3 lg:mr-0 xl:mr-3"),
                 )}
               />
-              <span className={cn(isCollapsed ? "hidden" : "hidden xl:inline")}>
+              <span
+                className={cn(
+                  isCollapsed ? "hidden" : "inline lg:hidden xl:inline",
+                )}
+              >
                 {t.tasks}
               </span>
               <span
@@ -87,8 +103,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   "absolute top-1/2 -translate-y-1/2 z-50 px-2.5 py-1 rounded-md text-xs font-semibold whitespace-nowrap border bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 border-neutral-800 dark:border-neutral-200 shadow-md pointer-events-none invisible opacity-0 transition-all duration-200",
                   isCollapsed
                     ? "group-hover:visible group-hover:opacity-100"
-                    : "xl:group-hover:invisible xl:group-hover:opacity-0 group-hover:visible group-hover:opacity-100",
-                  dir === "rtl" ? "right-full me-2" : "left-full ms-2",
+                    : "hidden lg:group-hover:visible lg:group-hover:opacity-100 xl:group-hover:invisible xl:group-hover:opacity-0",
+                  dir === "rtl"
+                    ? "right-full me-2 translate-x-2 group-hover:translate-x-0"
+                    : "left-full ms-2 -translate-x-2 group-hover:translate-x-0",
                 )}
               >
                 {t.tasks}
@@ -102,16 +120,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 "relative group w-full text-sm py-2",
                 isCollapsed
                   ? "justify-center px-0"
-                  : "justify-center xl:justify-start px-0 xl:px-3",
+                  : "justify-start lg:justify-center xl:justify-start px-3 lg:px-0 xl:px-3",
               )}
             >
               <Briefcase
                 className={cn(
                   "h-4 w-4 text-neutral-500",
-                  !isCollapsed && (dir === "rtl" ? "xl:ml-3" : "xl:mr-3"),
+                  !isCollapsed &&
+                    (dir === "rtl"
+                      ? "ml-3 lg:ml-0 xl:ml-3"
+                      : "mr-3 lg:mr-0 xl:mr-3"),
                 )}
               />
-              <span className={cn(isCollapsed ? "hidden" : "hidden xl:inline")}>
+              <span
+                className={cn(
+                  isCollapsed ? "hidden" : "inline lg:hidden xl:inline",
+                )}
+              >
                 {t.projects}
               </span>
               <span
@@ -120,8 +145,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   "absolute top-1/2 -translate-y-1/2 z-50 px-2.5 py-1 rounded-md text-xs font-semibold whitespace-nowrap border bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 border-neutral-800 dark:border-neutral-200 shadow-md pointer-events-none invisible opacity-0 transition-all duration-200",
                   isCollapsed
                     ? "group-hover:visible group-hover:opacity-100"
-                    : "xl:group-hover:invisible xl:group-hover:opacity-0 group-hover:visible group-hover:opacity-100",
-                  dir === "rtl" ? "right-full me-2" : "left-full ms-2",
+                    : "hidden lg:group-hover:visible lg:group-hover:opacity-100 xl:group-hover:invisible xl:group-hover:opacity-0",
+                  dir === "rtl"
+                    ? "right-full me-2 translate-x-2 group-hover:translate-x-0"
+                    : "left-full ms-2 -translate-x-2 group-hover:translate-x-0",
                 )}
               >
                 {t.projects}
@@ -135,16 +162,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 "relative group w-full text-sm py-2",
                 isCollapsed
                   ? "justify-center px-0"
-                  : "justify-center xl:justify-start px-0 xl:px-3",
+                  : "justify-start lg:justify-center xl:justify-start px-3 lg:px-0 xl:px-3",
               )}
             >
               <Users
                 className={cn(
                   "h-4 w-4 text-neutral-500",
-                  !isCollapsed && (dir === "rtl" ? "xl:ml-3" : "xl:mr-3"),
+                  !isCollapsed &&
+                    (dir === "rtl"
+                      ? "ml-3 lg:ml-0 xl:ml-3"
+                      : "mr-3 lg:mr-0 xl:mr-3"),
                 )}
               />
-              <span className={cn(isCollapsed ? "hidden" : "hidden xl:inline")}>
+              <span
+                className={cn(
+                  isCollapsed ? "hidden" : "inline lg:hidden xl:inline",
+                )}
+              >
                 {t.clients}
               </span>
               <span
@@ -153,8 +187,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   "absolute top-1/2 -translate-y-1/2 z-50 px-2.5 py-1 rounded-md text-xs font-semibold whitespace-nowrap border bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 border-neutral-800 dark:border-neutral-200 shadow-md pointer-events-none invisible opacity-0 transition-all duration-200",
                   isCollapsed
                     ? "group-hover:visible group-hover:opacity-100"
-                    : "xl:group-hover:invisible xl:group-hover:opacity-0 group-hover:visible group-hover:opacity-100",
-                  dir === "rtl" ? "right-full me-2" : "left-full ms-2",
+                    : "hidden lg:group-hover:visible lg:group-hover:opacity-100 xl:group-hover:invisible xl:group-hover:opacity-0",
+                  dir === "rtl"
+                    ? "right-full me-2 translate-x-2 group-hover:translate-x-0"
+                    : "left-full ms-2 -translate-x-2 group-hover:translate-x-0",
                 )}
               >
                 {t.clients}
@@ -168,16 +204,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 "relative group w-full text-sm py-2",
                 isCollapsed
                   ? "justify-center px-0"
-                  : "justify-center xl:justify-start px-0 xl:px-3",
+                  : "justify-start lg:justify-center xl:justify-start px-3 lg:px-0 xl:px-3",
               )}
             >
               <FileText
                 className={cn(
                   "h-4 w-4 text-neutral-500",
-                  !isCollapsed && (dir === "rtl" ? "xl:ml-3" : "xl:mr-3"),
+                  !isCollapsed && (dir === "rtl" ? "ml-3" : "mr-3"),
                 )}
               />
-              <span className={cn(isCollapsed ? "hidden" : "hidden xl:inline")}>
+              <span
+                className={cn(
+                  isCollapsed ? "hidden" : "inline lg:hidden xl:inline",
+                )}
+              >
                 {t.notes}
               </span>
               <span
@@ -186,8 +226,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   "absolute top-1/2 -translate-y-1/2 z-50 px-2.5 py-1 rounded-md text-xs font-semibold whitespace-nowrap border bg-neutral-900 dark:bg-neutral-50 text-neutral-50 dark:text-neutral-900 border-neutral-800 dark:border-neutral-200 shadow-md pointer-events-none invisible opacity-0 transition-all duration-200",
                   isCollapsed
                     ? "group-hover:visible group-hover:opacity-100"
-                    : "xl:group-hover:invisible xl:group-hover:opacity-0 group-hover:visible group-hover:opacity-100",
-                  dir === "rtl" ? "right-full me-2" : "left-full ms-2",
+                    : "hidden lg:group-hover:visible lg:group-hover:opacity-100 xl:group-hover:invisible xl:group-hover:opacity-0",
+                  dir === "rtl"
+                    ? "right-full me-2 translate-x-2 group-hover:translate-x-0"
+                    : "left-full ms-2 -translate-x-2 group-hover:translate-x-0",
                 )}
               >
                 {t.notes}

@@ -90,7 +90,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   return (
     <div className="border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden bg-neutral-50 dark:bg-neutral-950 flex flex-col h-full min-h-75">
-      <div className="h-11 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 px-3 flex items-center justify-between">
+      <div className="h-fit py-2 md:py-1 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 px-3 flex flex-col md:flex-row items-start md:items-center justify-between">
         <div className="flex items-center gap-1">
           <Button
             type="button"

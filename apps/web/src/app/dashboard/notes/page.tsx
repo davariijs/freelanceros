@@ -27,12 +27,26 @@ export default function NotesPage() {
 
   const [selectedNote, setSelectedNote] = React.useState<Note | null>(null);
   const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
+  const [editorTitle, setEditorTitle] = React.useState("");
+  const [editorContent, setEditorContent] = React.useState("");
 
   React.useEffect(() => {
     if (notes.length > 0 && !selectedNote) {
       setSelectedNote(notes[0]);
     }
   }, [notes, selectedNote]);
+
+  React.useEffect(() => {
+    if (selectedNote) {
+      setEditorTitle(selectedNote.title);
+      setEditorContent(selectedNote.content);
+    }
+  }, [selectedNote]);
+
+  const isDirty = selectedNote
+    ? editorTitle !== selectedNote.title ||
+      editorContent !== selectedNote.content
+    : false;
 
   const handleCreateNote = () => {
     createNoteMutation.mutate(undefined, {
@@ -43,11 +57,31 @@ export default function NotesPage() {
     });
   };
 
-  const handleUpdateNote = (id: string, key: string, value: any) => {
-    updateNoteMutation.mutate({ id, [key]: value });
-    setSelectedNote((prev) =>
-      prev && prev.id === id ? { ...prev, [key]: value } : prev,
-    );
+  const handleSaveNote = () => {
+    if (selectedNote) {
+      updateNoteMutation.mutate({
+        id: selectedNote.id,
+        title: editorTitle,
+        content: editorContent,
+        taskId: selectedNote.taskId || undefined,
+      });
+    }
+  };
+
+  const handleUpdateNoteField = (
+    key: "title" | "content" | "taskId",
+    value: any,
+  ) => {
+    if (key === "title") setEditorTitle(value);
+    if (key === "content") setEditorContent(value);
+    if (key === "taskId" && selectedNote) {
+      const updatedTaskId = value === "NONE" ? null : value;
+      updateNoteMutation.mutate({
+        id: selectedNote.id,
+        taskId: updatedTaskId || undefined,
+      });
+      setSelectedNote({ ...selectedNote, taskId: updatedTaskId });
+    }
   };
 
   const handleDeleteNote = (id: string) => {
@@ -61,9 +95,9 @@ export default function NotesPage() {
   };
 
   const taskOptions = [
-    { label: "Unlinked", value: "NONE" },
+    { label: t.unlinked, value: "NONE" },
     ...tasks.map((t) => ({
-      label: t.title.substring(0, 15) + "...",
+      label: t.title.length > 24 ? `${t.title.substring(0, 24)}...` : t.title,
       value: t.id,
     })),
   ];
@@ -128,10 +162,8 @@ export default function NotesPage() {
             <div className="flex flex-col gap-3 border-b border-neutral-200 dark:border-neutral-800 pb-4">
               <input
                 type="text"
-                value={selectedNote.title}
-                onChange={(e) =>
-                  handleUpdateNote(selectedNote.id, "title", e.target.value)
-                }
+                value={editorTitle}
+                onChange={(e) => handleUpdateNoteField("title", e.target.value)}
                 className="text-xl font-bold bg-transparent border-none outline-none focus:outline-none focus:ring-0 text-neutral-900 dark:text-neutral-100 w-full"
                 placeholder={t.noteTitle}
               />
@@ -139,27 +171,20 @@ export default function NotesPage() {
                 <Select
                   value={(selectedNote as any).taskId || "NONE"}
                   options={taskOptions}
-                  onChange={(val) =>
-                    handleUpdateNote(
-                      selectedNote.id,
-                      "taskId",
-                      val === "NONE" ? undefined : val,
-                    )
-                  }
+                  onChange={(val) => handleUpdateNoteField("taskId", val)}
                   className="w-full sm:w-40 text-xs"
                 />
 
                 <Button
                   size="sm"
-                  variant="ghost"
-                  onClick={() =>
-                    handleUpdateNote(
-                      selectedNote.id,
-                      "updatedAt",
-                      new Date().toISOString(),
-                    )
-                  }
-                  className="h-11 px-3 flex items-center gap-1.5 text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 border border-neutral-200 dark:border-neutral-800 rounded-lg shrink-0"
+                  variant={isDirty ? "primary" : "ghost"}
+                  onClick={handleSaveNote}
+                  className={cn(
+                    "h-11 px-3 flex items-center gap-1.5 shrink-0 whitespace-nowrap rounded-lg",
+                    isDirty
+                      ? "border border-transparent"
+                      : "text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 border border-neutral-200 dark:border-neutral-800",
+                  )}
                 >
                   <Save className="h-4 w-4" />
                   <span className="text-xs hidden sm:inline">{t.saveNote}</span>
@@ -202,10 +227,8 @@ export default function NotesPage() {
 
             <div className="grow min-h-0">
               <RichTextEditor
-                value={selectedNote.content}
-                onChange={(val) =>
-                  handleUpdateNote(selectedNote.id, "content", val)
-                }
+                value={editorContent}
+                onChange={(val) => handleUpdateNoteField("content", val)}
                 placeholder={t.noteContent}
               />
             </div>
