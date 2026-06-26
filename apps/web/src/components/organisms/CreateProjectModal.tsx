@@ -81,7 +81,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   ];
 
   const clientOptions: SelectOption[] = [
-    { label: t.noClient, value: "NONE" },
+    { label: t.selectClient, value: "NONE" },
     ...clients.map((c) => ({ label: c.name, value: c.id })),
     { label: t.addClient, value: "REDIRECT" },
   ];

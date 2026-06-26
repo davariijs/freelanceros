@@ -93,7 +93,7 @@ export const en = {
     "Monitor and manage your active client accounts, billing emails, and workspace integrations.",
   noClients: "No clients registered.",
   clientTableName: "Name",
-  clientTableEmail: "Billing Email",
+  clientTableEmail: "Email",
   clientTableDate: "Created Date",
   write: "Write",
   preview: "Preview",
@@ -116,4 +116,6 @@ export const en = {
   addClient: "+ Add Client",
   addProject: "+ Add Project",
   unlinked: "Unlinked",
+  selectClient: "Select Client",
+  selectProject: "Select Project",
 };

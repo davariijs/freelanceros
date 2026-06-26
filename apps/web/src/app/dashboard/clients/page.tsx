@@ -13,6 +13,7 @@ import {
 } from "@/hooks/useClients";
 import { Client } from "@/schemas/client";
 import { Plus, Users, Pencil } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function ClientsPage() {
   const { t } = useApp();
@@ -26,13 +27,17 @@ export default function ClientsPage() {
   const updateClientMutation = useUpdateClientMutation();
   const deleteClientMutation = useDeleteClientMutation();
 
-  const handleCreateClient = (data: { name: string; email?: string }) => {
+  const handleCreateClient = (data: {
+    name: string;
+    email?: string;
+    status: any;
+  }) => {
     createClientMutation.mutate(data);
   };
 
   const handleUpdateClient = (
     id: string,
-    data: { name: string; email?: string },
+    data: { name: string; email?: string; status: any },
   ) => {
     updateClientMutation.mutate({ id, ...data });
   };
@@ -64,7 +69,7 @@ export default function ClientsPage() {
       <div className="border border-neutral-200 dark:border-neutral-800 rounded-2xl bg-white dark:bg-neutral-900 shadow-sm overflow-hidden">
         {isLoading ? (
           <div className="p-12 flex items-center justify-center">
-            <p className="text-sm text-neutral-400">{t.mainloading}</p>
+            <p className="text-sm text-neutral-400">Loading Clients...</p>
           </div>
         ) : clients.length === 0 ? (
           <div className="p-12 flex flex-col items-center justify-center text-center">
@@ -81,38 +86,57 @@ export default function ClientsPage() {
                 <tr className="border-b border-neutral-200 dark:border-neutral-800 text-xs font-bold uppercase tracking-wider text-neutral-400 bg-neutral-50 dark:bg-neutral-900/50">
                   <th className="p-4">{t.clientTableName}</th>
                   <th className="p-4">{t.clientTableEmail}</th>
+                  <th className="p-4">{t.status}</th>
                   <th className="p-4">{t.clientTableDate}</th>
                   <th className="p-4 text-right"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
-                {clients.map((client) => (
-                  <tr
-                    key={client.id}
-                    className="hover:bg-neutral-50/50 dark:hover:bg-neutral-800/20 transition-colors"
-                  >
-                    <td className="p-4 font-semibold text-neutral-900 dark:text-neutral-100">
-                      {client.name}
-                    </td>
-                    <td className="p-4 text-neutral-500 dark:text-neutral-400">
-                      {client.email || "N/A"}
-                    </td>
-                    <td className="p-4 text-neutral-400">
-                      {new Date(client.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="p-4 text-right">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 rounded-full"
-                        onClick={() => setSelectedClient(client)}
-                      >
-                        <Pencil className="h-3.5 w-3.5 text-neutral-500" />
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
+                {clients.map((client) => {
+                  const isClientActive = client.status === "ACTIVE";
+
+                  return (
+                    <tr
+                      key={client.id}
+                      className="hover:bg-neutral-50/50 dark:hover:bg-neutral-800/20 transition-colors"
+                    >
+                      <td className="p-4 font-semibold text-neutral-900 dark:text-neutral-100">
+                        {client.name}
+                      </td>
+                      <td className="p-4 text-neutral-500 dark:text-neutral-400">
+                        {client.email || "N/A"}
+                      </td>
+                      <td className="p-4">
+                        <span
+                          className={cn(
+                            "text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full border",
+                            isClientActive
+                              ? "bg-green-500/10 text-green-500 border-green-500/20"
+                              : "bg-neutral-500/10 text-neutral-500 border-neutral-500/20",
+                          )}
+                        >
+                          {isClientActive
+                            ? t.clientStatusActive
+                            : t.clientStatusInactive}
+                        </span>
+                      </td>
+                      <td className="p-4 text-neutral-400">
+                        {new Date(client.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="p-4 text-right">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 rounded-full"
+                          onClick={() => setSelectedClient(client)}
+                        >
+                          <Pencil className="h-3.5 w-3.5 text-neutral-500" />
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

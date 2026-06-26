@@ -93,7 +93,7 @@ export const fa = {
     "حساب‌های کارفرمایان فعال، ایمیل‌های صورت‌حساب و یکپارچه‌سازی‌های فضای کار خود را مانیتور و مدیریت کنید.",
   noClients: "هیچ کارفرمایی ثبت نشده است.",
   clientTableName: "نام کارفرما",
-  clientTableEmail: "ایمیل صورت‌حساب",
+  clientTableEmail: "ایمیل",
   clientTableDate: "تاریخ ثبت",
   write: "نوشتن",
   preview: "پیش‌نمایش",
@@ -116,4 +116,6 @@ export const fa = {
   addClient: "+ افزودن کارفرما",
   addProject: "+ افزودن پروژه",
   unlinked: "بدون ارتباط",
+  selectClient: "انتخاب کارفرما",
+  selectProject: "انتخاب پروژه",
 };

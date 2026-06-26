@@ -6,6 +6,7 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/atoms/Button";
 import { DashboardHeader } from "@/components/organisms/DashboardHeader";
 import { cn } from "@/lib/utils";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -19,6 +20,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const { dir } = useApp();
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
   const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const drawerRef = React.useRef<HTMLDivElement>(null);
+
+  useClickOutside(drawerRef, () => {
+    if (isMobileOpen) {
+      setIsMobileOpen(false);
+    }
+  });
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row bg-neutral-50 dark:bg-neutral-950 transition-colors duration-200">
@@ -29,6 +37,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {isMobileOpen && (
         <div className="fixed inset-0 z-50 flex lg:hidden bg-neutral-950/80 backdrop-blur-sm">
           <div
+            ref={drawerRef}
             className={`w-64 bg-neutral-50 dark:bg-neutral-950 h-full p-6 shadow-xl flex flex-col justify-between border-neutral-200 dark:border-neutral-800 ${
               dir === "rtl" ? "mr-0 ml-auto border-l" : "ml-0 mr-auto border-r"
             }`}
