@@ -20,14 +20,15 @@ model User {
 }
 
 model Client {
-  id         String   @id @default(cuid())
+  id         String       @id @default(cuid())
   name       String
   email      String?
+  status     ClientStatus @default(ACTIVE)
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   projects   Project[]
   tasks      Task[]
-  createdAt  DateTime @default(now())
+  createdAt  DateTime     @default(now())
 }
 
 model Project {
@@ -82,6 +83,11 @@ model ActivityLog {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+}
+
+enum ClientStatus {
+  ACTIVE
+  INACTIVE
 }
 
 enum ProjectStatus {

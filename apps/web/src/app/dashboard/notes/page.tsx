@@ -95,7 +95,7 @@ export default function NotesPage() {
   };
 
   const taskOptions = [
-    { label: "Unlinked", value: "NONE" },
+    { label: t.unlinked, value: "NONE" },
     ...tasks.map((t) => ({
       label: t.title.length > 24 ? `${t.title.substring(0, 24)}...` : t.title,
       value: t.id,

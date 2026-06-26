@@ -21,6 +21,7 @@ export const useCreateProjectMutation = () => {
       dueDate: string;
       priority: TaskPriority;
       status: ProjectStatus;
+      clientId?: string;
     }) => {
       const res = await apiClient.post("/projects", data);
       return res.data;
@@ -43,6 +44,7 @@ export const useUpdateProjectMutation = () => {
       dueDate: string;
       priority: TaskPriority;
       status: ProjectStatus;
+      clientId?: string;
     }) => {
       const res = await apiClient.patch(`/projects/${id}`, data);
       return res.data;

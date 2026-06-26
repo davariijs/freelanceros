@@ -12,12 +12,15 @@ import { Button } from "@/components/atoms/Button";
 import { z } from "zod";
 import { Project, ProjectStatus } from "@/schemas/project";
 import { TaskPriority } from "@/schemas/task";
+import { useRouter } from "next/navigation";
+import { Trash2 } from "lucide-react";
 
 const editProjectSchema = z.object({
   title: z.string().min(1, "Title is required"),
   dueDate: z.string().min(1, "Due date is required"),
   priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
   status: z.enum(["PLANNING", "ACTIVE", "COMPLETED", "PAUSED"]),
+  clientId: z.string().optional(),
 });
 
 type EditProjectInput = z.infer<typeof editProjectSchema>;
@@ -26,6 +29,7 @@ interface EditProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
   project: Project | null;
+  clients?: { id: string; name: string }[];
   onUpdateProject: (
     id: string,
     data: {
@@ -33,6 +37,7 @@ interface EditProjectModalProps {
       dueDate: string;
       priority: TaskPriority;
       status: ProjectStatus;
+      clientId?: string;
     },
   ) => void;
   onDeleteProject: (id: string) => void;
@@ -42,10 +47,12 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
   isOpen,
   onClose,
   project,
+  clients = [],
   onUpdateProject,
   onDeleteProject,
 }) => {
   const { t } = useApp();
+  const router = useRouter();
   const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
 
   const {
@@ -61,6 +68,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
   const { field: dateField } = useController({ name: "dueDate", control });
   const { field: priorityField } = useController({ name: "priority", control });
   const { field: statusField } = useController({ name: "status", control });
+  const { field: clientField } = useController({ name: "clientId", control });
 
   const priorityOptions: SelectOption[] = [
     { label: t.priorityLow, value: "LOW" },
@@ -75,6 +83,21 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
     { label: t.statusCompleted, value: "COMPLETED" },
   ];
 
+  const clientOptions: SelectOption[] = [
+    { label: t.noClient, value: "NONE" },
+    ...clients.map((c) => ({ label: c.name, value: c.id })),
+    { label: t.addClient, value: "REDIRECT" },
+  ];
+
+  const handleClientSelect = (value: string) => {
+    if (value === "REDIRECT") {
+      onClose();
+      router.push("/dashboard/clients");
+    } else {
+      clientField.onChange(value);
+    }
+  };
+
   React.useEffect(() => {
     if (isOpen) setIsConfirmingDelete(false);
     if (project) {
@@ -83,6 +106,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
         dueDate: project.dueDate ? project.dueDate.split("T")[0] : "",
         priority: project.priority,
         status: project.status,
+        clientId: project.clientId || "NONE",
       });
     }
   }, [project, reset, isOpen]);
@@ -95,12 +119,13 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
       dueDate: data.dueDate,
       priority: data.priority,
       status: data.status,
+      clientId: data.clientId === "NONE" ? undefined : data.clientId,
     });
     onClose();
   };
 
   return (
-    <Dialog isOpen={isOpen} onClose={onClose} title={t.editTask}>
+    <Dialog isOpen={isOpen} onClose={onClose} title={t.editProject}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           label={t.title}
@@ -146,6 +171,17 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
           </div>
         </div>
 
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+            {t.clients}
+          </label>
+          <Select
+            value={clientField.value}
+            onChange={handleClientSelect}
+            options={clientOptions}
+          />
+        </div>
+
         <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 mt-6">
           {isConfirmingDelete ? (
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-3 bg-red-50 dark:bg-red-950/30 rounded-xl border border-red-100 dark:border-red-900/50">
@@ -181,7 +217,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
                 className="text-red-500 hover:bg-red-50 dark:hover:bg-red-950/50"
                 onClick={() => setIsConfirmingDelete(true)}
               >
-                {t.delete}
+                <Trash2 className="h-4 w-4" />
               </Button>
               <div className="flex gap-3">
                 <Button type="button" variant="secondary" onClick={onClose}>

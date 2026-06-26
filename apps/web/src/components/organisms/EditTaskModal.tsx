@@ -72,7 +72,7 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
   const projectOptions: SelectOption[] = [
     { label: t.noProjects, value: "NONE" },
     ...projects.map((p) => ({ label: p.title, value: p.id })),
-    { label: "+ Add Project", value: "REDIRECT" },
+    { label: t.addProject, value: "REDIRECT" },
   ];
 
   const handleProjectSelect = (value: string) => {

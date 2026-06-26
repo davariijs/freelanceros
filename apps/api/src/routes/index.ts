@@ -4,6 +4,7 @@ import { clientRouter } from '@/routes/client.routes';
 import { projectRouter } from '@/routes/project.routes';
 import { taskRouter } from '@/routes/task.routes';
 import { noteRouter } from '@/routes/note.routes';
+import { activityRouter } from '@/routes/activity.routes';
 
 const router: Router = Router();
 
@@ -16,5 +17,6 @@ router.use('/clients', clientRouter);
 router.use('/projects', projectRouter);
 router.use('/tasks', taskRouter);
 router.use('/notes', noteRouter);
+router.use('/activity-logs', activityRouter);
 
 export { router as apiRoutes };

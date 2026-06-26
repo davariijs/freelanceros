@@ -1,20 +1,23 @@
 "use client";
 
 import * as React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useController } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useApp } from "@/context/AppContext";
 import { Dialog } from "@/components/atoms/Dialog";
 import { FormField } from "@/components/molecules/FormField";
+import { Select, SelectOption } from "@/components/atoms/Select";
 import { Button } from "@/components/atoms/Button";
 import { Trash2 } from "lucide-react";
 import { z } from "zod";
 import { Client } from "@/schemas/client";
+import { ClientStatus } from "@freelanceos/database";
 
 const editClientSchema = (t: any) =>
   z.object({
     name: z.string().min(1, t.clientNameRequired),
     email: z.string().email(t.emailRequired).optional().or(z.literal("")),
+    status: z.enum(["ACTIVE", "INACTIVE"]),
   });
 
 type EditClientInput = z.infer<ReturnType<typeof editClientSchema>>;
@@ -23,7 +26,10 @@ interface EditClientModalProps {
   isOpen: boolean;
   onClose: () => void;
   client: Client | null;
-  onUpdateClient: (id: string, data: { name: string; email?: string }) => void;
+  onUpdateClient: (
+    id: string,
+    data: { name: string; email?: string; status: ClientStatus },
+  ) => void;
   onDeleteClient: (id: string) => void;
 }
 
@@ -40,6 +46,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
   const currentSchema = React.useMemo(() => editClientSchema(t), [t]);
 
   const {
+    control,
     register,
     handleSubmit,
     reset,
@@ -48,12 +55,20 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
     resolver: zodResolver(currentSchema),
   });
 
+  const { field: statusField } = useController({ name: "status", control });
+
+  const statusOptions: SelectOption[] = [
+    { label: t.clientStatusActive, value: "ACTIVE" },
+    { label: t.clientStatusInactive, value: "INACTIVE" },
+  ];
+
   React.useEffect(() => {
     if (isOpen) setIsConfirmingDelete(false);
     if (client) {
       reset({
         name: client.name,
         email: client.email || "",
+        status: client.status,
       });
     }
   }, [client, reset, isOpen]);
@@ -64,6 +79,7 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
     onUpdateClient(client.id, {
       name: data.name,
       email: data.email || undefined,
+      status: data.status as ClientStatus,
     });
     onClose();
   };
@@ -88,6 +104,17 @@ export const EditClientModal: React.FC<EditClientModalProps> = ({
           errorMessage={errors.email ? errors.email.message : undefined}
           {...register("email")}
         />
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+            {t.status}
+          </label>
+          <Select
+            value={statusField.value}
+            onChange={statusField.onChange}
+            options={statusOptions}
+          />
+        </div>
 
         <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 mt-6">
           {isConfirmingDelete ? (

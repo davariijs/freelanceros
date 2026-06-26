@@ -6,6 +6,7 @@ import { FilterToolbar } from "@/components/molecules/FilterToolbar";
 import { Timeline } from "@/components/organisms/Timeline";
 import { CreateProjectModal } from "@/components/organisms/CreateProjectModal";
 import { EditProjectModal } from "@/components/organisms/EditProjectModal";
+import { useClientsQuery } from "@/hooks/useClients";
 import {
   useProjectsQuery,
   useCreateProjectMutation,
@@ -30,6 +31,8 @@ export default function ProjectsPage() {
   );
 
   const { data: projects = [], isLoading } = useProjectsQuery();
+  const { data: clients = [] } = useClientsQuery();
+
   const createProjectMutation = useCreateProjectMutation();
   const updateProjectMutation = useUpdateProjectMutation();
   const deleteProjectMutation = useDeleteProjectMutation();
@@ -43,6 +46,7 @@ export default function ProjectsPage() {
     dueDate: string;
     priority: TaskPriority;
     status: ProjectStatus;
+    clientId?: string;
   }) => {
     createProjectMutation.mutate(data);
   };
@@ -54,6 +58,7 @@ export default function ProjectsPage() {
       dueDate: string;
       priority: TaskPriority;
       status: ProjectStatus;
+      clientId?: string;
     },
   ) => {
     updateProjectMutation.mutate({ id, ...data });
@@ -109,6 +114,7 @@ export default function ProjectsPage() {
       <CreateProjectModal
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
+        clients={clients}
         onSubmitProject={handleCreateProject}
       />
 
@@ -116,6 +122,7 @@ export default function ProjectsPage() {
         isOpen={!!selectedProject}
         onClose={() => setSelectedProject(null)}
         project={selectedProject}
+        clients={clients}
         onUpdateProject={handleUpdateProject}
         onDeleteProject={handleDeleteProject}
       />
