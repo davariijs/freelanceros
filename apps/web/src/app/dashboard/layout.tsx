@@ -13,9 +13,16 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { CommandPalette } from "@/components/organisms/CommandPalette";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { t, dir } = useApp();
+  const [isCommandOpen, setIsCommandOpen] = React.useState(false);
+
+  useKeyboardShortcuts(() => {
+    setIsCommandOpen((prev) => !prev);
+  });
 
   const SidebarContent = (isCollapsed: boolean) => (
     <nav className="space-y-6 w-full">
@@ -241,5 +248,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </nav>
   );
 
-  return <DashboardLayout sidebar={SidebarContent}>{children}</DashboardLayout>;
+  return (
+    <DashboardLayout sidebar={SidebarContent}>
+      {children}
+      <CommandPalette
+        isOpen={isCommandOpen}
+        onClose={() => setIsCommandOpen(false)}
+      />
+    </DashboardLayout>
+  );
 }

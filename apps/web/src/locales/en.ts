@@ -118,4 +118,13 @@ export const en = {
   unlinked: "Unlinked",
   selectClient: "Select Client",
   selectProject: "Select Project",
+  searchPlaceholder: "Search commands or type a shortcut...",
+  commandCreateTask: "Create a new task",
+  commandCreateProject: "Create a new project",
+  commandGoDashboard: "Go to Dashboard",
+  commandGoTasks: "Go to Tasks Board",
+  commandGoProjects: "Go to Projects Timeline",
+  commandGoClients: "Go to Clients Roster",
+  commandGoNotes: "Go to Notes Archive",
+  noCommands: "No commands found.",
 };
