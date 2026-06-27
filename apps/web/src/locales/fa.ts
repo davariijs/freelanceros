@@ -118,4 +118,13 @@ export const fa = {
   unlinked: "بدون ارتباط",
   selectClient: "انتخاب کارفرما",
   selectProject: "انتخاب پروژه",
+  searchPlaceholder: "جستجوی دستورات یا تایپ میانبر...",
+  commandCreateTask: "ایجاد تسک جدید",
+  commandCreateProject: "ایجاد پروژه جدید",
+  commandGoDashboard: "رفتن به پیشخوان داشبورد",
+  commandGoTasks: "رفتن به برد کارها",
+  commandGoProjects: "رفتن به تایم‌لاین پروژه‌ها",
+  commandGoClients: "رفتن به لیست کارفرمایان",
+  commandGoNotes: "رفتن به بایگانی یادداشت‌ها",
+  noCommands: "No commands found.",
 };
