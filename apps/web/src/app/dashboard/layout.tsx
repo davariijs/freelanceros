@@ -17,11 +17,12 @@ import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { CommandPalette } from "@/components/organisms/CommandPalette";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const { t, dir } = useApp();
-  const [isCommandOpen, setIsCommandOpen] = React.useState(false);
+  const { t, dir, isCommandOpen, setIsCommandOpen } = useApp();
 
-  useKeyboardShortcuts(() => {
-    setIsCommandOpen((prev) => !prev);
+  useKeyboardShortcuts({
+    onCtrlK: () => {
+      setIsCommandOpen(!isCommandOpen);
+    },
   });
 
   const SidebarContent = (isCollapsed: boolean) => (

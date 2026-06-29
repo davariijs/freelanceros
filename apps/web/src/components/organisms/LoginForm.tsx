@@ -30,7 +30,7 @@ export const LoginForm: React.FC = () => {
   const onSubmit = (data: LoginInput) => {
     loginMutation.mutate(data, {
       onSuccess: () => {
-        router.push("/");
+        router.push("/dashboard");
       },
     });
   };
