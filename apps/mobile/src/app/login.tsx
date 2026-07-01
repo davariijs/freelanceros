@@ -69,7 +69,7 @@ export default function LoginScreen() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/auth/login",
+        `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/login`,
         data,
       );
 

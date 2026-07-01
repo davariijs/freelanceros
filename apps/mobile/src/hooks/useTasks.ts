@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { secureStore } from "@/services/secureStore";
+import { syncStorage } from "@/services/syncStorage";
+import NetInfo from "@react-native-community/netinfo";
 
 export type TaskStatus = "TODO" | "IN_PROGRESS" | "DONE";
 export type TaskPriority = "LOW" | "MEDIUM" | "HIGH";
@@ -14,9 +16,10 @@ export interface Task {
   order: number;
   projectId?: string | null;
   createdAt: string;
+  isOfflinePending?: boolean;
 }
 
-const API_URL = "http://localhost:3001/api/tasks";
+const API_URL = `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3001"}/api/tasks`;
 
 const getAuthHeaders = async () => {
   const token = await secureStore.getToken();
@@ -39,12 +42,106 @@ export const useTasksQuery = () => {
   });
 };
 
+export const useCreateTaskMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: {
+      title: string;
+      description: string;
+      priority: TaskPriority;
+      status: TaskStatus;
+      projectId?: string;
+    }) => {
+      const netInfo = await NetInfo.fetch();
+      const isOnline = !!netInfo.isConnected;
+
+      if (!isOnline) {
+        const tempId = `temp_${Date.now()}`;
+        syncStorage.addToQueue({
+          id: tempId,
+          action: "CREATE_TASK",
+          payload: data,
+        });
+
+        const tempTask: Task = {
+          id: tempId,
+          ...data,
+          order: 0,
+          createdAt: new Date().toISOString(),
+          isOfflinePending: true,
+        };
+
+        const previousTasks = queryClient.getQueryData<Task[]>(["tasks"]) || [];
+        queryClient.setQueryData(["tasks"], [...previousTasks, tempTask]);
+
+        throw new Error("OFFLINE_SAVED");
+      }
+
+      const headers = await getAuthHeaders();
+      const res = await axios.post(API_URL, data, headers);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+};
+
 export const useUpdateTaskMutation = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: TaskStatus }) => {
+    mutationFn: async ({
+      id,
+      status,
+      title,
+      description,
+      priority,
+      projectId,
+    }: {
+      id: string;
+      status?: TaskStatus;
+      title?: string;
+      description?: string;
+      priority?: TaskPriority;
+      projectId?: string;
+    }) => {
+      const netInfo = await NetInfo.fetch();
+      const isOnline = !!netInfo.isConnected;
+
+      if (!isOnline) {
+        syncStorage.addToQueue({
+          id,
+          action: "UPDATE_TASK",
+          payload: { status, title, description, priority, projectId },
+        });
+
+        const previousTasks = queryClient.getQueryData<Task[]>(["tasks"]) || [];
+        queryClient.setQueryData(
+          ["tasks"],
+          previousTasks.map((t) =>
+            t.id === id
+              ? { ...t, status: status || t.status, isOfflinePending: true }
+              : t,
+          ),
+        );
+
+        throw new Error("OFFLINE_SAVED");
+      }
+
       const headers = await getAuthHeaders();
-      const res = await axios.patch(`${API_URL}/${id}`, { status }, headers);
+      const res = await axios.patch(
+        `${API_URL}/${id}`,
+        {
+          status,
+          title,
+          description,
+          priority,
+          projectId,
+        },
+        headers,
+      );
       return res.data;
     },
     onSuccess: () => {

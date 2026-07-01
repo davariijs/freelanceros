@@ -1,11 +1,18 @@
 import * as React from "react";
-import { View, Text, useColorScheme, SafeAreaView } from "react-native";
+import { View, Text, useColorScheme, TouchableOpacity } from "react-native";
 import { SyncStatus } from "@/components/atoms/SyncStatus";
 import { CircularProgress } from "@/components/atoms/CircularProgress";
 import { TodayTasksList } from "@/components/organisms/TodayTasksList";
 import { useMobileTranslation } from "@/hooks/useMobileTranslation";
 import { useTasksQuery, useUpdateTaskMutation, Task } from "@/hooks/useTasks";
 import { useRouter } from "expo-router";
+import BottomSheet from "@gorhom/bottom-sheet";
+import { QuickAddSheet } from "@/components/organisms/QuickAddSheet";
+import { Plus } from "lucide-react-native";
+import * as Haptics from "expo-haptics";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useActiveAppRefetch } from "@/hooks/useActiveAppRefetch";
+import { SkeletonCard } from "@/components/atoms/SkeletonCard";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -15,6 +22,17 @@ export default function HomeScreen() {
 
   const { data: tasks = [], isLoading } = useTasksQuery();
   const updateTaskMutation = useUpdateTaskMutation();
+
+  const quickAddSheetRef = React.useRef<BottomSheet>(null);
+
+  const handleOpenQuickAdd = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    quickAddSheetRef.current?.expand();
+  };
+
+  const handleCloseQuickAdd = () => {
+    quickAddSheetRef.current?.close();
+  };
 
   const todayTasks = React.useMemo(() => {
     return tasks.filter((task: Task) => task.status !== "DONE");
@@ -49,11 +67,13 @@ export default function HomeScreen() {
     });
   }, []);
 
+  useActiveAppRefetch();
+
   return (
     <SafeAreaView
       className={`flex-1 ${isDark ? "bg-neutral-950" : "bg-neutral-50"}`}
     >
-      <View className="flex-1 px-5 pt-4">
+      <View className="flex-1 px-5 pt-4 relative">
         <View className="flex-row justify-between items-center mb-6">
           <View>
             <Text className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
@@ -87,10 +107,10 @@ export default function HomeScreen() {
         </View>
 
         {isLoading ? (
-          <View className="flex-1 justify-center items-center">
-            <Text className="text-xs text-neutral-500 font-semibold">
-              {t.loadingFocus}
-            </Text>
+          <View className="flex-1 space-y-2">
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
           </View>
         ) : (
           <TodayTasksList
@@ -100,6 +120,15 @@ export default function HomeScreen() {
             onTaskPress={handleTaskPress}
           />
         )}
+        <TouchableOpacity
+          onPress={handleOpenQuickAdd}
+          className={`absolute bottom-6 right-6 h-14 w-14 rounded-full justify-center items-center shadow-lg active:scale-90 transition-transform ${
+            isDark ? "bg-neutral-100" : "bg-neutral-950"
+          }`}
+        >
+          <Plus size={24} color={isDark ? "#0a0a0a" : "#ffffff"} />
+        </TouchableOpacity>
+        <QuickAddSheet ref={quickAddSheetRef} onSuccess={handleCloseQuickAdd} />
       </View>
     </SafeAreaView>
   );
