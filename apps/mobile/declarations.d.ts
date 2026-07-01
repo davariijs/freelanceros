@@ -45,3 +45,38 @@ declare module "@shopify/flash-list" {
   }
   export function FlashList<T>(props: FlashListProps<T>): React.ReactNode;
 }
+declare module "@gorhom/bottom-sheet" {
+  import * as React from "react";
+  import { ViewStyle, StyleProp } from "react-native";
+
+  export interface BottomSheetProps {
+    index?: number;
+    snapPoints: (string | number)[];
+    enablePanDownToClose?: boolean;
+    backdropComponent?: React.FC<any>;
+    backgroundStyle?: StyleProp<ViewStyle>;
+    handleIndicatorStyle?: StyleProp<ViewStyle>;
+    children?: React.ReactNode;
+  }
+
+  const BottomSheet: React.ForwardRefExoticComponent<
+    BottomSheetProps & React.RefAttributes<any>
+  >;
+
+  export default BottomSheet;
+  export const BottomSheetBackdrop: React.FC<any>;
+  export const BottomSheetModalProvider: React.FC<any>;
+}
+
+declare module "react-native-mmkv" {
+  export class MMKV {
+    constructor(options?: {
+      id?: string;
+      path?: string;
+      encryptionKey?: string;
+    });
+    set: (key: string, value: string | number | boolean) => void;
+    getString: (key: string) => string | undefined;
+    delete: (key: string) => void;
+  }
+}

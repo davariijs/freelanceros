@@ -55,7 +55,7 @@ export default function RegisterScreen() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/auth/register",
+        `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/register`,
         data,
       );
 
