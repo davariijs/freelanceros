@@ -19,6 +19,7 @@ import { secureStore } from "@/services/secureStore";
 import * as Haptics from "expo-haptics";
 import { Lock, Mail, Fingerprint, Eye, EyeOff } from "lucide-react-native";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -76,6 +77,7 @@ export default function LoginScreen() {
       const { accessToken } = response.data;
       if (accessToken) {
         await secureStore.saveToken(accessToken);
+        await AsyncStorage.removeItem("isAppLocked");
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         router.replace("/home");
       }
@@ -97,6 +99,7 @@ export default function LoginScreen() {
 
     const success = await authenticateUser(t.biometricPrompt);
     if (success) {
+      await AsyncStorage.removeItem("isAppLocked");
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.replace("/home");
     }
@@ -119,7 +122,7 @@ export default function LoginScreen() {
           </Text>
         </View>
 
-        <View className="space-y-4">
+        <View className="space-y-4 gap-2">
           <View>
             <Controller
               control={control}

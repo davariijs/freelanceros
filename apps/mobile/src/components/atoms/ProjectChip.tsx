@@ -17,7 +17,7 @@ export const ProjectChip: React.FC<ProjectChipProps> = ({
     <TouchableOpacity
       onPress={onPress}
       className={cn(
-        "px-3.5 py-2 rounded-xl border mr-2 items-center justify-center active:scale-95 transition-all",
+        "px-3.5 py-2 rounded-xl border mr-2 items-center justify-center",
         isActive
           ? "bg-neutral-100 border-neutral-100 dark:bg-neutral-100 dark:border-neutral-100"
           : "bg-neutral-900 border-neutral-800 dark:bg-neutral-900/50",

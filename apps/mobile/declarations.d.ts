@@ -1,3 +1,5 @@
+/// <reference types="react-native-css/types" />
+
 import "react-native";
 
 declare module "react-native" {
@@ -56,6 +58,7 @@ declare module "@gorhom/bottom-sheet" {
     backdropComponent?: React.FC<any>;
     backgroundStyle?: StyleProp<ViewStyle>;
     handleIndicatorStyle?: StyleProp<ViewStyle>;
+    enableDynamicSizing?: boolean;
     children?: React.ReactNode;
   }
 
@@ -66,6 +69,8 @@ declare module "@gorhom/bottom-sheet" {
   export default BottomSheet;
   export const BottomSheetBackdrop: React.FC<any>;
   export const BottomSheetModalProvider: React.FC<any>;
+  export const BottomSheetView: React.FC<any>;
+  export const BottomSheetTextInput: React.FC<any>;
 }
 
 declare module "react-native-mmkv" {

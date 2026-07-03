@@ -2,6 +2,7 @@ import * as React from "react";
 import { View, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { secureStore } from "@/services/secureStore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function IndexScreen() {
   const router = useRouter();
@@ -10,7 +11,9 @@ export default function IndexScreen() {
     async function checkAuthStatus() {
       try {
         const token = await secureStore.getToken();
-        if (token) {
+        const isLocked = await AsyncStorage.getItem("isAppLocked");
+
+        if (token && isLocked !== "true") {
           router.replace("/home");
         } else {
           router.replace("/login");

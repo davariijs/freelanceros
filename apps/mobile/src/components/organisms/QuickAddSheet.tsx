@@ -2,12 +2,15 @@ import * as React from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   useColorScheme,
   ActivityIndicator,
 } from "react-native";
-import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetView,
+  BottomSheetTextInput,
+} from "@gorhom/bottom-sheet";
 import { ProjectScrollerPicker } from "@/components/molecules/ProjectScrollerPicker";
 import { useMobileTranslation } from "@/hooks/useMobileTranslation";
 import { useProjectsQuery } from "@/hooks/useProjects";
@@ -34,7 +37,7 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
     const { data: projects = [] } = useProjectsQuery();
     const createTaskMutation = useCreateTaskMutation();
 
-    const snapPoints = React.useMemo(() => ["45%"], []);
+    const snapPoints = React.useMemo(() => [300], []);
 
     const handleSave = () => {
       if (!title.trim() || isSaving) return;
@@ -85,6 +88,7 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
         index={-1}
         snapPoints={snapPoints}
         enablePanDownToClose
+        enableDynamicSizing={false}
         backdropComponent={renderBackdrop}
         backgroundStyle={{
           backgroundColor: isDark ? "#0f0f0f" : "#ffffff",
@@ -93,7 +97,7 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
           backgroundColor: isDark ? "#262626" : "#e5e5e5",
         }}
       >
-        <View className="flex-1 px-6 pt-2 space-y-5">
+        <BottomSheetView className="flex-1 px-6 pt-2 space-y-5">
           <Text
             className={`text-base font-black ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
           >
@@ -103,7 +107,7 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
           <View
             className={`flex-row items-center border rounded-xl px-3 h-12 ${isDark ? "border-neutral-800 bg-neutral-900/50" : "border-neutral-300 bg-neutral-50"}`}
           >
-            <TextInput
+            <BottomSheetTextInput
               className={`flex-1 text-sm h-full ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
               value={title}
               onChangeText={setTitle}
@@ -135,7 +139,7 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
                 color={isDark ? "#0a0a0a" : "#ffffff"}
               />
             ) : (
-              <>
+              <View className="flex-row items-center">
                 <Plus
                   size={16}
                   color={isDark ? "#0a0a0a" : "#ffffff"}
@@ -146,10 +150,10 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
                 >
                   {t.quickAddTitle}
                 </Text>
-              </>
+              </View>
             )}
           </TouchableOpacity>
-        </View>
+        </BottomSheetView>
       </BottomSheet>
     );
   },
