@@ -1,8 +1,8 @@
-"use client";
-
 import * as React from "react";
+import { View } from "react-native";
 import { en } from "@/locales/en";
 import { fa } from "@/locales/fa";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type Theme = "light" | "dark" | "system";
 type Locale = "en" | "fa";
@@ -50,37 +50,36 @@ export const AppProvider: React.FC<AppProviderProps> = ({
   const dir = locale === "fa" ? "rtl" : "ltr";
 
   React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedTheme = localStorage.getItem("theme") as Theme;
-      const savedLocale = localStorage.getItem("locale") as Locale;
-      if (savedTheme) setThemeState(savedTheme);
-      if (savedLocale) setLocale(savedLocale);
+    async function loadSavedSettings() {
+      try {
+        const savedTheme = await AsyncStorage.getItem("theme");
+        const savedLocale = await AsyncStorage.getItem("locale");
+        if (savedTheme) setThemeState(savedTheme as Theme);
+        if (savedLocale) setLocale(savedLocale as Locale);
+      } catch (error) {
+        console.error("Failed to load settings:", error);
+      }
     }
+    loadSavedSettings();
   }, []);
 
-  React.useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.remove("light", "dark");
-    root.classList.add(theme);
-  }, [theme]);
-
-  const setTheme = (newTheme: Theme) => {
+  const setTheme = async (newTheme: Theme) => {
     setThemeState(newTheme);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("theme", newTheme);
-      document.cookie = `theme=${newTheme}; path=/; max-age=31536000; SameSite=Lax; Secure`;
+    try {
+      await AsyncStorage.setItem("theme", newTheme);
+    } catch (error) {
+      console.error("Failed to save theme:", error);
     }
   };
 
-  const toggleLocale = () => {
-    setLocale((prev) => {
-      const next = prev === "en" ? "fa" : "en";
-      if (typeof window !== "undefined") {
-        localStorage.setItem("locale", next);
-        document.cookie = `locale=${next}; path=/; max-age=31536000; SameSite=Lax; Secure`;
-      }
-      return next;
-    });
+  const toggleLocale = async () => {
+    const nextLocale = locale === "en" ? "fa" : "en";
+    setLocale(nextLocale);
+    try {
+      await AsyncStorage.setItem("locale", nextLocale);
+    } catch (error) {
+      console.error("Failed to save locale:", error);
+    }
   };
 
   const showToast = React.useCallback(
@@ -116,9 +115,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({
         showToast,
       }}
     >
-      <div dir={dir} className={locale === "fa" ? "font-fa" : "font-sans"}>
+      <View style={{ flex: 1 }}>
         {children}
-      </div>
+      </View>
     </AppContext.Provider>
   );
 };

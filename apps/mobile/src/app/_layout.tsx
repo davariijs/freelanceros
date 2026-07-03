@@ -7,6 +7,8 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { notificationService } from "@/services/notificationService";
 import { useMobileTranslation } from "@/hooks/useMobileTranslation";
 import { ErrorBoundary } from "@/components/organisms/ErrorBoundary";
+import { AppProvider } from "@/context/AppContext";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import "../../global.css";
 
 const queryClient = new QueryClient({
@@ -22,10 +24,14 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ErrorBoundary>
-        <QueryClientProvider client={queryClient}>
-          <StatusBar style="auto" />
-          <AppContent />
-        </QueryClientProvider>
+        <AppProvider initialLocale="en" initialTheme="dark">
+          <QueryClientProvider client={queryClient}>
+            <BottomSheetModalProvider>
+              <StatusBar style="auto" />
+              <AppContent />
+            </BottomSheetModalProvider>
+          </QueryClientProvider>
+        </AppProvider>
       </ErrorBoundary>
     </GestureHandlerRootView>
   );

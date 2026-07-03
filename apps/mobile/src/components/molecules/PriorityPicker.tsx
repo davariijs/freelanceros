@@ -45,8 +45,8 @@ export const PriorityPicker: React.FC<PriorityPickerProps> = ({
             key={item}
             onPress={() => handleSelect(item)}
             className={cn(
-              "px-3.5 py-2 rounded-xl border items-center justify-center min-w-16 active:scale-95 transition-transform",
-              getVariantStyles(item, isActive),
+              "px-3.5 py-2 rounded-xl border items-center justify-center min-w-16",
+              getVariantStyles(item, isActive)
             )}
           >
             <Text
