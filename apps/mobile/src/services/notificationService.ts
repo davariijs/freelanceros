@@ -54,10 +54,9 @@ export const notificationService = {
           sound: true,
         },
         trigger: {
-          type: Notifications.SchedulableTriggerInputTypes.CALENDAR,
+          type: Notifications.SchedulableTriggerInputTypes.DAILY,
           hour: 21,
           minute: 0,
-          repeats: true,
         },
       });
     } catch (error) {

@@ -3,7 +3,7 @@
 import * as React from "react";
 import NetInfo from "@react-native-community/netinfo";
 import { useQueryClient } from "@tanstack/react-query";
-import { syncStorage, QueuedAction } from "@/services/syncStorage";
+import { syncStorage } from "@/services/syncStorage";
 import { secureStore } from "@/services/secureStore";
 import { useApp } from "@/context/AppContext";
 import axios from "axios";
@@ -17,7 +17,7 @@ export function useOfflineSync() {
       const isOnline = !!state.isConnected;
 
       if (isOnline) {
-        const queue: QueuedAction[] = syncStorage.getQueue();
+        const queue = await syncStorage.getQueue();
         if (queue.length === 0) return;
 
         try {
@@ -45,9 +45,9 @@ export function useOfflineSync() {
             }
           }
 
-          syncStorage.clearQueue();
-          queryClient.invalidateQueries({ queryKey: ["tasks"] });
+          await syncStorage.clearQueue();
 
+          queryClient.invalidateQueries({ queryKey: ["tasks"] });
           showToast(t.toastSyncSuccess, "success");
         } catch (error) {
           console.error("Offline sync pipeline failed:", error);

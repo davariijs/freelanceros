@@ -58,7 +58,7 @@ export const useCreateTaskMutation = () => {
 
       if (!isOnline) {
         const tempId = `temp_${Date.now()}`;
-        syncStorage.addToQueue({
+        await syncStorage.addToQueue({
           id: tempId,
           action: "CREATE_TASK",
           payload: data,
@@ -111,7 +111,7 @@ export const useUpdateTaskMutation = () => {
       const isOnline = !!netInfo.isConnected;
 
       if (!isOnline) {
-        syncStorage.addToQueue({
+        await syncStorage.addToQueue({
           id,
           action: "UPDATE_TASK",
           payload: { status, title, description, priority, projectId },
