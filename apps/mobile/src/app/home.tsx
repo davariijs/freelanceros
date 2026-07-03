@@ -8,11 +8,13 @@ import { useTasksQuery, useUpdateTaskMutation, Task } from "@/hooks/useTasks";
 import { useRouter } from "expo-router";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { QuickAddSheet } from "@/components/organisms/QuickAddSheet";
-import { Plus } from "lucide-react-native";
+import { Plus, LogOut } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useActiveAppRefetch } from "@/hooks/useActiveAppRefetch";
 import { SkeletonCard } from "@/components/atoms/SkeletonCard";
+import { secureStore } from "@/services/secureStore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -34,6 +36,12 @@ export default function HomeScreen() {
     quickAddSheetRef.current?.close();
   };
 
+  const handleLogout = async () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    await AsyncStorage.setItem("isAppLocked", "true");
+    router.replace("/login");
+  };
+
   const todayTasks = React.useMemo(() => {
     return tasks.filter((task: Task) => task.status !== "DONE");
   }, [tasks]);
@@ -53,10 +61,7 @@ export default function HomeScreen() {
   };
 
   const handleTaskPress = (task: Task) => {
-    router.push({
-      pathname: "/task-detail",
-      params: { id: task.id },
-    });
+    router.push(`/tasks/${task.id}`);
   };
 
   const todayDateString = React.useMemo(() => {
@@ -85,7 +90,17 @@ export default function HomeScreen() {
               {t.todayTasksTitle}
             </Text>
           </View>
-          <SyncStatus />
+
+          <View className="flex-row items-center">
+            <SyncStatus />
+            <TouchableOpacity
+              onPress={handleLogout}
+              className="h-8 w-8 rounded-full border border-neutral-800 bg-neutral-900 justify-center items-center active:bg-neutral-800 ml-2"
+              aria-label="Log Out"
+            >
+              <LogOut size={14} color="#ef4444" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View

@@ -55,4 +55,5 @@ export const en = {
   errorBoundaryDesc:
     "The operational console met an unexpected runtime issue. Use safe reset to restore database integrity.",
   errorBoundaryReset: "Safe Reset Console",
+  logout: "Log Out",
 };

@@ -7,6 +7,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { notificationService } from "@/services/notificationService";
 import { useMobileTranslation } from "@/hooks/useMobileTranslation";
 import { ErrorBoundary } from "@/components/organisms/ErrorBoundary";
+import "../../global.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {

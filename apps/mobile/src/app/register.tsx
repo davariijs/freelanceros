@@ -18,6 +18,7 @@ import { secureStore } from "@/services/secureStore";
 import * as Haptics from "expo-haptics";
 import { Lock, Mail, User, Eye, EyeOff } from "lucide-react-native";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -62,6 +63,7 @@ export default function RegisterScreen() {
       const { accessToken } = response.data;
       if (accessToken) {
         await secureStore.saveToken(accessToken);
+        await AsyncStorage.removeItem("isAppLocked");
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         router.replace("/home");
       }
@@ -90,7 +92,7 @@ export default function RegisterScreen() {
           </Text>
         </View>
 
-        <View className="space-y-4">
+        <View className="space-y-4 gap-2">
           <View>
             <Controller
               control={control}
