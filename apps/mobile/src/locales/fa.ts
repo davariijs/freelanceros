@@ -30,7 +30,7 @@ export const fa = {
   loadingFocus: "در حال بارگذاری کارهای امروز...",
   taskDetailsTitle: "جزئیات کار جاری",
   taskTitleLabel: "عنوان کار",
-  descriptionLabel: "توضیحات کارفرما",
+  descriptionLabel: "توضیحات",
   noDescription: "هیچ توضیحی برای این کار ثبت نشده است.",
   priorityLabel: "اولویت انجام",
   projectTag: "پروژه",
@@ -65,4 +65,5 @@ export const fa = {
   themeLight: "روشن",
   themeDark: "تاریک",
   noProject: "بدون پروژه",
+  completed: "انجام شد",
 };

@@ -63,4 +63,5 @@ export const en = {
   themeLight: "Light",
   themeDark: "Dark",
   noProject: "No Project",
+  completed: "Done",
 };

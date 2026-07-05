@@ -52,17 +52,20 @@ export default function LoginScreen() {
 
   React.useEffect(() => {
     async function checkAutoLogin() {
-      const savedToken = await secureStore.getRefreshToken();
+      const savedToken = await secureStore.getAccessToken();
       if (savedToken && isCompatible && hasRecords) {
+        setIsBiometricLoading(true);
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
         const success = await authenticateUser(t.biometricPrompt);
         if (success) {
           router.replace("/home");
         }
+        setIsBiometricLoading(false);
       }
     }
     checkAutoLogin();
-  }, [isCompatible, hasRecords]);
+  }, [isCompatible, hasRecords, t]);
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
