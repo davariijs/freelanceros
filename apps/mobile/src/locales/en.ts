@@ -56,4 +56,11 @@ export const en = {
     "The operational console met an unexpected runtime issue. Use safe reset to restore database integrity.",
   errorBoundaryReset: "Safe Reset Console",
   logout: "Log Out",
+  settingsTitle: "Settings",
+  changeLanguage: "Change Language",
+  toggleTheme: "Theme",
+  themeSystem: "System",
+  themeLight: "Light",
+  themeDark: "Dark",
+  noProject: "No Project",
 };

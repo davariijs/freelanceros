@@ -58,4 +58,11 @@ export const fa = {
     "کنسول مدیریت با یک باگ غیرمنتظره روبرو شد. از دکمه بازنشانی امن برای حل تداخل داده‌ها و راه‌اندازی مجدد برنامه استفاده کنید.",
   errorBoundaryReset: "بازنشانی امن کنسول فریلنسری",
   logout: "خروج از سیستم",
+  settingsTitle: "تنظیمات برنامه",
+  changeLanguage: "تغییر زبان",
+  toggleTheme: "پوسته",
+  themeSystem: "سیستم",
+  themeLight: "روشن",
+  themeDark: "تاریک",
+  noProject: "بدون پروژه",
 };

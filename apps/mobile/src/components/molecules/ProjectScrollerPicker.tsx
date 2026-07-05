@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ScrollView, View, Text } from "react-native";
 import { ProjectChip } from "@/components/atoms/ProjectChip";
-import { useMobileTranslation } from "@/hooks/useMobileTranslation";
+import { useApp } from "@/context/AppContext";
 
 interface SimpleProject {
   id: string;
@@ -19,7 +19,7 @@ export const ProjectScrollerPicker: React.FC<ProjectScrollerPickerProps> = ({
   selectedId,
   onSelect,
 }) => {
-  const { t } = useMobileTranslation();
+  const { t } = useApp();
 
   return (
     <View className="space-y-2">
