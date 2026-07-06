@@ -1,11 +1,15 @@
 import * as SecureStore from "expo-secure-store";
 
-const TOKEN_KEY = "freelanceos_user_jwt_token";
+const ACCESS_TOKEN_KEY = "freelanceos_user_access_token";
+const REFRESH_TOKEN_KEY = "freelanceos_user_refresh_token";
 
 export const secureStore = {
-  async saveToken(token: string): Promise<void> {
+  async saveTokens(accessToken: string, refreshToken: string): Promise<void> {
     try {
-      await SecureStore.setItemAsync(TOKEN_KEY, token, {
+      await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken, {
+        keychainAccessible: SecureStore.WHEN_UNLOCKED,
+      });
+      await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken, {
         keychainAccessible: SecureStore.WHEN_UNLOCKED,
       });
     } catch (error) {
@@ -13,20 +17,30 @@ export const secureStore = {
     }
   },
 
-  async getToken(): Promise<string | null> {
+  async getAccessToken(): Promise<string | null> {
     try {
-      return await SecureStore.getItemAsync(TOKEN_KEY);
+      return await SecureStore.getItemAsync(ACCESS_TOKEN_KEY);
     } catch (error) {
-      console.error("SecureStore Get Failed:", error);
+      console.error("SecureStore Get Access Token Failed:", error);
       return null;
     }
   },
 
-  async deleteToken(): Promise<void> {
+  async getRefreshToken(): Promise<string | null> {
     try {
-      await SecureStore.deleteItemAsync(TOKEN_KEY);
+      return await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
     } catch (error) {
-      console.error("SecureStore Delete Failed:", error);
+      console.error("SecureStore Get Refresh Token Failed:", error);
+      return null;
+    }
+  },
+
+  async clearTokens(): Promise<void> {
+    try {
+      await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
+      await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
+    } catch (error) {
+      console.error("SecureStore Clear Tokens Failed:", error);
     }
   },
 };

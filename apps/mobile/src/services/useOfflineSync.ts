@@ -21,7 +21,7 @@ export function useOfflineSync() {
         if (queue.length === 0) return;
 
         try {
-          const token = await secureStore.getToken();
+          const token = await secureStore.getAccessToken();
           const headers = {
             headers: {
               Authorization: `Bearer ${token}`,

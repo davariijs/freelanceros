@@ -1,12 +1,12 @@
 import * as React from "react";
 import { View, Text } from "react-native";
 import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
-import { useMobileTranslation } from "@/hooks/useMobileTranslation";
 import { Cloud, CloudOff } from "lucide-react-native";
+import { useApp } from "@/context/AppContext";
 
 export const SyncStatus: React.FC = () => {
   const [isOnline, setIsOnline] = React.useState<boolean>(true);
-  const { t } = useMobileTranslation();
+  const { t } = useApp();
 
   React.useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state: NetInfoState) => {

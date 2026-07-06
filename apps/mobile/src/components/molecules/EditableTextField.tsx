@@ -4,9 +4,9 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  useColorScheme,
 } from "react-native";
 import { Check, Edit2 } from "lucide-react-native";
+import { useApp } from "@/context/AppContext";
 
 interface EditableTextFieldProps {
   value: string;
@@ -19,8 +19,8 @@ export const EditableTextField: React.FC<EditableTextFieldProps> = ({
   onSave,
   placeholder,
 }) => {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { theme } = useApp();
+  const isDark = theme === "dark";
   const [isEditing, setIsEditing] = React.useState<boolean>(false);
   const [inputValue, setInputValue] = React.useState<string>(value);
 
@@ -63,7 +63,8 @@ export const EditableTextField: React.FC<EditableTextFieldProps> = ({
           </Text>
           <TouchableOpacity
             onPress={() => setIsEditing(true)}
-            className="p-2 border border-neutral-800 bg-neutral-900/50 rounded-lg active:bg-neutral-800"
+            style={{ backgroundColor: "#171717", borderColor: "#262626" }}
+            className="p-2 border rounded-lg active:bg-neutral-800"
           >
             <Edit2 size={14} color="#a3a3a3" />
           </TouchableOpacity>

@@ -10,10 +10,10 @@ export default function IndexScreen() {
   React.useEffect(() => {
     async function checkAuthStatus() {
       try {
-        const token = await secureStore.getToken();
+        const refreshToken = await secureStore.getRefreshToken();
         const isLocked = await AsyncStorage.getItem("isAppLocked");
 
-        if (token && isLocked !== "true") {
+        if (refreshToken && isLocked !== "true") {
           router.replace("/home");
         } else {
           router.replace("/login");

@@ -2,34 +2,70 @@ import * as React from "react";
 import {
   View,
   Text,
-  useColorScheme,
   TouchableOpacity,
   ActivityIndicator,
+  useColorScheme as useSystemColorScheme,
+  TextInput,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { useTasksQuery, useUpdateTaskMutation, Task } from "@/hooks/useTasks";
-import { useMobileTranslation } from "@/hooks/useMobileTranslation";
+import { useProjectsQuery } from "@/hooks/useProjects";
 import { Badge } from "@/components/atoms/Badge";
-import { RichTextRenderer } from "@/components/atoms/RichTextRenderer";
 import { EditableTextField } from "@/components/molecules/EditableTextField";
 import { PriorityPicker } from "@/components/molecules/PriorityPicker";
 import { ArrowLeft } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useApp } from "@/context/AppContext";
 
 export default function TaskDetailScreen() {
   const { taskId } = useLocalSearchParams<{ taskId: string }>();
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const { t } = useMobileTranslation();
+  const navigation = useNavigation();
+
+  const { t, theme } = useApp();
+  const systemTheme = useSystemColorScheme();
+  const isDark = theme === "system" ? systemTheme === "dark" : theme === "dark";
 
   const { data: tasks = [], isLoading } = useTasksQuery();
+  const { data: projects = [] } = useProjectsQuery();
   const updateTaskMutation = useUpdateTaskMutation();
 
   const task = React.useMemo(() => {
     return tasks.find((t: Task) => t.id === taskId);
   }, [tasks, taskId]);
+
+  const [description, setDescription] = React.useState("");
+
+  React.useEffect(() => {
+    if (task) {
+      setDescription(task.description || "");
+    }
+  }, [task]);
+
+  const handleUpdateDescription = React.useCallback(
+    (targetDesc: string) => {
+      if (task && targetDesc !== (task.description || "")) {
+        updateTaskMutation.mutate(
+          { id: task.id, description: targetDesc } as any,
+          {
+            onSuccess: () =>
+              Haptics.notificationAsync(
+                Haptics.NotificationFeedbackType.Success,
+              ),
+          },
+        );
+      }
+    },
+    [task, updateTaskMutation],
+  );
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", () => {
+      handleUpdateDescription(description);
+    });
+    return unsubscribe;
+  }, [navigation, description, handleUpdateDescription]);
 
   if (isLoading || !task) {
     return (
@@ -59,21 +95,30 @@ export default function TaskDetailScreen() {
     HIGH: t.priorityHigh || "High",
   };
 
+  const relatedProject = projects.find((p) => p.id === task.projectId);
+  const projectLabel = relatedProject
+    ? relatedProject.title
+    : t.noProject || "No Project";
+  const projectVariant = relatedProject ? "primary" : "secondary";
+
+  const dynamicBg = isDark ? "#0a0a0a" : "#f5f5f5";
+  const labelColorClass = isDark ? "text-neutral-400" : "text-neutral-600";
+
   return (
-    <SafeAreaView
-      className={`flex-1 ${isDark ? "bg-neutral-950" : "bg-neutral-50"}`}
-    >
-      <View className="flex-1 px-5 pt-4">
-        <View className="flex-row items-center justify-between mb-8">
+    <SafeAreaView style={{ flex: 1, backgroundColor: dynamicBg }}>
+      <View style={{ flex: 1, paddingHorizontal: 20, paddingTop: 16 }}>
+        <View className="flex-row items-center justify-between mb-8 shrink-0">
           <TouchableOpacity
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               router.back();
             }}
-            className="h-10 w-10 border border-neutral-800 bg-neutral-900/40 rounded-full items-center justify-center active:bg-neutral-800"
+            style={{ backgroundColor: "#171717", borderColor: "#262626" }}
+            className="h-10 w-10 border rounded-full items-center justify-center active:bg-neutral-800"
           >
             <ArrowLeft size={18} color="#a3a3a3" />
           </TouchableOpacity>
+
           <Text
             className={`text-md font-bold ${isDark ? "text-neutral-400" : "text-neutral-600"}`}
           >
@@ -101,6 +146,7 @@ export default function TaskDetailScreen() {
             value={task.priority}
             onChange={handleUpdatePriority}
             labels={priorityLabels}
+            isDark={isDark}
           />
         </View>
 
@@ -109,27 +155,31 @@ export default function TaskDetailScreen() {
             {t.descriptionLabel}
           </Text>
           <View
-            className={`p-4 border rounded-xl min-h-24 ${isDark ? "border-neutral-800 bg-neutral-900/30" : "border-neutral-200 bg-white"}`}
+            className={`p-4 border rounded-xl min-h-32 ${isDark ? "border-neutral-800 bg-neutral-900/30" : "border-neutral-200 bg-white"}`}
           >
-            <RichTextRenderer
-              text={task.description}
+            <TextInput
+              style={{
+                color: isDark ? "#f5f5f5" : "#171717",
+                fontSize: 13,
+                minHeight: 80,
+                textAlignVertical: "top",
+              }}
+              value={description}
+              onChangeText={setDescription}
               placeholder={t.noDescription}
+              placeholderTextColor="#737373"
+              multiline
+              onBlur={() => handleUpdateDescription(description)}
             />
           </View>
         </View>
 
         <View className="space-y-4">
           <View className="flex-row items-center justify-between">
-            <Text className="text-xs text-neutral-500 font-bold">
+            <Text className={`text-xs font-bold ${labelColorClass}`}>
               {t.projectTag}
             </Text>
-            <Badge label="E-Commerce API" variant="warning" />
-          </View>
-          <View className="flex-row items-center justify-between">
-            <Text className="text-xs text-neutral-500 font-bold">
-              {t.clientTag}
-            </Text>
-            <Badge label="TechCorp Inc." variant="success" />
+            <Badge label={projectLabel} variant={projectVariant as any} />
           </View>
         </View>
       </View>

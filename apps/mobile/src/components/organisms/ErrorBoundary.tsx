@@ -6,7 +6,7 @@ import {
   useColorScheme,
   NativeModules,
 } from "react-native";
-import { mmkvStorage } from "@/services/syncStorage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMobileTranslation } from "@/hooks/useMobileTranslation";
 import { RefreshCw, ShieldAlert } from "lucide-react-native";
 
@@ -31,9 +31,9 @@ export class ErrorBoundary extends React.Component<Props, State> {
     console.error("Critical mobile runtime error caught:", error, errorInfo);
   }
 
-  private handleResetApp = () => {
+  private handleResetApp = async () => {
     try {
-      mmkvStorage.clearAll();
+      await AsyncStorage.clear();
       NativeModules.DevSettings?.reload();
     } catch {
       this.setState({ hasError: false });

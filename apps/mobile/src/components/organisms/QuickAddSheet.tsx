@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  useColorScheme,
   ActivityIndicator,
 } from "react-native";
 import BottomSheet, {
@@ -12,11 +11,11 @@ import BottomSheet, {
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
 import { ProjectScrollerPicker } from "@/components/molecules/ProjectScrollerPicker";
-import { useMobileTranslation } from "@/hooks/useMobileTranslation";
 import { useProjectsQuery } from "@/hooks/useProjects";
 import { useCreateTaskMutation } from "@/hooks/useTasks";
 import * as Haptics from "expo-haptics";
 import { Plus } from "lucide-react-native";
+import { useApp } from "@/context/AppContext";
 
 interface QuickAddSheetProps {
   onSuccess: () => void;
@@ -24,9 +23,8 @@ interface QuickAddSheetProps {
 
 export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
   ({ onSuccess }, ref) => {
-    const { t } = useMobileTranslation();
-    const colorScheme = useColorScheme();
-    const isDark = colorScheme === "dark";
+    const { t, theme } = useApp();
+    const isDark = theme === "dark";
 
     const [title, setTitle] = React.useState("");
     const [selectedProjectId, setSelectedProjectId] = React.useState<
@@ -105,7 +103,7 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
           </Text>
 
           <View
-            className={`flex-row items-center border rounded-xl px-3 h-12 ${isDark ? "border-neutral-800 bg-neutral-900/50" : "border-neutral-300 bg-neutral-50"}`}
+            className={`flex-row items-center border rounded-xl px-3 mb-2 h-12 ${isDark ? "border-neutral-800 bg-neutral-900/50" : "border-neutral-300 bg-neutral-50"}`}
           >
             <BottomSheetTextInput
               className={`flex-1 text-sm h-full ${isDark ? "text-neutral-100" : "text-neutral-900"}`}

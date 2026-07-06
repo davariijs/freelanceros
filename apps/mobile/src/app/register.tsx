@@ -56,20 +56,24 @@ export default function RegisterScreen() {
 
     try {
       const response = await axios.post(
-        `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/register`,
+        `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000"}/api/auth/register`,
         data,
       );
 
-      const { accessToken } = response.data;
-      if (accessToken) {
-        await secureStore.saveToken(accessToken);
+      const { accessToken, refreshToken } = response.data;
+      if (accessToken && refreshToken) {
+        await secureStore.saveTokens(accessToken, refreshToken);
         await AsyncStorage.removeItem("isAppLocked");
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         router.replace("/home");
+      } else {
+        throw new Error("Invalid token payload received from server");
       }
     } catch (err: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      setApiError(err.response?.data?.message || "Registration failed");
+      setApiError(
+        err.response?.data?.message || err.message || "Registration failed",
+      );
     } finally {
       setIsLoading(false);
     }

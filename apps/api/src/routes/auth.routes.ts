@@ -27,7 +27,8 @@ router.post('/register', validate(createUserSchema), async (req, res) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
   });
-  return res.status(201).json({ user, accessToken });
+
+  return res.status(201).json({ user, accessToken, refreshToken });
 });
 
 router.post('/login', async (req, res) => {
@@ -56,7 +57,28 @@ router.post('/login', async (req, res) => {
   return res.status(200).json({
     user: { id: user.id, email: user.email, name: user.name },
     accessToken,
+    refreshToken,
   });
+});
+
+router.post('/refresh', (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).json({ message: 'Refresh token missing' });
+  }
+
+  const decoded = jwtService.verifyRefreshToken(refreshToken) as {
+    userId: string;
+  } | null;
+  if (!decoded) {
+    return res
+      .status(401)
+      .json({ message: 'Invalid or expired refresh token' });
+  }
+
+  const newAccessToken = jwtService.generateAccessToken(decoded.userId);
+  return res.status(200).json({ accessToken: newAccessToken });
 });
 
 export { router as authRouter };

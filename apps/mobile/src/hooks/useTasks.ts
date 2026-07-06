@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { secureStore } from "@/services/secureStore";
+import apiClient from "@/lib/apiClient";
 import { syncStorage } from "@/services/syncStorage";
 import NetInfo from "@react-native-community/netinfo";
 
@@ -19,24 +18,11 @@ export interface Task {
   isOfflinePending?: boolean;
 }
 
-const API_URL = `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3001"}/api/tasks`;
-
-const getAuthHeaders = async () => {
-  const token = await secureStore.getToken();
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  };
-};
-
 export const useTasksQuery = () => {
   return useQuery<Task[]>({
     queryKey: ["tasks"],
     queryFn: async () => {
-      const headers = await getAuthHeaders();
-      const res = await axios.get(API_URL, headers);
+      const res = await apiClient.get("/api/tasks");
       return res.data;
     },
   });
@@ -78,8 +64,7 @@ export const useCreateTaskMutation = () => {
         throw new Error("OFFLINE_SAVED");
       }
 
-      const headers = await getAuthHeaders();
-      const res = await axios.post(API_URL, data, headers);
+      const res = await apiClient.post("/api/tasks", data);
       return res.data;
     },
     onSuccess: () => {
@@ -130,21 +115,53 @@ export const useUpdateTaskMutation = () => {
         throw new Error("OFFLINE_SAVED");
       }
 
-      const headers = await getAuthHeaders();
-      const res = await axios.patch(
-        `${API_URL}/${id}`,
-        {
-          status,
-          title,
-          description,
-          priority,
-          projectId,
-        },
-        headers,
-      );
+      const res = await apiClient.patch(`/api/tasks/${id}`, {
+        status,
+        title,
+        description,
+        priority,
+        projectId,
+      });
+      console.log("PATCH RESPONSE:", res.data);
       return res.data;
     },
-    onSuccess: () => {
+    onMutate: async ({
+      id,
+      status,
+      title,
+      description,
+      priority,
+      projectId,
+    }) => {
+      await queryClient.cancelQueries({ queryKey: ["tasks"] });
+      const previousTasks = queryClient.getQueryData<Task[]>(["tasks"]);
+
+      if (previousTasks) {
+        queryClient.setQueryData<Task[]>(
+          ["tasks"],
+          previousTasks.map((t) =>
+            t.id === id
+              ? {
+                  ...t,
+                  status: status !== undefined ? status : t.status,
+                  title: title !== undefined ? title : t.title,
+                  description:
+                    description !== undefined ? description : t.description,
+                  priority: priority !== undefined ? priority : t.priority,
+                  projectId: projectId !== undefined ? projectId : t.projectId,
+                }
+              : t,
+          ),
+        );
+      }
+      return { previousTasks };
+    },
+    onError: (_err, _variables, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(["tasks"], context.previousTasks);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });

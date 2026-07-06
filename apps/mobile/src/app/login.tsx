@@ -26,6 +26,7 @@ export default function LoginScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const { t } = useMobileTranslation();
+  const [isBiometricLoading, setIsBiometricLoading] = React.useState(false);
 
   const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -51,17 +52,20 @@ export default function LoginScreen() {
 
   React.useEffect(() => {
     async function checkAutoLogin() {
-      const savedToken = await secureStore.getToken();
+      const savedToken = await secureStore.getAccessToken();
       if (savedToken && isCompatible && hasRecords) {
+        setIsBiometricLoading(true);
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
         const success = await authenticateUser(t.biometricPrompt);
         if (success) {
           router.replace("/home");
         }
+        setIsBiometricLoading(false);
       }
     }
     checkAutoLogin();
-  }, [isCompatible, hasRecords]);
+  }, [isCompatible, hasRecords, t]);
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
@@ -70,30 +74,37 @@ export default function LoginScreen() {
 
     try {
       const response = await axios.post(
-        `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/login`,
+        `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000"}/api/auth/login`,
         data,
       );
+      const { accessToken, refreshToken } = response.data;
 
-      const { accessToken } = response.data;
-      if (accessToken) {
-        await secureStore.saveToken(accessToken);
-        await AsyncStorage.removeItem("isAppLocked");
+      if (accessToken && refreshToken) {
+        await secureStore.saveTokens(accessToken, refreshToken);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        await AsyncStorage.removeItem("isAppLocked");
         router.replace("/home");
+      } else {
+        throw new Error("Invalid token payload received");
       }
     } catch (err: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      setApiError(err.response?.data?.message || "Invalid credentials");
+      setApiError(
+        err.response?.data?.message || err.message || "Invalid credentials",
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleBiometricLogin = async () => {
+    setIsBiometricLoading(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const savedToken = await secureStore.getToken();
+    const savedToken = await secureStore.getAccessToken();
+
     if (!savedToken) {
       setApiError(t.biometricError);
+      setIsBiometricLoading(false);
       return;
     }
 
@@ -103,6 +114,7 @@ export default function LoginScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.replace("/home");
     }
+    setIsBiometricLoading(false);
   };
 
   return (
@@ -220,9 +232,14 @@ export default function LoginScreen() {
           <View className="items-center mt-4">
             <TouchableOpacity
               onPress={handleBiometricLogin}
+              disabled={isBiometricLoading}
               className={`h-14 w-14 rounded-full justify-center items-center border ${isDark ? "border-neutral-800 bg-neutral-900" : "border-neutral-300 bg-white"}`}
             >
-              <Fingerprint size={28} color={isDark ? "#f5f5f5" : "#171717"} />
+              {isBiometricLoading ? (
+                <ActivityIndicator size="small" color="#10b981" />
+              ) : (
+                <Fingerprint size={28} color={isDark ? "#f5f5f5" : "#171717"} />
+              )}
             </TouchableOpacity>
             <Text className="text-[10px] text-neutral-500 font-semibold mt-2">
               {t.orBiometrics}
