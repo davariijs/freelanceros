@@ -26,21 +26,40 @@ export const cronService = {
         });
 
         for (const project of tomorrowProjects) {
-          await prisma.activityLog.create({
-            data: {
+          const existingLog = await prisma.activityLog.findFirst({
+            where: {
               action: 'PROJECT_DEADLINE_TOMORROW',
-              metadata: JSON.stringify({
-                projectId: project.id,
-                title: project.title,
-              }),
               userId: project.userId,
+              metadata: { contains: project.id },
+              createdAt: { gte: today },
             },
           });
 
-          await emailService.sendVerificationCode(
-            project.user.email,
-            `Deadline Warning: Tomorrow is the delivery date for your project "${project.title}". Keep pushing!`,
-          );
+          if (!existingLog) {
+            await prisma.activityLog.create({
+              data: {
+                action: 'PROJECT_DEADLINE_TOMORROW',
+                metadata: JSON.stringify({
+                  projectId: project.id,
+                  title: project.title,
+                }),
+                userId: project.userId,
+              },
+            });
+
+            try {
+              await emailService.sendProjectDeadlineWarning(
+                project.user.email,
+                project.title,
+                true,
+              );
+            } catch (emailError) {
+              console.error(
+                `[Cron Job Error]: Failed to send tomorrow warning email for project ${project.title}:`,
+                emailError,
+              );
+            }
+          }
         }
 
         const todayProjects = await prisma.project.findMany({
@@ -55,21 +74,40 @@ export const cronService = {
         });
 
         for (const project of todayProjects) {
-          await prisma.activityLog.create({
-            data: {
+          const existingLog = await prisma.activityLog.findFirst({
+            where: {
               action: 'PROJECT_DEADLINE_TODAY',
-              metadata: JSON.stringify({
-                projectId: project.id,
-                title: project.title,
-              }),
               userId: project.userId,
+              metadata: { contains: project.id },
+              createdAt: { gte: today },
             },
           });
 
-          await emailService.sendVerificationCode(
-            project.user.email,
-            `Final Warning: Today is the deadline for your project "${project.title}". Please deliver it on time!`,
-          );
+          if (!existingLog) {
+            await prisma.activityLog.create({
+              data: {
+                action: 'PROJECT_DEADLINE_TODAY',
+                metadata: JSON.stringify({
+                  projectId: project.id,
+                  title: project.title,
+                }),
+                userId: project.userId,
+              },
+            });
+
+            try {
+              await emailService.sendProjectDeadlineWarning(
+                project.user.email,
+                project.title,
+                false,
+              );
+            } catch (emailError) {
+              console.error(
+                `[Cron Job Error]: Failed to send today warning email for project ${project.title}:`,
+                emailError,
+              );
+            }
+          }
         }
 
         console.log(

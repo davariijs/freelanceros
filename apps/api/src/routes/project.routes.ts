@@ -23,11 +23,21 @@ const checkAndLogSingleProjectDeadline = async (project: any) => {
     const isTomorrow = projectDate.getTime() === tomorrow.getTime();
     const isToday = projectDate.getTime() === today.getTime();
 
+    console.log('[DEBUG DEADLINE SCAN]:', {
+      projectTitle: project.title,
+      todayStr: today.toISOString(),
+      tomorrowStr: tomorrow.toISOString(),
+      projectDateStr: projectDate.toISOString(),
+      isToday,
+      isTomorrow,
+    });
+
     if (isTomorrow) {
       const existingLog = await prisma.activityLog.findFirst({
         where: {
           action: 'PROJECT_DEADLINE_TOMORROW',
           userId: project.userId,
+          metadata: { contains: project.id },
           createdAt: { gte: today },
         },
       });
@@ -44,16 +54,25 @@ const checkAndLogSingleProjectDeadline = async (project: any) => {
           },
         });
 
-        await emailService.sendVerificationCode(
-          project.user?.email || '',
-          `Deadline Warning: Tomorrow is the delivery date for your project "${project.title}". Keep pushing!`,
-        );
+        try {
+          await emailService.sendProjectDeadlineWarning(
+            project.user?.email || '',
+            project.title,
+            true,
+          );
+        } catch (emailErr) {
+          console.error(
+            '[EMAIL ERROR]: Failed to send tomorrow deadline email:',
+            emailErr,
+          );
+        }
       }
     } else if (isToday) {
       const existingLog = await prisma.activityLog.findFirst({
         where: {
           action: 'PROJECT_DEADLINE_TODAY',
           userId: project.userId,
+          metadata: { contains: project.id },
           createdAt: { gte: today },
         },
       });
@@ -70,10 +89,18 @@ const checkAndLogSingleProjectDeadline = async (project: any) => {
           },
         });
 
-        await emailService.sendVerificationCode(
-          project.user?.email || '',
-          `Final Warning: Today is the deadline for your project "${project.title}". Please deliver it on time!`,
-        );
+        try {
+          await emailService.sendProjectDeadlineWarning(
+            project.user?.email || '',
+            project.title,
+            false,
+          );
+        } catch (emailErr) {
+          console.error(
+            '[EMAIL ERROR]: Failed to send today deadline email:',
+            emailErr,
+          );
+        }
       }
     }
   } catch (error) {
