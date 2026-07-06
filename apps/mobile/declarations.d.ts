@@ -85,3 +85,13 @@ declare module "react-native-mmkv" {
     delete: (key: string) => void;
   }
 }
+
+declare module "react-native-default-preference" {
+  const DefaultPreference: {
+    get: (key: string) => Promise<string | undefined>;
+    set: (key: string, value: string) => Promise<void>;
+    clear: (key: string) => Promise<void>;
+    setName: (name: string) => Promise<void>;
+  };
+  export default DefaultPreference;
+}

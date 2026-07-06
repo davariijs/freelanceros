@@ -1,5 +1,8 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import DefaultPreference from "react-native-default-preference";
 import { Task } from "@/hooks/useTasks";
+import { Platform } from "react-native";
+
+const APP_GROUP_IDENTIFIER = "group.com.freelanceos.mobile";
 
 export const widgetSync = {
   async syncTodayTasks(tasks: Task[]): Promise<void> {
@@ -15,9 +18,12 @@ export const widgetSync = {
 
       const rawJson = JSON.stringify(todayTasks);
 
-      await AsyncStorage.setItem("today_tasks_json", rawJson);
+      if (Platform.OS === "android" || Platform.OS === "ios") {
+        await DefaultPreference.setName(APP_GROUP_IDENTIFIER);
+        await DefaultPreference.set("today_tasks_json", rawJson);
 
-      console.log("Widget storage synchronized successfully.");
+        console.log("Widget storage synchronized successfully with system.");
+      }
     } catch (error) {
       console.error("Widget storage synchronization failed:", error);
     }
