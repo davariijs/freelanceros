@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { GoogleLogin } from "@react-oauth/google";
 import { useMutation } from "@tanstack/react-query";
 import { apiClient } from "@/lib/apiClient";
+import Link from "next/link";
 
 export const LoginForm: React.FC = () => {
   const { t } = useApp();
@@ -51,6 +52,18 @@ export const LoginForm: React.FC = () => {
     },
   });
 
+  const getLoginErrorMessage = () => {
+    if (!loginMutation.error) return null;
+    const rawMsg =
+      (loginMutation.error as any).response?.data?.message ||
+      loginMutation.error.message ||
+      "";
+    if (rawMsg === "Invalid credentials") {
+      return t.errorInvalidCredentials;
+    }
+    return rawMsg;
+  };
+
   return (
     <div className="w-full max-w-sm space-y-6">
       <div className="text-center space-y-2">
@@ -79,12 +92,22 @@ export const LoginForm: React.FC = () => {
           />
 
           {loginMutation.isError && (
-            <p role="alert" className="text-xs text-red-500 font-medium">
-              {loginMutation.error instanceof Error
-                ? loginMutation.error.message
-                : "Login failed"}
+            <p
+              role="alert"
+              className="text-xs text-red-500 font-bold text-center mt-2 animate-pulse"
+            >
+              {getLoginErrorMessage()}
             </p>
           )}
+
+          <div className="text-center">
+            <Link
+              href="/forgot-password"
+              className="text-xs text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 underline"
+            >
+              {t.forgotPasswordLink}
+            </Link>
+          </div>
 
           <Button
             type="submit"

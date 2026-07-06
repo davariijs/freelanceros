@@ -1,10 +1,85 @@
 import { Router } from 'express';
 import { prisma, ProjectStatus, TaskPriority } from '@freelanceos/database';
 import { authenticate, AuthenticatedRequest } from '@/middleware/auth';
+import { emailService } from '@/services/emailService';
 
 const router: Router = Router();
 
 router.use(authenticate);
+
+const checkAndLogSingleProjectDeadline = async (project: any) => {
+  if (project.status === 'COMPLETED' || !project.dueDate) return;
+
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const projectDate = new Date(project.dueDate);
+    projectDate.setHours(0, 0, 0, 0);
+
+    const isTomorrow = projectDate.getTime() === tomorrow.getTime();
+    const isToday = projectDate.getTime() === today.getTime();
+
+    if (isTomorrow) {
+      const existingLog = await prisma.activityLog.findFirst({
+        where: {
+          action: 'PROJECT_DEADLINE_TOMORROW',
+          userId: project.userId,
+          createdAt: { gte: today },
+        },
+      });
+
+      if (!existingLog) {
+        await prisma.activityLog.create({
+          data: {
+            action: 'PROJECT_DEADLINE_TOMORROW',
+            metadata: JSON.stringify({
+              projectId: project.id,
+              title: project.title,
+            }),
+            userId: project.userId,
+          },
+        });
+
+        await emailService.sendVerificationCode(
+          project.user?.email || '',
+          `Deadline Warning: Tomorrow is the delivery date for your project "${project.title}". Keep pushing!`,
+        );
+      }
+    } else if (isToday) {
+      const existingLog = await prisma.activityLog.findFirst({
+        where: {
+          action: 'PROJECT_DEADLINE_TODAY',
+          userId: project.userId,
+          createdAt: { gte: today },
+        },
+      });
+
+      if (!existingLog) {
+        await prisma.activityLog.create({
+          data: {
+            action: 'PROJECT_DEADLINE_TODAY',
+            metadata: JSON.stringify({
+              projectId: project.id,
+              title: project.title,
+            }),
+            userId: project.userId,
+          },
+        });
+
+        await emailService.sendVerificationCode(
+          project.user?.email || '',
+          `Final Warning: Today is the deadline for your project "${project.title}". Please deliver it on time!`,
+        );
+      }
+    }
+  } catch (error) {
+    console.error('Failed to execute instant project deadline check:', error);
+  }
+};
 
 router.post('/', async (req: AuthenticatedRequest, res) => {
   const { title, description, status, dueDate, clientId, priority } = req.body;
@@ -20,6 +95,7 @@ router.post('/', async (req: AuthenticatedRequest, res) => {
         clientId,
         userId: req.userId!,
       },
+      include: { user: true },
     });
 
     await tx.activityLog.create({
@@ -32,6 +108,8 @@ router.post('/', async (req: AuthenticatedRequest, res) => {
 
     return project;
   });
+
+  await checkAndLogSingleProjectDeadline(result);
 
   return res.status(201).json(result);
 });
@@ -59,6 +137,7 @@ router.patch('/:id', async (req: AuthenticatedRequest, res) => {
         dueDate: dueDate ? new Date(dueDate) : undefined,
         clientId: clientId === 'NONE' ? null : clientId || undefined,
       },
+      include: { user: true },
     });
 
     if (status === 'COMPLETED') {
@@ -73,6 +152,8 @@ router.patch('/:id', async (req: AuthenticatedRequest, res) => {
 
     return project;
   });
+
+  await checkAndLogSingleProjectDeadline(result);
 
   return res.status(200).json(result);
 });

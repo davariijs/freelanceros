@@ -12,6 +12,8 @@ import {
   FolderPlus,
   Trophy,
   UserPlus,
+  AlertTriangle,
+  BellRing,
 } from "lucide-react";
 
 interface ActivityFeedProps {
@@ -28,26 +30,24 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
 
   const getActionLabel = (action: string, metadataStr: string) => {
     const meta = JSON.parse(metadataStr || "{}");
+    const title = truncateText(meta.title || "");
+
     if (action === "TASK_CREATED") {
-      const title = truncateText(meta.title || "");
       return t.activityTaskCreated
         ? t.activityTaskCreated.replace("{title}", title)
         : `Created Task: ${title}`;
     }
     if (action === "TASK_COMPLETED") {
-      const title = truncateText(meta.title || "");
       return t.activityTaskCompleted
         ? t.activityTaskCompleted.replace("{title}", title)
         : `Completed Task: ${title}`;
     }
     if (action === "PROJECT_CREATED") {
-      const title = truncateText(meta.title || "");
       return t.activityProjectCreated
         ? t.activityProjectCreated.replace("{title}", title)
         : `Started Project: ${title}`;
     }
     if (action === "PROJECT_COMPLETED") {
-      const title = truncateText(meta.title || "");
       return t.activityProjectCompleted
         ? t.activityProjectCompleted.replace("{title}", title)
         : `Completed Project: ${title}`;
@@ -57,6 +57,16 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
       return t.activityClientCreated
         ? t.activityClientCreated.replace("{name}", name)
         : `Added Client: ${name}`;
+    }
+    if (action === "PROJECT_DEADLINE_TOMORROW") {
+      return t.activityProjectDeadlineTomorrow
+        ? t.activityProjectDeadlineTomorrow.replace("{title}", title)
+        : `Tomorrow is the deadline for: ${title}`;
+    }
+    if (action === "PROJECT_DEADLINE_TODAY") {
+      return t.activityProjectDeadlineToday
+        ? t.activityProjectDeadlineToday.replace("{title}", title)
+        : `Today is the deadline for: ${title}!`;
     }
     return action;
   };
@@ -73,6 +83,12 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
         return <Trophy className="h-4 w-4 text-amber-500" />;
       case "CLIENT_CREATED":
         return <UserPlus className="h-4 w-4 text-purple-500" />;
+      case "PROJECT_DEADLINE_TOMORROW":
+        return (
+          <AlertTriangle className="h-4 w-4 text-amber-500 animate-pulse" />
+        );
+      case "PROJECT_DEADLINE_TODAY":
+        return <BellRing className="h-4 w-4 text-red-500 animate-bounce" />;
       default:
         return <PlayCircle className="h-4 w-4 text-neutral-400" />;
     }
@@ -106,8 +122,8 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
               <div className="h-5 w-5 rounded-full bg-white dark:bg-neutral-900 flex items-center justify-center z-10 shrink-0">
                 {getActionIcon(item.action)}
               </div>
-              <div className="space-y-0.5 min-w-0">
-                <p className="text-sm text-neutral-900 dark:text-neutral-100 font-medium">
+              <div className="space-y-0.5 min-w-0 flex-1">
+                <p className="text-sm text-neutral-900 dark:text-neutral-100 font-medium leading-relaxed">
                   {getActionLabel(item.action, item.metadata)}
                 </p>
                 <p className="text-xs text-neutral-400 dark:text-neutral-500">
