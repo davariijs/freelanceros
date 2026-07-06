@@ -5,12 +5,12 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   useColorScheme as useSystemColorScheme,
+  TextInput,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { useTasksQuery, useUpdateTaskMutation, Task } from "@/hooks/useTasks";
 import { useProjectsQuery } from "@/hooks/useProjects";
 import { Badge } from "@/components/atoms/Badge";
-import { RichTextRenderer } from "@/components/atoms/RichTextRenderer";
 import { EditableTextField } from "@/components/molecules/EditableTextField";
 import { PriorityPicker } from "@/components/molecules/PriorityPicker";
 import { ArrowLeft } from "lucide-react-native";
@@ -21,6 +21,7 @@ import { useApp } from "@/context/AppContext";
 export default function TaskDetailScreen() {
   const { taskId } = useLocalSearchParams<{ taskId: string }>();
   const router = useRouter();
+  const navigation = useNavigation();
 
   const { t, theme } = useApp();
   const systemTheme = useSystemColorScheme();
@@ -33,6 +34,38 @@ export default function TaskDetailScreen() {
   const task = React.useMemo(() => {
     return tasks.find((t: Task) => t.id === taskId);
   }, [tasks, taskId]);
+
+  const [description, setDescription] = React.useState("");
+
+  React.useEffect(() => {
+    if (task) {
+      setDescription(task.description || "");
+    }
+  }, [task]);
+
+  const handleUpdateDescription = React.useCallback(
+    (targetDesc: string) => {
+      if (task && targetDesc !== (task.description || "")) {
+        updateTaskMutation.mutate(
+          { id: task.id, description: targetDesc } as any,
+          {
+            onSuccess: () =>
+              Haptics.notificationAsync(
+                Haptics.NotificationFeedbackType.Success,
+              ),
+          },
+        );
+      }
+    },
+    [task, updateTaskMutation],
+  );
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", () => {
+      handleUpdateDescription(description);
+    });
+    return unsubscribe;
+  }, [navigation, description, handleUpdateDescription]);
 
   if (isLoading || !task) {
     return (
@@ -122,11 +155,21 @@ export default function TaskDetailScreen() {
             {t.descriptionLabel}
           </Text>
           <View
-            className={`p-4 border rounded-xl min-h-24 ${isDark ? "border-neutral-800 bg-neutral-900/30" : "border-neutral-200 bg-white"}`}
+            className={`p-4 border rounded-xl min-h-32 ${isDark ? "border-neutral-800 bg-neutral-900/30" : "border-neutral-200 bg-white"}`}
           >
-            <RichTextRenderer
-              text={task.description}
+            <TextInput
+              style={{
+                color: isDark ? "#f5f5f5" : "#171717",
+                fontSize: 13,
+                minHeight: 80,
+                textAlignVertical: "top",
+              }}
+              value={description}
+              onChangeText={setDescription}
               placeholder={t.noDescription}
+              placeholderTextColor="#737373"
+              multiline
+              onBlur={() => handleUpdateDescription(description)}
             />
           </View>
         </View>

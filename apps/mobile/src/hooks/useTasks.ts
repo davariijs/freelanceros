@@ -122,9 +122,46 @@ export const useUpdateTaskMutation = () => {
         priority,
         projectId,
       });
+      console.log("PATCH RESPONSE:", res.data);
       return res.data;
     },
-    onSuccess: () => {
+    onMutate: async ({
+      id,
+      status,
+      title,
+      description,
+      priority,
+      projectId,
+    }) => {
+      await queryClient.cancelQueries({ queryKey: ["tasks"] });
+      const previousTasks = queryClient.getQueryData<Task[]>(["tasks"]);
+
+      if (previousTasks) {
+        queryClient.setQueryData<Task[]>(
+          ["tasks"],
+          previousTasks.map((t) =>
+            t.id === id
+              ? {
+                  ...t,
+                  status: status !== undefined ? status : t.status,
+                  title: title !== undefined ? title : t.title,
+                  description:
+                    description !== undefined ? description : t.description,
+                  priority: priority !== undefined ? priority : t.priority,
+                  projectId: projectId !== undefined ? projectId : t.projectId,
+                }
+              : t,
+          ),
+        );
+      }
+      return { previousTasks };
+    },
+    onError: (_err, _variables, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(["tasks"], context.previousTasks);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });

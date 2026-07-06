@@ -49,7 +49,11 @@ export default function HomeScreen() {
   };
 
   const todayTasks = React.useMemo(() => {
-    return tasks.filter((task: Task) => task.status !== "DONE");
+    return [...tasks].sort((a: Task, b: Task) => {
+      if (a.status === "DONE" && b.status !== "DONE") return 1;
+      if (a.status !== "DONE" && b.status === "DONE") return -1;
+      return 0;
+    });
   }, [tasks]);
 
   const progressPercent = React.useMemo(() => {
@@ -243,7 +247,7 @@ export default function HomeScreen() {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                   cycleTheme();
                 }}
-                style={styles.settingRow}
+                style={styles.settingRowdown}
               >
                 {theme === "system" ? (
                   <Settings
@@ -298,5 +302,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#26262620",
+  },
+  settingRowdown: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
   },
 });

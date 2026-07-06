@@ -57,6 +57,10 @@ export const TaskSwipeableCard: React.FC<TaskSwipeableCardProps> = ({
       renderLeftActions={renderLeftActions}
       renderRightActions={renderRightActions}
       onSwipeableOpen={(direction) => {
+        setTimeout(() => {
+          swipeableRef.current?.close();
+        }, 100);
+
         if (direction === "left") {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           onComplete(task.id);

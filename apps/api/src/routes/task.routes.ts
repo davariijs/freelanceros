@@ -87,13 +87,23 @@ router.get('/', async (req: AuthenticatedRequest, res) => {
 });
 
 router.patch('/:id', async (req: AuthenticatedRequest, res) => {
+  console.log('BODY:', req.body);
+
   const { id } = req.params;
   const { status, order, title, priority, description, projectId } = req.body;
+
+  console.log('STATUS:', status);
 
   const result = await prisma.$transaction(async (tx) => {
     const resolvedProjectId =
       projectId === 'NONE' ? null : projectId || undefined;
-
+    console.log({
+      status,
+      priority,
+      title,
+      description,
+      projectId,
+    });
     const task = await tx.task.update({
       where: { id, userId: req.userId! },
       data: {
@@ -115,6 +125,7 @@ router.patch('/:id', async (req: AuthenticatedRequest, res) => {
         },
       });
     }
+    console.log('UPDATED:', task);
 
     return task;
   });
