@@ -66,4 +66,5 @@ export const fa = {
   themeDark: "تاریک",
   noProject: "بدون پروژه",
   completed: "انجام شد",
+  inProgress: "در حال انجام",
 };

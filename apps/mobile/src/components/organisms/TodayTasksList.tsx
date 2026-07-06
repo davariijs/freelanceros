@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { Task } from "@/hooks/useTasks";
+import { Task, TaskStatus } from "@/hooks/useTasks";
 import { TaskSwipeableCard } from "@/components/molecules/TaskSwipeableCard";
 import { useApp } from "@/context/AppContext";
 import {
@@ -9,20 +9,19 @@ import {
   CheckCircle2,
   Circle,
   Check,
+  Play,
 } from "lucide-react-native";
 import { cn } from "@/lib/utils";
 
 interface TodayTasksListProps {
   tasks: Task[];
-  onComplete: (id: string) => void;
-  onSnooze: (id: string) => void;
+  onUpdateStatus: (id: string, status: TaskStatus) => void;
   onTaskPress: (task: Task) => void;
 }
 
 export const TodayTasksList: React.FC<TodayTasksListProps> = ({
   tasks,
-  onComplete,
-  onSnooze,
+  onUpdateStatus,
   onTaskPress,
 }) => {
   const { t } = useApp();
@@ -55,20 +54,20 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
 
   const renderItem = ({ item }: { item: Task }) => {
     const isDone = item.status === "DONE";
+    const isInProgress = item.status === "IN_PROGRESS";
     const priorityColor = getPriorityStyles(item.priority);
 
     return (
       <TaskSwipeableCard
         task={item}
-        onComplete={onComplete}
-        onSnooze={onSnooze}
+        onUpdateStatus={onUpdateStatus}
       >
         <TouchableOpacity
           onPress={() => onTaskPress(item)}
           className={cn(
             "p-4 border rounded-2xl my-1 flex-row items-center justify-between active:bg-neutral-800",
             isDone
-              ? "bg-neutral-800/40 border-neutral-800"
+              ? "bg-neutral-800/20 border-neutral-800"
               : "bg-neutral-900 border-neutral-800",
           )}
         >
@@ -77,6 +76,12 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
               <CheckCircle2
                 size={18}
                 color="#10b981"
+                style={{ marginRight: 10 }}
+              />
+            ) : isInProgress ? (
+              <CheckCircle2
+                size={18}
+                color="#3b82f6"
                 style={{ marginRight: 10 }}
               />
             ) : (
@@ -88,7 +93,7 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
                 style={{ textDecorationLine: isDone ? "line-through" : "none" }}
                 className={cn(
                   "text-sm font-bold mb-1",
-                  isDone ? "text-neutral-400" : "text-neutral-100",
+                  isDone ? "text-neutral-500" : "text-neutral-100",
                 )}
               >
                 {item.title}
@@ -112,6 +117,13 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
               <Check size={10} color="#10b981" style={{ marginRight: 4 }} />
               <Text className="text-[9px] font-black text-emerald-500 uppercase">
                 {t.completed || "Done"}
+              </Text>
+            </View>
+          ) : isInProgress ? (
+            <View className="px-2.5 py-1 rounded-full border border-blue-500/20 bg-blue-500/10 flex-row items-center justify-center shrink-0">
+              <Play size={10} color="#3b82f6" style={{ marginRight: 4 }} />
+              <Text className="text-[9px] font-black text-blue-500 uppercase">
+                {t.inProgress || "Progress"}
               </Text>
             </View>
           ) : (

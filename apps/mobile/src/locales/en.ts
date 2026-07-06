@@ -64,4 +64,5 @@ export const en = {
   themeDark: "Dark",
   noProject: "No Project",
   completed: "Done",
+  inProgress: "In Progress",
 };

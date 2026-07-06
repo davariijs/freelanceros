@@ -2,7 +2,7 @@ import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import * as Haptics from "expo-haptics";
-import { Check, Clock } from "lucide-react-native";
+import { Check, Play, RotateCcw } from "lucide-react-native";
 
 export interface Task {
   id: string;
@@ -17,34 +17,41 @@ export interface Task {
 
 interface TaskSwipeableCardProps {
   task: Task;
-  onComplete: (id: string) => void;
-  onSnooze: (id: string) => void;
+  onUpdateStatus: (id: string, status: "TODO" | "IN_PROGRESS" | "DONE") => void;
   children: React.ReactNode;
 }
 
 export const TaskSwipeableCard: React.FC<TaskSwipeableCardProps> = ({
   task,
-  onComplete,
-  onSnooze,
+  onUpdateStatus,
   children,
 }) => {
   const swipeableRef = React.useRef<any>(null);
 
+  const isDone = task.status === "DONE";
   const renderLeftActions = () => (
     <View
       style={styles.leftAction}
-      className="bg-emerald-600 rounded-2xl justify-center px-6"
+      className={
+        isDone
+          ? "bg-neutral-600 rounded-2xl justify-center px-6"
+          : "bg-emerald-600 rounded-2xl justify-center px-6"
+      }
     >
-      <Check size={20} color="#ffffff" />
+      {isDone ? (
+        <RotateCcw size={20} color="#ffffff" />
+      ) : (
+        <Check size={20} color="#ffffff" />
+      )}
     </View>
   );
 
   const renderRightActions = () => (
     <View
       style={styles.rightAction}
-      className="bg-amber-600 rounded-2xl justify-center items-end px-6"
+      className="bg-blue-600 rounded-2xl justify-center items-end px-6"
     >
-      <Clock size={20} color="#ffffff" />
+      <Play size={20} color="#ffffff" />
     </View>
   );
 
@@ -61,12 +68,16 @@ export const TaskSwipeableCard: React.FC<TaskSwipeableCardProps> = ({
           swipeableRef.current?.close();
         }, 100);
 
-        if (direction === "left") {
+        if (direction === "right") {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-          onComplete(task.id);
-        } else if (direction === "right") {
+          if (isDone) {
+            onUpdateStatus(task.id, "TODO");
+          } else {
+            onUpdateStatus(task.id, "DONE");
+          }
+        } else if (direction === "left") {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          onSnooze(task.id);
+          onUpdateStatus(task.id, "IN_PROGRESS");
         }
       }}
     >

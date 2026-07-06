@@ -9,7 +9,12 @@ import {
 import { SyncStatus } from "@/components/atoms/SyncStatus";
 import { CircularProgress } from "@/components/atoms/CircularProgress";
 import { TodayTasksList } from "@/components/organisms/TodayTasksList";
-import { useTasksQuery, useUpdateTaskMutation, Task } from "@/hooks/useTasks";
+import {
+  useTasksQuery,
+  useUpdateTaskMutation,
+  Task,
+  TaskStatus,
+} from "@/hooks/useTasks";
 import { useRouter } from "expo-router";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { QuickAddSheet } from "@/components/organisms/QuickAddSheet";
@@ -62,12 +67,8 @@ export default function HomeScreen() {
     return (completed / tasks.length) * 100;
   }, [tasks]);
 
-  const handleCompleteTask = (id: string) => {
-    updateTaskMutation.mutate({ id, status: "DONE" });
-  };
-
-  const handleSnoozeTask = (id: string) => {
-    updateTaskMutation.mutate({ id, status: "TODO" });
+  const handleUpdateTaskStatus = (id: string, status: TaskStatus) => {
+    updateTaskMutation.mutate({ id, status });
   };
 
   const handleTaskPress = (task: Task) => {
@@ -177,8 +178,7 @@ export default function HomeScreen() {
           ) : (
             <TodayTasksList
               tasks={todayTasks}
-              onComplete={handleCompleteTask}
-              onSnooze={handleSnoozeTask}
+              onUpdateStatus={handleUpdateTaskStatus}
               onTaskPress={handleTaskPress}
             />
           )}
