@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { Task } from "@/hooks/useTasks"; // ایمپورت تایپ تسک از هوک شما
+import { Task } from "@/hooks/useTasks";
 import { TaskSwipeableCard } from "@/components/molecules/TaskSwipeableCard";
 import { useApp } from "@/context/AppContext";
 import {
@@ -65,11 +65,10 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
       >
         <TouchableOpacity
           onPress={() => onTaskPress(item)}
-          style={{ opacity: isDone ? 0.4 : 1 }}
           className={cn(
-            "p-4 border rounded-2xl my-1 flex-row items-center justify-between active:bg-neutral-800/80",
+            "p-4 border rounded-2xl my-1 flex-row items-center justify-between active:bg-neutral-800",
             isDone
-              ? "bg-neutral-950 border-emerald-500/20"
+              ? "bg-neutral-800/40 border-neutral-800"
               : "bg-neutral-900 border-neutral-800",
           )}
         >
@@ -89,13 +88,19 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
                 style={{ textDecorationLine: isDone ? "line-through" : "none" }}
                 className={cn(
                   "text-sm font-bold mb-1",
-                  isDone ? "text-neutral-500" : "text-neutral-100",
+                  isDone ? "text-neutral-400" : "text-neutral-100",
                 )}
               >
                 {item.title}
               </Text>
               {item.description && (
-                <Text className="text-xs text-neutral-500" numberOfLines={1}>
+                <Text
+                  className={cn(
+                    "text-xs",
+                    isDone ? "text-neutral-600" : "text-neutral-500",
+                  )}
+                  numberOfLines={1}
+                >
                   {item.description}
                 </Text>
               )}
