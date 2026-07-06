@@ -153,4 +153,6 @@ export const fa = {
     'عنوان پروژه را وارد کنید: "> project [Title]"',
   commandCreateProjectSubtitle: "برای ساخت پروژه کلید Enter را بزنید",
   commandGoProjectWithPayload: 'رفتن به پروژه: "{title}"',
+  or: "یا",
+  noAccount: "حساب کاربری ندارید? ثبت‌نام کنید.",
 };

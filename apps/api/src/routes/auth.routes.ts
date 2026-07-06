@@ -3,8 +3,10 @@ import { prisma } from '@freelanceos/database';
 import { jwtService } from '@/services/jwtService';
 import { validate } from '@/middleware/validate';
 import { createUserSchema } from '@/schemas/user';
+import { OAuth2Client } from 'google-auth-library';
 
 const router: Router = Router();
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 router.post('/register', validate(createUserSchema), async (req, res) => {
   const { email, password, name } = req.body;
@@ -79,6 +81,57 @@ router.post('/refresh', (req, res) => {
 
   const newAccessToken = jwtService.generateAccessToken(decoded.userId);
   return res.status(200).json({ accessToken: newAccessToken });
+});
+
+router.post('/google', async (req, res) => {
+  const { idToken } = req.body;
+  if (!idToken) {
+    return res.status(400).json({ message: 'idToken is required' });
+  }
+
+  try {
+    const ticket = await googleClient.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload || !payload.email) {
+      return res.status(400).json({ message: 'Invalid Google token payload' });
+    }
+    const { email, name } = payload;
+    let user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      const dummyPasswordHash = await jwtService.hashPassword(
+        Math.random().toString(36).substring(7),
+      );
+      user = await prisma.user.create({
+        data: {
+          email,
+          name: name || email.split('@')[0],
+          passwordHash: dummyPasswordHash,
+        },
+      });
+    }
+
+    const accessToken = jwtService.generateAccessToken(user.id);
+    const refreshToken = jwtService.generateRefreshToken(user.id);
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    return res.status(200).json({
+      user: { id: user.id, email: user.email, name: user.name },
+      accessToken,
+      refreshToken,
+    });
+  } catch (error) {
+    console.error('Google Auth Error:', error);
+    return res.status(401).json({ message: 'Google authentication failed' });
+  }
 });
 
 export { router as authRouter };

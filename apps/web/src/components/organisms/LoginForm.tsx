@@ -9,6 +9,9 @@ import { loginSchema, type LoginInput } from "@/schemas/auth";
 import { FormField } from "@/components/molecules/FormField";
 import { Button } from "@/components/atoms/Button";
 import { useRouter } from "next/navigation";
+import { GoogleLogin } from "@react-oauth/google";
+import { useMutation } from "@tanstack/react-query";
+import { apiClient } from "@/lib/apiClient";
 
 export const LoginForm: React.FC = () => {
   const { t } = useApp();
@@ -34,6 +37,19 @@ export const LoginForm: React.FC = () => {
       },
     });
   };
+
+  const googleMutation = useMutation({
+    mutationFn: async (idToken: string) => {
+      const res = await apiClient.post("/auth/google", { idToken });
+      return res.data;
+    },
+    onSuccess: (data) => {
+      if (data.accessToken) {
+        document.cookie = `token=${data.accessToken}; path=/; max-age=86400; SameSite=Strict; Secure`;
+        router.push("/dashboard");
+      }
+    },
+  });
 
   return (
     <div className="w-full max-w-sm space-y-6">
@@ -78,6 +94,29 @@ export const LoginForm: React.FC = () => {
             {loginMutation.isPending ? t.loading : t.loginButton}
           </Button>
         </form>
+
+        <div className="relative my-4 flex items-center justify-center">
+          <div className="absolute w-full border-t border-neutral-200 dark:border-neutral-800" />
+          <span className="relative bg-white dark:bg-neutral-900 px-3 text-xs text-neutral-400">
+            {t.or}
+          </span>
+        </div>
+
+        <div className="flex justify-center w-full">
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              if (credentialResponse.credential) {
+                googleMutation.mutate(credentialResponse.credential);
+              }
+            }}
+            onError={() => {
+              console.error("Google Sign-In failed");
+            }}
+            shape="pill"
+            width={200}
+            text="signin_with"
+          />
+        </div>
       </div>
     </div>
   );

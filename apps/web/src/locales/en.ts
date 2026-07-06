@@ -152,4 +152,6 @@ export const en = {
   commandCreateProjectPlaceholder: 'Type a title: "> project [Title]"',
   commandCreateProjectSubtitle: "Press Enter to build project",
   commandGoProjectWithPayload: 'Go to project: "{title}"',
+  or: "or",
+  noAccount: "Don't have an account? Sign Up",
 };
