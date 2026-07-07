@@ -3,12 +3,12 @@
 import { motion } from "framer-motion";
 
 interface LetterRevealProps {
-  text: string;
+  text?: string;
   active: boolean;
 }
 
-export function LetterReveal({ text, active }: LetterRevealProps) {
-  const letters = Array.from(text);
+export function LetterReveal({ text = "", active }: LetterRevealProps) {
+  const letters = Array.from(text || "");
 
   const containerVariants = {
     hidden: { opacity: 0 },

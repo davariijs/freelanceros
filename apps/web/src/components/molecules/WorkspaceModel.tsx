@@ -5,6 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import { useGLTF, Center } from "@react-three/drei";
 import * as THREE from "three";
 import { DeskLamp } from "@/components/molecules/DeskLamp";
+import { WorkTablet } from "@/components/molecules/WorkTablet";
 
 export function WorkspaceModel() {
   const { scene } = useGLTF("/models/workspace.glb");
@@ -38,6 +39,7 @@ export function WorkspaceModel() {
         <primitive object={scene} scale={1.5} />
       </Center>
       <DeskLamp />
+      <WorkTablet />
     </group>
   );
 }
