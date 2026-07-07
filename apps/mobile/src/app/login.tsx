@@ -14,18 +14,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter, Link } from "expo-router";
 import { useBiometrics } from "@/hooks/useBiometrics";
-import { useMobileTranslation } from "@/hooks/useMobileTranslation";
 import { secureStore } from "@/services/secureStore";
 import * as Haptics from "expo-haptics";
 import { Lock, Mail, Fingerprint, Eye, EyeOff } from "lucide-react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useApp } from "@/context/AppContext";
 
 export default function LoginScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const { t } = useMobileTranslation();
+
+  const { t, theme } = useApp();
+  const systemTheme = useColorScheme();
+  const isDark = theme === "system" ? systemTheme === "dark" : theme === "dark";
+
   const [isBiometricLoading, setIsBiometricLoading] = React.useState(false);
 
   const [showPassword, setShowPassword] = React.useState(false);
