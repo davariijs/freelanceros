@@ -1,11 +1,5 @@
 import * as React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Modal,
-  StyleSheet,
-} from "react-native";
+import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import { SyncStatus } from "@/components/atoms/SyncStatus";
 import { CircularProgress } from "@/components/atoms/CircularProgress";
 import { TodayTasksList } from "@/components/organisms/TodayTasksList";
@@ -29,7 +23,16 @@ import { widgetSync } from "@/services/widgetSync";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { toggleLocale, setTheme, theme, locale, t } = useApp();
+
+  const {
+    toggleLocale,
+    setTheme,
+    theme,
+    locale,
+    t,
+    isCommandOpen,
+    setIsCommandOpen,
+  } = useApp();
   const isDark = theme === "dark";
 
   const { data: tasks = [], isLoading } = useTasksQuery();
@@ -38,13 +41,21 @@ export default function HomeScreen() {
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
   const quickAddSheetRef = React.useRef<BottomSheet>(null);
 
+  React.useEffect(() => {
+    if (isCommandOpen) {
+      quickAddSheetRef.current?.snapToIndex(0);
+    } else {
+      quickAddSheetRef.current?.close();
+    }
+  }, [isCommandOpen]);
+
   const handleOpenQuickAdd = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    quickAddSheetRef.current?.snapToIndex(0);
+    setIsCommandOpen(true);
   };
 
   const handleCloseQuickAdd = () => {
-    quickAddSheetRef.current?.close();
+    setIsCommandOpen(false);
   };
 
   const handleLogout = async () => {
@@ -57,7 +68,7 @@ export default function HomeScreen() {
     return [...tasks].sort((a: Task, b: Task) => {
       if (a.status === "DONE" && b.status !== "DONE") return 1;
       if (a.status !== "DONE" && b.status === "DONE") return -1;
-      return 0;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
   }, [tasks]);
 
@@ -67,7 +78,7 @@ export default function HomeScreen() {
     return (completed / tasks.length) * 100;
   }, [tasks]);
 
-  const handleUpdateTaskStatus = (id: string, status: TaskStatus) => {
+  const handleCompleteTask = (id: string, status: TaskStatus) => {
     updateTaskMutation.mutate({ id, status });
   };
 
@@ -178,7 +189,7 @@ export default function HomeScreen() {
           ) : (
             <TodayTasksList
               tasks={todayTasks}
-              onUpdateStatus={handleUpdateTaskStatus}
+              onUpdateStatus={handleCompleteTask}
               onTaskPress={handleTaskPress}
             />
           )}

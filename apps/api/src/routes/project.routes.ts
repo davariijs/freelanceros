@@ -1,10 +1,112 @@
 import { Router } from 'express';
 import { prisma, ProjectStatus, TaskPriority } from '@freelanceos/database';
 import { authenticate, AuthenticatedRequest } from '@/middleware/auth';
+import { emailService } from '@/services/emailService';
 
 const router: Router = Router();
 
 router.use(authenticate);
+
+const checkAndLogSingleProjectDeadline = async (project: any) => {
+  if (project.status === 'COMPLETED' || !project.dueDate) return;
+
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const projectDate = new Date(project.dueDate);
+    projectDate.setHours(0, 0, 0, 0);
+
+    const isTomorrow = projectDate.getTime() === tomorrow.getTime();
+    const isToday = projectDate.getTime() === today.getTime();
+
+    console.log('[DEBUG DEADLINE SCAN]:', {
+      projectTitle: project.title,
+      todayStr: today.toISOString(),
+      tomorrowStr: tomorrow.toISOString(),
+      projectDateStr: projectDate.toISOString(),
+      isToday,
+      isTomorrow,
+    });
+
+    if (isTomorrow) {
+      const existingLog = await prisma.activityLog.findFirst({
+        where: {
+          action: 'PROJECT_DEADLINE_TOMORROW',
+          userId: project.userId,
+          metadata: { contains: project.id },
+          createdAt: { gte: today },
+        },
+      });
+
+      if (!existingLog) {
+        await prisma.activityLog.create({
+          data: {
+            action: 'PROJECT_DEADLINE_TOMORROW',
+            metadata: JSON.stringify({
+              projectId: project.id,
+              title: project.title,
+            }),
+            userId: project.userId,
+          },
+        });
+
+        try {
+          await emailService.sendProjectDeadlineWarning(
+            project.user?.email || '',
+            project.title,
+            true,
+          );
+        } catch (emailErr) {
+          console.error(
+            '[EMAIL ERROR]: Failed to send tomorrow deadline email:',
+            emailErr,
+          );
+        }
+      }
+    } else if (isToday) {
+      const existingLog = await prisma.activityLog.findFirst({
+        where: {
+          action: 'PROJECT_DEADLINE_TODAY',
+          userId: project.userId,
+          metadata: { contains: project.id },
+          createdAt: { gte: today },
+        },
+      });
+
+      if (!existingLog) {
+        await prisma.activityLog.create({
+          data: {
+            action: 'PROJECT_DEADLINE_TODAY',
+            metadata: JSON.stringify({
+              projectId: project.id,
+              title: project.title,
+            }),
+            userId: project.userId,
+          },
+        });
+
+        try {
+          await emailService.sendProjectDeadlineWarning(
+            project.user?.email || '',
+            project.title,
+            false,
+          );
+        } catch (emailErr) {
+          console.error(
+            '[EMAIL ERROR]: Failed to send today deadline email:',
+            emailErr,
+          );
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Failed to execute instant project deadline check:', error);
+  }
+};
 
 router.post('/', async (req: AuthenticatedRequest, res) => {
   const { title, description, status, dueDate, clientId, priority } = req.body;
@@ -20,6 +122,7 @@ router.post('/', async (req: AuthenticatedRequest, res) => {
         clientId,
         userId: req.userId!,
       },
+      include: { user: true },
     });
 
     await tx.activityLog.create({
@@ -32,6 +135,8 @@ router.post('/', async (req: AuthenticatedRequest, res) => {
 
     return project;
   });
+
+  await checkAndLogSingleProjectDeadline(result);
 
   return res.status(201).json(result);
 });
@@ -59,6 +164,7 @@ router.patch('/:id', async (req: AuthenticatedRequest, res) => {
         dueDate: dueDate ? new Date(dueDate) : undefined,
         clientId: clientId === 'NONE' ? null : clientId || undefined,
       },
+      include: { user: true },
     });
 
     if (status === 'COMPLETED') {
@@ -73,6 +179,8 @@ router.patch('/:id', async (req: AuthenticatedRequest, res) => {
 
     return project;
   });
+
+  await checkAndLogSingleProjectDeadline(result);
 
   return res.status(200).json(result);
 });

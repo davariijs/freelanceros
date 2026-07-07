@@ -9,6 +9,10 @@ import { loginSchema, type LoginInput } from "@/schemas/auth";
 import { FormField } from "@/components/molecules/FormField";
 import { Button } from "@/components/atoms/Button";
 import { useRouter } from "next/navigation";
+import { GoogleLogin } from "@react-oauth/google";
+import { useMutation } from "@tanstack/react-query";
+import { apiClient } from "@/lib/apiClient";
+import Link from "next/link";
 
 export const LoginForm: React.FC = () => {
   const { t } = useApp();
@@ -33,6 +37,31 @@ export const LoginForm: React.FC = () => {
         router.push("/dashboard");
       },
     });
+  };
+
+  const googleMutation = useMutation({
+    mutationFn: async (idToken: string) => {
+      const res = await apiClient.post("/auth/google", { idToken });
+      return res.data;
+    },
+    onSuccess: (data) => {
+      if (data.accessToken) {
+        document.cookie = `token=${data.accessToken}; path=/; max-age=86400; SameSite=Strict; Secure`;
+        router.push("/dashboard");
+      }
+    },
+  });
+
+  const getLoginErrorMessage = () => {
+    if (!loginMutation.error) return null;
+    const rawMsg =
+      (loginMutation.error as any).response?.data?.message ||
+      loginMutation.error.message ||
+      "";
+    if (rawMsg === "Invalid credentials") {
+      return t.errorInvalidCredentials;
+    }
+    return rawMsg;
   };
 
   return (
@@ -63,12 +92,22 @@ export const LoginForm: React.FC = () => {
           />
 
           {loginMutation.isError && (
-            <p role="alert" className="text-xs text-red-500 font-medium">
-              {loginMutation.error instanceof Error
-                ? loginMutation.error.message
-                : "Login failed"}
+            <p
+              role="alert"
+              className="text-xs text-red-500 font-bold text-center mt-2 animate-pulse"
+            >
+              {getLoginErrorMessage()}
             </p>
           )}
+
+          <div className="text-center">
+            <Link
+              href="/forgot-password"
+              className="text-xs text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 underline"
+            >
+              {t.forgotPasswordLink}
+            </Link>
+          </div>
 
           <Button
             type="submit"
@@ -78,6 +117,29 @@ export const LoginForm: React.FC = () => {
             {loginMutation.isPending ? t.loading : t.loginButton}
           </Button>
         </form>
+
+        <div className="relative my-4 flex items-center justify-center">
+          <div className="absolute w-full border-t border-neutral-200 dark:border-neutral-800" />
+          <span className="relative bg-white dark:bg-neutral-900 px-3 text-xs text-neutral-400">
+            {t.or}
+          </span>
+        </div>
+
+        <div className="flex justify-center w-full">
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              if (credentialResponse.credential) {
+                googleMutation.mutate(credentialResponse.credential);
+              }
+            }}
+            onError={() => {
+              console.error("Google Sign-In failed");
+            }}
+            shape="pill"
+            width={200}
+            text="signin_with"
+          />
+        </div>
       </div>
     </div>
   );
