@@ -177,4 +177,18 @@ export const fa = {
   verifying: "در حال بررسی...",
   activityProjectDeadlineTomorrow: "فردا ددلاین پروژه «{title}» است.",
   activityProjectDeadlineToday: "امروز آخرین مهلت تحویل پروژه «{title}» است!",
+  heroVersionBadge: "نسخه ۱.۰.۰ منتشر شد",
+  heroSubtitle:
+    "سیستم‌عامل جامع مدیریت فرآیندها ویژه فریلنسرهای مدرن. به صورت یکپارچه روابط با مشتریان را مدیریت کنید، جدول زمانی پروژه‌ها را ردیابی کنید، تسک‌ها را در بورد کانبان سازماندهی کنید و یادداشت‌های متصل بنویسید.",
+  accessDashboard: "ورود به پیشخوان",
+  learnMore: "اطلاعات بیشتر",
+  widgetActiveTitleLeft: "سیستم‌عامل",
+  widgetInactiveTitleLeft: "سیستم",
+  widgetActiveValueLeft: "فعال",
+  widgetInactiveValueLeft: "آماده‌به‌کار",
+  widgetActiveTitleRight: "جلسه تمرکز",
+  widgetInactiveTitleRight: "فضای‌کاری",
+  widgetActiveValueRight: "در حال اجرا",
+  widgetInactiveValueRight: "حالت استراحت",
+  scrollToExplore: "برای کاوش اسکرول کنید",
 };

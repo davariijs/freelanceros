@@ -5,11 +5,10 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useNotifications } from "@/hooks/useNotifications";
 import { notificationService } from "@/services/notificationService";
-import { useMobileTranslation } from "@/hooks/useMobileTranslation";
 import { ErrorBoundary } from "@/components/organisms/ErrorBoundary";
-import { AppProvider } from "@/context/AppContext";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import "../../global.css";
+import { AppProvider, useApp } from "@/context/AppContext";
+import { useColorScheme } from "react-native";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,21 +23,20 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ErrorBoundary>
-        <AppProvider initialLocale="en" initialTheme="dark">
-          <QueryClientProvider client={queryClient}>
-            <BottomSheetModalProvider>
-              <StatusBar style="auto" />
-              <AppContent />
-            </BottomSheetModalProvider>
-          </QueryClientProvider>
-        </AppProvider>
+        <QueryClientProvider client={queryClient}>
+          <AppProvider initialLocale="en" initialTheme="dark">
+            <AppContent />
+          </AppProvider>
+        </QueryClientProvider>
       </ErrorBoundary>
     </GestureHandlerRootView>
   );
 }
 
 function AppContent() {
-  const { t } = useMobileTranslation();
+  const { t, theme } = useApp();
+  const systemTheme = useColorScheme();
+  const isDark = theme === "system" ? systemTheme === "dark" : theme === "dark";
 
   useNotifications();
 
@@ -54,17 +52,21 @@ function AppContent() {
   }, [t]);
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: "#0a0a0a" },
-      }}
-    >
-      <Stack.Screen name="index" />
-      <Stack.Screen name="login" />
-      <Stack.Screen name="home" />
-      <Stack.Screen name="tasks/[taskId]" />
-      <Stack.Screen name="quick-add" />
-    </Stack>
+    <>
+      <StatusBar style={isDark ? "light" : "dark"} />
+
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: isDark ? "#0a0a0a" : "#f5f5f5" },
+        }}
+      >
+        <Stack.Screen name="index" />
+        <Stack.Screen name="login" />
+        <Stack.Screen name="home" />
+        <Stack.Screen name="tasks/[taskId]" />
+        <Stack.Screen name="quick-add" />
+      </Stack>
+    </>
   );
 }
