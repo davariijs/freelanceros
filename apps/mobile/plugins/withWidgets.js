@@ -33,7 +33,7 @@ const withWidgets = (config) => {
       const widgetInfoXml = `<?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="110dp"
-    android:minHeight="40dp"
+    android:minHeight="110dp"
     android:updatePeriodMillis="86400000"
     android:initialLayout="@layout/widget_layout"
     android:resizeMode="horizontal|vertical"
@@ -42,32 +42,51 @@ const withWidgets = (config) => {
       fs.writeFileSync(path.join(xmlDir, "widget_info.xml"), widgetInfoXml);
 
       const widgetLayoutXml = `<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="12dp"
+    android:orientation="vertical"
+    android:padding="16dp"
     android:background="#0a0a0a">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/widget_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FOS Today"
+            android:textColor="#737373"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true" />
+        <Button
+            android:id="@+id/btn_quick_add"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:text="+"
+            android:textSize="14sp"
+            android:textColor="#0a0a0a"
+            android:backgroundTint="#FFFFFF"
+            android:padding="0dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/widget_task_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="FOS Today"
+        android:layout_marginTop="16dp"
+        android:text="No tasks available today."
         android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="true" />
-    <Button
-        android:id="@+id/btn_quick_add"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:text="+"
-        android:textSize="18sp"
-        android:backgroundTint="#262626"
-        android:textColor="#FFFFFF"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true" />
-</RelativeLayout>`;
+        android:textSize="13sp"
+        android:lineSpacingExtra="4dp" />
+</LinearLayout>`;
       fs.writeFileSync(path.join(layoutDir, "widget_layout.xml"), widgetLayoutXml);
       const widgetCode = `
 package ${packageName}
@@ -91,8 +110,13 @@ class FreelanceOSWidget : AppWidgetProvider() {
                 val rawJson = sharedPref.getString("today_tasks_json", "[]")
                 val tasksArray = JSONArray(rawJson)
                 if (tasksArray.length() > 0) {
-                    val firstTask = tasksArray.getJSONObject(0)
-                    views.setTextViewText(R.id.widget_task_title, firstTask.getString("title"))
+                    val tasksText = StringBuilder()
+                    val maxCount = minOf(tasksArray.length(), 3)
+                    for (i in 0 until maxCount) {
+                        val task = tasksArray.getJSONObject(i)
+                        tasksText.append("• ").append(task.getString("title")).append("\\n")
+                    }
+                    views.setTextViewText(R.id.widget_task_title, tasksText.toString().trim())
                 } else {
                     views.setTextViewText(R.id.widget_task_title, "No tasks available today.")
                 }

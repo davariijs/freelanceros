@@ -26,6 +26,20 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
 }) => {
   const { t } = useApp();
 
+  const listRef = React.useRef<any>(null);
+  const prevFirstTaskId = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    if (tasks.length > 0) {
+      const firstTaskId = tasks[0].id;
+      if (prevFirstTaskId.current && prevFirstTaskId.current !== firstTaskId) {
+        setTimeout(() => {
+          listRef.current?.scrollToOffset({ offset: 0, animated: true });
+        }, 150);
+      }
+      prevFirstTaskId.current = firstTaskId;
+    }
+  }, [tasks]);
+
   const getPriorityStyles = (priority: string) => {
     switch (priority) {
       case "LOW":
@@ -58,10 +72,7 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
     const priorityColor = getPriorityStyles(item.priority);
 
     return (
-      <TaskSwipeableCard
-        task={item}
-        onUpdateStatus={onUpdateStatus}
-      >
+      <TaskSwipeableCard task={item} onUpdateStatus={onUpdateStatus}>
         <TouchableOpacity
           onPress={() => onTaskPress(item)}
           className={cn(
@@ -163,6 +174,7 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
         </View>
       ) : (
         <FlashList
+          ref={listRef}
           data={tasks}
           renderItem={renderItem}
           estimatedItemSize={76}

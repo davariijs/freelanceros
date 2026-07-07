@@ -88,6 +88,11 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
         enablePanDownToClose
         enableDynamicSizing={false}
         backdropComponent={renderBackdrop}
+        onChange={(index) => {
+          if (index === -1) {
+            onSuccess();
+          }
+        }}
         backgroundStyle={{
           backgroundColor: isDark ? "#0f0f0f" : "#ffffff",
         }}
@@ -111,7 +116,6 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
               onChangeText={setTitle}
               placeholder={t.placeholderQuickAddTask}
               placeholderTextColor="#737373"
-              autoFocus
             />
           </View>
 
