@@ -4,6 +4,8 @@ import {
   Text,
   TouchableOpacity,
   ActivityIndicator,
+  Keyboard,
+  BackHandler,
 } from "react-native";
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -23,7 +25,7 @@ interface QuickAddSheetProps {
 
 export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
   ({ onSuccess }, ref) => {
-    const { t, theme } = useApp();
+    const { t, theme, isCommandOpen } = useApp();
     const isDark = theme === "dark";
 
     const [title, setTitle] = React.useState("");
@@ -31,16 +33,33 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
       string | null
     >(null);
     const [isSaving, setIsLoading] = React.useState(false);
+    const [isOpen, setIsOpen] = React.useState(false);
+    const inputRef = React.useRef<any>(null);
 
     const { data: projects = [] } = useProjectsQuery();
     const createTaskMutation = useCreateTaskMutation();
 
     const snapPoints = React.useMemo(() => [300], []);
 
+    React.useEffect(() => {
+      if (isOpen) {
+        const backAction = () => {
+          onSuccess();
+          return true;
+        };
+        const backHandler = BackHandler.addEventListener(
+          "hardwareBackPress",
+          backAction,
+        );
+        return () => backHandler.remove();
+      }
+    }, [isOpen, onSuccess]);
+
     const handleSave = () => {
       if (!title.trim() || isSaving) return;
 
       setIsLoading(true);
+      Keyboard.dismiss();
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
       createTaskMutation.mutate(
@@ -87,9 +106,15 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
         snapPoints={snapPoints}
         enablePanDownToClose
         enableDynamicSizing={false}
-        backdropComponent={renderBackdrop}
+        backdropComponent={isCommandOpen ? renderBackdrop : undefined}
         onChange={(index) => {
-          if (index === -1) {
+          const isSheetOpen = index !== -1;
+          setIsOpen(isSheetOpen);
+          if (index === 0) {
+            setTimeout(() => {
+              inputRef.current?.focus();
+            }, 50);
+          } else if (index === -1) {
             onSuccess();
           }
         }}
@@ -111,6 +136,7 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
             className={`flex-row items-center border rounded-xl px-3 mb-2 h-12 ${isDark ? "border-neutral-800 bg-neutral-900/50" : "border-neutral-300 bg-neutral-50"}`}
           >
             <BottomSheetTextInput
+              ref={inputRef}
               className={`flex-1 text-sm h-full ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
               value={title}
               onChangeText={setTitle}
@@ -141,7 +167,7 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
                 color={isDark ? "#0a0a0a" : "#ffffff"}
               />
             ) : (
-              <View className="flex-row items-center">
+              <>
                 <Plus
                   size={16}
                   color={isDark ? "#0a0a0a" : "#ffffff"}
@@ -152,7 +178,7 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
                 >
                   {t.quickAddTitle}
                 </Text>
-              </View>
+              </>
             )}
           </TouchableOpacity>
         </BottomSheetView>
