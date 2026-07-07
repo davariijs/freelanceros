@@ -177,4 +177,19 @@ export const en = {
     "Tomorrow is the deadline for project: {title}",
   activityProjectDeadlineToday:
     "Today is the last day to deliver project: {title}!",
+  heroVersionBadge: "v1.0.0 is live",
+  heroTitle: "FreelanceOS",
+  heroSubtitle:
+    "The ultimate operations system designed for modern freelancers. Seamlessly manage client relationships, track project timelines, organize tasks on a dynamic Kanban board, and write connected notes in one unified workspace.",
+  learnMore: "Learn More",
+  accessDashboard: "Access Dashboard",
+  widgetActiveTitleLeft: "Operating System",
+  widgetInactiveTitleLeft: "System",
+  widgetActiveValueLeft: "ACTIVE",
+  widgetInactiveValueLeft: "STANDBY",
+  widgetActiveTitleRight: "Focus Session",
+  widgetInactiveTitleRight: "Workspace",
+  widgetActiveValueRight: "RUNNING",
+  widgetInactiveValueRight: "SLEEP MODE",
+  scrollToExplore: "Scroll to Explore",
 };
