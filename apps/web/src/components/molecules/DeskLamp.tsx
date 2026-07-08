@@ -55,35 +55,43 @@ export function DeskLamp() {
 
   return (
     <group
-      position={[-0.75, 0.08, -0.1]}
+      position={[-0.82, 0.15, -0.1]}
       rotation={[0, Math.PI / 4.2, 0]}
       onClick={handleToggle}
       onPointerOver={handlePointerOver}
       onPointerOut={handlePointerOut}
     >
-      <mesh position={[0, 0.007, 0]} castShadow receiveShadow>
-        <cylinderGeometry args={[0.08, 0.08, 0.015, 24]} />
-        <meshStandardMaterial color="#1a1a1a" roughness={0.6} />
+      {/* 1. Re-designed Solid Black Base Disc (Highly Visible) */}
+      <mesh position={[0, 0.015, 0]} castShadow receiveShadow>
+        <cylinderGeometry args={[0.09, 0.09, 0.03, 32]} />
+        <meshStandardMaterial color="#111111" roughness={0.7} />
       </mesh>
 
-      <group position={[0, 0.015, 0]} rotation={[0, 0, 0.25]}>
+      {/* 2. Lower Arm Group (Mounted precisely on top of Base Disc) */}
+      <group position={[0, 0.03, 0]} rotation={[0, 0, 0.25]}>
+        {/* Lower Arm Cylinder */}
         <mesh position={[0, 0.22, 0]} castShadow>
           <cylinderGeometry args={[0.01, 0.01, 0.44, 8]} />
           <meshStandardMaterial color="#decba4" roughness={0.8} />
         </mesh>
 
+        {/* 3. Middle Joint & Upper Arm Group */}
         <group position={[0, 0.44, 0]} rotation={[0, 0, -0.85]}>
+          {/* Middle Joint Knob */}
           <mesh position={[0, 0, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
             <cylinderGeometry args={[0.008, 0.008, 0.04, 8]} />
             <meshStandardMaterial color="#1a1a1a" roughness={0.6} />
           </mesh>
 
+          {/* Upper Arm Cylinder */}
           <mesh position={[0, 0.2, 0]} castShadow>
             <cylinderGeometry args={[0.009, 0.009, 0.4, 8]} />
             <meshStandardMaterial color="#decba4" roughness={0.8} />
           </mesh>
 
+          {/* 4. Top Joint & Lamp Head Group */}
           <group position={[0, 0.4, 0]} rotation={[0, 0, 0.6]}>
+            {/* Top Joint Knob */}
             <mesh
               position={[0, 0, 0]}
               rotation={[0, 0, Math.PI / 2]}
@@ -93,12 +101,15 @@ export function DeskLamp() {
               <meshStandardMaterial color="#1a1a1a" roughness={0.6} />
             </mesh>
 
+            {/* Lamp Head Assembly */}
             <group position={[0.01, -0.08, 0]} scale={1.3}>
+              {/* Black Socket Top */}
               <mesh position={[0, 0.1, 0]} castShadow>
                 <cylinderGeometry args={[0.022, 0.022, 0.06, 16]} />
                 <meshStandardMaterial color="#1a1a1a" roughness={0.7} />
               </mesh>
 
+              {/* Dome Shade */}
               <mesh rotation={[0, 0, 0]} castShadow>
                 <sphereGeometry
                   args={[0.09, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2]}
@@ -110,6 +121,7 @@ export function DeskLamp() {
                 />
               </mesh>
 
+              {/* Bulb */}
               <mesh position={[0, 0.02, 0]}>
                 <sphereGeometry args={[0.022, 16, 16]} />
                 <meshBasicMaterial
@@ -118,6 +130,7 @@ export function DeskLamp() {
                 />
               </mesh>
 
+              {/* SpotLight Source */}
               <spotLight
                 ref={spotLightRef}
                 position={[0, -0.04, 0]}

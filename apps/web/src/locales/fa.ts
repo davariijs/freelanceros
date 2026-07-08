@@ -190,5 +190,15 @@ export const fa = {
   widgetInactiveTitleRight: "فضای‌کاری",
   widgetActiveValueRight: "در حال اجرا",
   widgetInactiveValueRight: "حالت استراحت",
-  scrollToExplore: "برای کاوش اسکرول کنید",
+  leftScreenSystemCore: "هسته سیستم‌عامل",
+  leftScreenOsStatus: "وضعیت سیستم: آنلاین",
+  leftScreenActiveText: "امروز شروع کنید!",
+  leftScreenInactiveText: "فریلنس‌آس",
+
+  rightScreenTitle: "کنسول فضای‌کاری",
+  rightScreenEfficiency: "کارایی هفتگی",
+  rightScreenLog1: "> همگام‌سازی مشتریان: فعال",
+  rightScreenLog2: "> دیتابیس هماهنگ شد (پستگرس)",
+  rightScreenLog3: '> تسک "نسخه موبایل" انجام شد',
+  rightScreenAction: "برای ورود کلیک کنید",
 };

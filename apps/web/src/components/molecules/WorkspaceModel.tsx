@@ -6,10 +6,13 @@ import { useGLTF, Center } from "@react-three/drei";
 import * as THREE from "three";
 import { DeskLamp } from "@/components/molecules/DeskLamp";
 import { WorkTablet } from "@/components/molecules/WorkTablet";
+import { LeftScreen } from "@/components/atoms/LeftScreen";
+import { RightScreen } from "@/components/atoms/RightScreen";
 
 export function WorkspaceModel() {
   const { scene } = useGLTF("/models/workspace.glb");
   const groupRef = React.useRef<THREE.Group>(null);
+  const [isShifted, setIsShifted] = React.useState(false);
 
   useFrame((state) => {
     if (!groupRef.current) return;
@@ -31,6 +34,9 @@ export function WorkspaceModel() {
       targetY,
       0.05,
     );
+
+    const hasScroll = window.scrollY > 50;
+    setIsShifted(hasScroll);
   });
 
   return (
@@ -40,6 +46,8 @@ export function WorkspaceModel() {
       </Center>
       <DeskLamp />
       <WorkTablet />
+      <LeftScreen />
+      <RightScreen active={isShifted} />
     </group>
   );
 }

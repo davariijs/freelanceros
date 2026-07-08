@@ -192,4 +192,15 @@ export const en = {
   widgetActiveValueRight: "RUNNING",
   widgetInactiveValueRight: "SLEEP MODE",
   scrollToExplore: "Scroll to Explore",
+  leftScreenSystemCore: "SYSTEM CORE",
+  leftScreenOsStatus: "OS_STATUS: ONLINE",
+  leftScreenActiveText: "Start Today!",
+  leftScreenInactiveText: "FreelanceOS",
+
+  rightScreenTitle: "WORKSPACE CONSOLE",
+  rightScreenEfficiency: "WEEKLY EFFICIENCY",
+  rightScreenLog1: "> sync crm: active",
+  rightScreenLog2: "> database synced (postgres)",
+  rightScreenLog3: '> task "Acme Mobile" completed',
+  rightScreenAction: "CLICK TO LOGIN",
 };

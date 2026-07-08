@@ -73,9 +73,16 @@ export function HeroSection() {
         <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 text-center pointer-events-none">
           <motion.p
             animate={
-              osState === 0 ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }
+              osState === 0
+                ? { opacity: 1, y: [0, -14, 0] }
+                : { opacity: 0, y: 15 }
             }
-            className="text-xs font-bold tracking-widest uppercase text-neutral-400 animate-bounce"
+            transition={
+              osState === 0
+                ? { repeat: Infinity, duration: 1.4, ease: "easeInOut" }
+                : { duration: 0.3 }
+            }
+            className="text-xs font-bold tracking-widest uppercase text-neutral-400"
           >
             {t.scrollToExplore}
           </motion.p>
