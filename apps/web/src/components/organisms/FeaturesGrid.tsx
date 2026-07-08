@@ -43,7 +43,6 @@ export function FeaturesGrid({ osState }: FeaturesGridProps) {
       animate={active ? "visible" : "hidden"}
       className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-8 pointer-events-auto"
     >
-      {/* 1. Client CRM Card */}
       <motion.div variants={cardVariants} className="md:col-span-2 h-68">
         <BentoCard active={active} glowColor="rgba(16,185,129,0.18)">
           <div className={isRtl ? "text-right" : ""}>
@@ -62,7 +61,6 @@ export function FeaturesGrid({ osState }: FeaturesGridProps) {
             </p>
           </div>
 
-          {/* Re-designed Capsule-style CRM Simulator */}
           <div
             className={`rounded-2xl p-3 border flex justify-between items-center text-xs mt-4 ${
               isDark
@@ -100,7 +98,6 @@ export function FeaturesGrid({ osState }: FeaturesGridProps) {
         </BentoCard>
       </motion.div>
 
-      {/* 2. Kanban Task Board Card */}
       <motion.div variants={cardVariants} className="md:col-span-1 h-68">
         <BentoCard active={active} glowColor="rgba(56,189,248,0.18)">
           <div className={isRtl ? "text-right" : ""}>
@@ -119,7 +116,6 @@ export function FeaturesGrid({ osState }: FeaturesGridProps) {
             </p>
           </div>
 
-          {/* Re-designed high-fidelity Kanban Simulator */}
           <div className="flex gap-2 h-24 mt-4 select-none">
             <div
               className={`flex-1 rounded-xl p-1.5 border text-center flex flex-col justify-between ${isDark ? "bg-neutral-950/40 border-neutral-900" : "bg-white/40 border-neutral-200/50 shadow-sm"}`}
@@ -174,7 +170,6 @@ export function FeaturesGrid({ osState }: FeaturesGridProps) {
         </BentoCard>
       </motion.div>
 
-      {/* 3. Connected Rich Notes Card */}
       <motion.div variants={cardVariants} className="md:col-span-3 h-64">
         <BentoCard active={active} glowColor="rgba(99,102,241,0.18)">
           <div className="flex flex-col md:flex-row gap-6 items-center h-full justify-between w-full">
@@ -194,7 +189,6 @@ export function FeaturesGrid({ osState }: FeaturesGridProps) {
               </p>
             </div>
 
-            {/* Re-designed editorial-style Notes Paper Simulator */}
             <div
               className={`w-full md:w-80 rounded-2xl p-4 border flex flex-col justify-between h-36 font-mono md:order-1 ${
                 isDark
