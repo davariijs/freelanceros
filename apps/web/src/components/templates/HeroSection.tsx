@@ -100,13 +100,15 @@ export function HeroSection() {
           ctaPrimary={t.accessDashboard}
           ctaSecondary={t.learnMore}
         />
-
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      </div>
+      <div className="relative z-30 w-full flex flex-col items-center pointer-events-none">
+        <div className="h-screen w-full pointer-events-none" />
+        <div className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto">
           <FeaturesGrid osState={osState} />
         </div>
-      </div>
 
-      <div className="h-[300vh] w-full pointer-events-none relative z-30" />
+        <div className="h-[50vh] w-full pointer-events-none" />
+      </div>
     </div>
   );
 }
