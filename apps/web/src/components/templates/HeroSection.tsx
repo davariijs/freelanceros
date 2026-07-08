@@ -95,15 +95,21 @@ export function HeroSection() {
         <HeroContent
           active={osState === 1}
           exit={osState === 2}
-          title={t.heroTitle}
+          title="FreelanceOs"
           subtitle={t.heroSubtitle}
           ctaPrimary={t.accessDashboard}
           ctaSecondary={t.learnMore}
         />
       </div>
+
       <div className="relative z-30 w-full flex flex-col items-center pointer-events-none">
         <div className="h-screen w-full pointer-events-none" />
-        <div className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto">
+
+        <div
+          className={`min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent transition-all ${
+            osState === 2 ? "pointer-events-auto" : "pointer-events-none"
+          }`}
+        >
           <FeaturesGrid osState={osState} />
         </div>
 

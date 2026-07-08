@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useApp } from "@/context/AppContext";
 import { LetterReveal } from "@/components/molecules/LetterReveal";
 import { ShimmerButton } from "@/components/atoms/ShimmerButton";
 import { SlideFillButton } from "@/components/atoms/SlideFillButton";
@@ -23,6 +24,8 @@ export function HeroContent({
   ctaPrimary,
   ctaSecondary,
 }: HeroContentProps) {
+  const { locale } = useApp();
+
   const subtitleVariants = {
     hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
     visible: {
@@ -54,7 +57,9 @@ export function HeroContent({
       transition={{ type: "spring", stiffness: 75, damping: 16 }}
       className="absolute left-6 lg:left-32 z-20 max-w-xl text-left rtl:text-right flex flex-col items-start gap-6 pointer-events-auto"
     >
-      <LetterReveal text={title} active={active && !exit} />
+      <div dir="ltr" className="text-left w-full">
+        <LetterReveal text={title} active={active && !exit} />
+      </div>
 
       <motion.p
         variants={subtitleVariants}
