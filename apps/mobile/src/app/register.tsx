@@ -17,13 +17,24 @@ import * as Haptics from "expo-haptics";
 import { Lock, Mail, User, Eye, EyeOff, Globe } from "lucide-react-native";
 import axios from "axios";
 import { useApp } from "@/context/AppContext";
-import * as WebBrowser from "expo-web-browser";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { secureStore } from "@/services/secureStore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RegisterScreen() {
   const router = useRouter();
   const { t, theme } = useApp();
   const systemTheme = useColorScheme();
   const isDark = theme === "system" ? systemTheme === "dark" : theme === "dark";
+
+  React.useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB ||
+        "YOUR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com",
+      offlineAccess: true,
+    });
+  }, []);
 
   const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -81,18 +92,36 @@ export default function RegisterScreen() {
   const handleGoogleLogin = async () => {
     setIsGoogleLoading(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const googleClientId =
-      Platform.OS === "android"
-        ? process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_ANDROID
-        : process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_IOS;
 
     try {
-      await WebBrowser.openAuthSessionAsync(
-        `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${googleClientId}&scope=email%20profile`,
-        "freelanceos://",
-      );
-    } catch (error) {
-      console.error("Google Auth failed:", error);
+      await GoogleSignin.hasPlayServices();
+
+      const response = await GoogleSignin.signIn();
+      const idToken = response.data?.idToken;
+
+      if (idToken) {
+        const res = await axios.post(
+          `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000"}/api/auth/google`,
+          { idToken },
+        );
+
+        const { accessToken, refreshToken } = res.data;
+
+        if (accessToken && refreshToken) {
+          await secureStore.saveTokens(accessToken, refreshToken);
+          await AsyncStorage.removeItem("isAppLocked");
+
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+          router.replace("/home");
+        }
+      }
+    } catch (error: any) {
+      console.error("Google Sign-In Error:", error);
+
+      setApiError("Native Google sign-in was cancelled or failed.");
+
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     } finally {
       setIsGoogleLoading(false);
     }
