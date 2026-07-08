@@ -203,4 +203,28 @@ export const en = {
   rightScreenLog2: "> database synced (postgres)",
   rightScreenLog3: '> task "Acme Mobile" completed',
   rightScreenAction: "CLICK TO LOGIN",
+  bentoCrmTitle: "Active CRM Engine",
+  bentoCrmDesc:
+    "Centralize client relationships. Deactivating a client automatically pauses all associated projects instantly.",
+  bentoKanbanTitle: "Kanban Task Board",
+  bentoKanbanDesc:
+    "Track tasks on an elegant board with responsive drag-and-drop mechanics.",
+  bentoNotesTitle: "Connected Rich Notes",
+  bentoNotesDesc:
+    "Draft fluid text linked directly to tasks and clients with background saving.",
+  crmClientActive: "ACTIVE CLIENT",
+  crmClientInactive: "INACTIVE",
+  crmProjectRunning: "ACTIVE PROJECT",
+  crmProjectPaused: "PAUSED",
+  kanbanTodo: "Todo",
+  kanbanProgress: "In Progress",
+  kanbanDone: "Completed",
+  kanbanTask1: "Mobile Design UI",
+  kanbanTask2: "Setup PostgreSQL",
+  kanbanTask3: "Prisma Integration",
+
+  notesAutoSaving: "Saving in background...",
+  notesDocTitle: "Workspace Brief.txt",
+  notesDocContent:
+    "FreelanceOS allows you to sync CRM clients, manage active boards, and structure notes under a unified operations console.",
 };

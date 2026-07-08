@@ -4,7 +4,11 @@ import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
 import { WorkspaceModel } from "@/components/molecules/WorkspaceModel";
 
-export default function HeroCanvas() {
+interface HeroCanvasProps {
+  osState: 0 | 1 | 2;
+}
+
+export default function HeroCanvas({ osState }: HeroCanvasProps) {
   return (
     <div
       dir="ltr"
@@ -16,13 +20,12 @@ export default function HeroCanvas() {
         gl={{ antialias: true }}
       >
         <ambientLight intensity={1.5} />
-
         <directionalLight position={[5, 8, 5]} intensity={2.0} />
         <directionalLight position={[-5, 5, -5]} intensity={0.8} />
         <pointLight position={[0, 4, 0]} intensity={0.6} />
 
         <Suspense fallback={null}>
-          <WorkspaceModel />
+          <WorkspaceModel osState={osState} />
         </Suspense>
       </Canvas>
     </div>

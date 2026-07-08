@@ -28,6 +28,8 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useApp } from "@/context/AppContext";
 import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -44,6 +46,50 @@ export default function LoginScreen() {
   const [apiError, setApiError] = React.useState<string | null>(null);
 
   const { isCompatible, hasRecords, authenticateUser } = useBiometrics();
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB,
+    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_ANDROID,
+    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_IOS,
+  });
+
+  React.useEffect(() => {
+    async function handleGoogleResponse() {
+      if (response?.type === "success") {
+        const { authentication } = response;
+        if (authentication?.idToken) {
+          setIsGoogleLoading(true);
+          try {
+            const res = await axios.post(
+              `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000"}/api/auth/google`,
+              { idToken: authentication.idToken },
+            );
+
+            const { accessToken, refreshToken } = res.data;
+            if (accessToken && refreshToken) {
+              await secureStore.saveTokens(accessToken, refreshToken);
+              await AsyncStorage.removeItem("isAppLocked");
+              Haptics.notificationAsync(
+                Haptics.NotificationFeedbackType.Success,
+              );
+              router.replace("/home");
+            }
+          } catch (err: any) {
+            setApiError(
+              err.response?.data?.message || "Google Authentication Failed",
+            );
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+          } finally {
+            setIsGoogleLoading(false);
+          }
+        }
+      } else if (response?.type === "error") {
+        setApiError("Google Sign-In was cancelled or failed.");
+        setIsGoogleLoading(false);
+      }
+    }
+
+    handleGoogleResponse();
+  }, [response]);
 
   const loginSchema = z.object({
     email: z.string().email(t.emailRequired),
@@ -130,27 +176,12 @@ export default function LoginScreen() {
     setIsBiometricLoading(false);
   };
 
-  const handleGoogleLogin = async () => {
-    setIsGoogleLoading(true);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    try {
-      await WebBrowser.openAuthSessionAsync(
-        "https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=google_client_id&scope=email%20profile",
-        "freelanceos://",
-      );
-    } catch (error) {
-      console.error("Google Auth failed:", error);
-    } finally {
-      setIsGoogleLoading(false);
-    }
-  };
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className={`flex-1 justify-center px-6 ${isDark ? "bg-neutral-950" : "bg-neutral-50"}`}
     >
-      <View className="gap-y-6">
+      <View className="space-y-6">
         <View className="items-center mb-6">
           <Text
             className={`text-3xl font-extrabold tracking-tight ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
@@ -162,7 +193,7 @@ export default function LoginScreen() {
           </Text>
         </View>
 
-        <View className="gap-y-4 gap-2">
+        <View className="space-y-4 gap-2">
           <View>
             <Controller
               control={control}
@@ -265,10 +296,12 @@ export default function LoginScreen() {
             </Text>
           )}
         </TouchableOpacity>
-
         <TouchableOpacity
-          onPress={handleGoogleLogin}
-          disabled={isGoogleLoading}
+          onPress={() => {
+            setIsGoogleLoading(true);
+            promptAsync();
+          }}
+          disabled={!request || isGoogleLoading}
           className={`rounded-xl h-12 flex-row justify-center items-center border ${isDark ? "border-neutral-800 bg-neutral-900 active:bg-neutral-800" : "border-neutral-300 bg-white active:bg-neutral-100"}`}
         >
           {isGoogleLoading ? (

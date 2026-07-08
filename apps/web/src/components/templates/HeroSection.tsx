@@ -30,7 +30,7 @@ export function HeroSection() {
   }, [scrollY]);
 
   const getDeskAnimation = () => {
-    if (osState === 2) return { x: "22%", y: "-150px", opacity: 0 };
+    if (osState === 2) return { x: "22%", y: "-180px", opacity: 0 };
     if (osState === 1) return { x: "22%", y: "0px", opacity: 1 };
     return { x: "0%", y: "0px", opacity: 1 };
   };
@@ -70,7 +70,7 @@ export function HeroSection() {
             transition={{ type: "spring", stiffness: 60, damping: 16 }}
             className="w-full h-full flex items-center justify-center"
           >
-            <HeroCanvas />
+            <HeroCanvas osState={osState} />
           </motion.div>
         </div>
 
@@ -101,7 +101,9 @@ export function HeroSection() {
           ctaSecondary={t.learnMore}
         />
 
-        <FeaturesGrid active={osState === 2} />
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <FeaturesGrid osState={osState} />
+        </div>
       </div>
 
       <div className="h-[300vh] w-full pointer-events-none relative z-30" />

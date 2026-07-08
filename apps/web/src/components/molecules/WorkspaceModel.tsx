@@ -8,8 +8,15 @@ import { DeskLamp } from "@/components/molecules/DeskLamp";
 import { WorkTablet } from "@/components/molecules/WorkTablet";
 import { LeftScreen } from "@/components/atoms/LeftScreen";
 import { RightScreen } from "@/components/atoms/RightScreen";
+import { OrbitingRings } from "@/components/atoms/OrbitingRings";
+import { EnergyCables } from "@/components/atoms/EnergyCables";
+import { DeskPapers } from "@/components/atoms/DeskPapers";
 
-export function WorkspaceModel() {
+interface WorkspaceModelProps {
+  osState: 0 | 1 | 2;
+}
+
+export function WorkspaceModel({ osState }: WorkspaceModelProps) {
   const { scene } = useGLTF("/models/workspace.glb");
   const groupRef = React.useRef<THREE.Group>(null);
   const [isShifted, setIsShifted] = React.useState(false);
@@ -48,6 +55,10 @@ export function WorkspaceModel() {
       <WorkTablet />
       <LeftScreen />
       <RightScreen active={isShifted} />
+
+      <OrbitingRings />
+      <EnergyCables osState={osState} />
+      <DeskPapers osState={osState} />
     </group>
   );
 }
