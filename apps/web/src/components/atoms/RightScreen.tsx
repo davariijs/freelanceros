@@ -4,33 +4,22 @@ import * as React from "react";
 import { Html } from "@react-three/drei";
 import { motion, AnimatePresence } from "framer-motion";
 import { useApp } from "@/context/AppContext";
-import { ThreeEvent } from "@react-three/fiber";
 
-interface LeftScreenProps {
+interface RightScreenProps {
   active: boolean;
 }
 
-export function RightScreen({ active }: LeftScreenProps) {
+export function RightScreen({ active }: RightScreenProps) {
   const { t } = useApp();
 
   const text = active ? "Start Today!" : "FreelanceOS";
   const letters = Array.from(text);
 
-  const handleRedirect = (e: ThreeEvent<MouseEvent>) => {
-    e.stopPropagation();
+  const handleRedirect = () => {
     const hasToken = document.cookie
       .split("; ")
       .some((row) => row.startsWith("token="));
     window.location.href = hasToken ? "/dashboard" : "/login";
-  };
-
-  const handlePointerOver = (e: ThreeEvent<PointerEvent>) => {
-    e.stopPropagation();
-    document.body.style.cursor = "pointer";
-  };
-
-  const handlePointerOut = () => {
-    document.body.style.cursor = "auto";
   };
 
   const containerVariants = {
@@ -68,15 +57,12 @@ export function RightScreen({ active }: LeftScreenProps) {
   } as const;
 
   return (
-    <group
-      position={[-0.15, 0.94, 0.16]}
-      rotation={[0, -Math.PI * -0.9, 0]}
-      onClick={handleRedirect}
-      onPointerOver={handlePointerOver}
-      onPointerOut={handlePointerOut}
-    >
+    <group position={[-0.15, 0.94, 0.16]} rotation={[0, -Math.PI * -0.9, 0]}>
       <Html transform distanceFactor={0.8} className="select-none">
-        <div className="w-101 h-60 bg-neutral-950 border border-neutral-800 rounded-lg shadow-2xl overflow-hidden p-4 flex flex-col justify-between font-mono scale-[1.025] relative">
+        <div
+          onClick={handleRedirect}
+          className="w-101 h-60 bg-neutral-950 border border-neutral-800 rounded-lg shadow-2xl overflow-hidden p-4 flex flex-col justify-between font-mono scale-[1.025] relative cursor-pointer"
+        >
           <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0)_50%,rgba(0,0,0,0.4)_50%)] bg-size-[100%_4px] pointer-events-none z-20 opacity-80" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.06)_0%,transparent_100%)] z-0" />
 

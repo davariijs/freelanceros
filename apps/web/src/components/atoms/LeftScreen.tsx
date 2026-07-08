@@ -4,41 +4,25 @@ import * as React from "react";
 import { Html } from "@react-three/drei";
 import { motion } from "framer-motion";
 import { useApp } from "@/context/AppContext";
-import { ThreeEvent } from "@react-three/fiber";
 
 export function LeftScreen() {
   const { t, locale } = useApp();
   const isRtl = locale === "fa";
 
-  const handleRedirect = (e: ThreeEvent<MouseEvent>) => {
-    e.stopPropagation();
+  const handleRedirect = () => {
     const hasToken = document.cookie
       .split("; ")
       .some((row) => row.startsWith("token="));
     window.location.href = hasToken ? "/dashboard" : "/login";
   };
 
-  const handlePointerOver = (e: ThreeEvent<PointerEvent>) => {
-    e.stopPropagation();
-    document.body.style.cursor = "pointer";
-  };
-
-  const handlePointerOut = () => {
-    document.body.style.cursor = "auto";
-  };
-
   return (
-    <group
-      position={[0.64, 0.95, 0.14]}
-      rotation={[0, -Math.PI * 0.92, 0]}
-      onClick={handleRedirect}
-      onPointerOver={handlePointerOver}
-      onPointerOut={handlePointerOut}
-    >
+    <group position={[0.64, 0.95, 0.14]} rotation={[0, -Math.PI * 0.92, 0]}>
       <Html transform distanceFactor={0.8} className="select-none">
         <div
+          onClick={handleRedirect}
           dir="ltr"
-          className="w-103 h-59 bg-neutral-950 border border-neutral-800 rounded-lg shadow-2xl overflow-hidden p-4 flex flex-col justify-between font-mono scale-[1.025] relative"
+          className="w-103 h-59 bg-neutral-950 border border-neutral-800 rounded-lg shadow-2xl overflow-hidden p-4 flex flex-col justify-between font-mono scale-[1.025] relative cursor-pointer"
         >
           <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0)_50%,rgba(0,0,0,0.4)_50%)] bg-size-[100%_4px] pointer-events-none z-20 opacity-80" />
 
@@ -68,7 +52,6 @@ export function LeftScreen() {
             }}
             className="absolute inset-x-0 h-6 bg-linear-to-b from-transparent via-emerald-500/15 to-transparent z-10 pointer-events-none"
           />
-
           <div
             dir={isRtl ? "rtl" : "ltr"}
             className={`flex justify-between items-center border-b border-neutral-900 pb-2 z-10 ${isRtl ? "flex-row-reverse text-right" : "text-left"}`}

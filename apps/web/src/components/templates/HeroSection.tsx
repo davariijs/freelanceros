@@ -13,15 +13,15 @@ const HeroCanvas = dynamic(() => import("@/components/organisms/HeroCanvas"), {
 });
 
 export function HeroSection() {
-  const { t } = useApp();
+  const { t, locale } = useApp();
   const { scrollY } = useScroll();
   const [osState, setOsState] = React.useState<0 | 1 | 2>(0);
 
   React.useEffect(() => {
     return scrollY.on("change", (latest) => {
-      if (latest < 50) {
+      if (latest < 60) {
         setOsState(0);
-      } else if (latest >= 50 && latest < 450) {
+      } else if (latest >= 60 && latest < 750) {
         setOsState(1);
       } else {
         setOsState(2);
@@ -34,6 +34,10 @@ export function HeroSection() {
     if (osState === 1) return { x: "22%", y: "0px", opacity: 1 };
     return { x: "0%", y: "0px", opacity: 1 };
   };
+
+  const scrollText =
+    t.scrollToExplore ||
+    (locale === "fa" ? "برای کاوش اسکرول کنید" : "Scroll to Explore");
 
   return (
     <div className="relative w-full">
@@ -70,7 +74,7 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 text-center pointer-events-none">
+        <div className="absolute bottom-12 left-0 right-0 mx-auto w-fit z-10 text-center pointer-events-none">
           <motion.p
             animate={
               osState === 0
@@ -84,7 +88,7 @@ export function HeroSection() {
             }
             className="text-xs font-bold tracking-widest uppercase text-neutral-400"
           >
-            {t.scrollToExplore}
+            {scrollText}
           </motion.p>
         </div>
 
@@ -100,7 +104,7 @@ export function HeroSection() {
         <FeaturesGrid active={osState === 2} />
       </div>
 
-      <div className="h-[250vh] w-full pointer-events-none relative z-30" />
+      <div className="h-[300vh] w-full pointer-events-none relative z-30" />
     </div>
   );
 }
