@@ -16,25 +16,43 @@ import { useRouter, Link } from "expo-router";
 import { useBiometrics } from "@/hooks/useBiometrics";
 import { secureStore } from "@/services/secureStore";
 import * as Haptics from "expo-haptics";
-import { Lock, Mail, Fingerprint, Eye, EyeOff } from "lucide-react-native";
+import {
+  Lock,
+  Mail,
+  Fingerprint,
+  Eye,
+  EyeOff,
+  Globe,
+} from "lucide-react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useApp } from "@/context/AppContext";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 export default function LoginScreen() {
   const router = useRouter();
-
   const { t, theme } = useApp();
   const systemTheme = useColorScheme();
   const isDark = theme === "system" ? systemTheme === "dark" : theme === "dark";
 
   const [isBiometricLoading, setIsBiometricLoading] = React.useState(false);
-
   const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = React.useState(false);
   const [apiError, setApiError] = React.useState<string | null>(null);
 
   const { isCompatible, hasRecords, authenticateUser } = useBiometrics();
+
+  // ۱. پیکربندی بومی سرویس گوگل به محض لود شدن صفحه ورود
+  React.useEffect(() => {
+    GoogleSignin.configure({
+      // استفاده از شناسه کلاینت وب (Web Client ID) برای ارسال و تایید توکن در بک‌اند داکر
+      webClientId:
+        process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB ||
+        "YOUR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com",
+      offlineAccess: true,
+    });
+  }, []);
 
   const loginSchema = z.object({
     email: z.string().email(t.emailRequired),
@@ -92,7 +110,9 @@ export default function LoginScreen() {
     } catch (err: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       setApiError(
-        err.response?.data?.message || err.message || "Invalid credentials",
+        err.response?.data?.message === "Invalid credentials"
+          ? t.errorInvalidCredentials
+          : err.response?.data?.message || err.message,
       );
     } finally {
       setIsLoading(false);
@@ -119,12 +139,45 @@ export default function LoginScreen() {
     setIsBiometricLoading(false);
   };
 
+  const handleGoogleLogin = async () => {
+    setIsGoogleLoading(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    try {
+      await GoogleSignin.hasPlayServices();
+
+      const response = await GoogleSignin.signIn();
+      const idToken = response.data?.idToken;
+
+      if (idToken) {
+        const res = await axios.post(
+          `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000"}/api/auth/google`,
+          { idToken },
+        );
+
+        const { accessToken, refreshToken } = res.data;
+        if (accessToken && refreshToken) {
+          await secureStore.saveTokens(accessToken, refreshToken);
+          await AsyncStorage.removeItem("isAppLocked");
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          router.replace("/home");
+        }
+      }
+    } catch (error: any) {
+      console.error("Google Sign-In Error:", error);
+      setApiError("Native Google sign-in was cancelled or failed.");
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className={`flex-1 justify-center px-6 ${isDark ? "bg-neutral-950" : "bg-neutral-50"}`}
     >
-      <View className="space-y-6">
+      <View className="gap-y-6">
         <View className="items-center mb-6">
           <Text
             className={`text-3xl font-extrabold tracking-tight ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
@@ -136,7 +189,7 @@ export default function LoginScreen() {
           </Text>
         </View>
 
-        <View className="space-y-4 gap-2">
+        <View className="gap-y-4 gap-2">
           <View>
             <Controller
               control={control}
@@ -205,6 +258,16 @@ export default function LoginScreen() {
           </View>
         </View>
 
+        <View className="items-end px-1">
+          <Link href="/forgot-password" asChild>
+            <TouchableOpacity>
+              <Text className="text-xs text-neutral-500 underline">
+                {t.forgotPasswordLink}
+              </Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
+
         {apiError && (
           <Text className="text-xs text-red-500 font-bold text-center mt-2">
             {apiError}
@@ -227,6 +290,28 @@ export default function LoginScreen() {
             >
               {t.signInButton}
             </Text>
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleGoogleLogin}
+          disabled={isGoogleLoading}
+          className={`rounded-xl h-12 flex-row justify-center items-center border ${isDark ? "border-neutral-800 bg-neutral-900 active:bg-neutral-800" : "border-neutral-300 bg-white active:bg-neutral-100"}`}
+        >
+          {isGoogleLoading ? (
+            <ActivityIndicator size="small" color="#737373" />
+          ) : (
+            <>
+              <Globe
+                size={16}
+                color={isDark ? "#f5f5f5" : "#171717"}
+                style={{ marginRight: 8 }}
+              />
+              <Text
+                className={`font-bold text-sm ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
+              >
+                {t.continueWithGoogle}
+              </Text>
+            </>
           )}
         </TouchableOpacity>
 

@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "mobile",
-    "slug": "mobile",
+    "slug": "project",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -42,8 +42,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "892c1176-3bdc-4de8-9540-d2b12204b513"
+        "projectId": "d468192a-b3be-4d05-a81a-a8bdbe785088"
       }
-    }
+    },
+    "owner": "developerjsdev"
   }
 }

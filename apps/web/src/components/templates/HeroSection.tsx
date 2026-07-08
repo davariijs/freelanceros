@@ -13,15 +13,15 @@ const HeroCanvas = dynamic(() => import("@/components/organisms/HeroCanvas"), {
 });
 
 export function HeroSection() {
-  const { t } = useApp();
+  const { t, locale } = useApp();
   const { scrollY } = useScroll();
   const [osState, setOsState] = React.useState<0 | 1 | 2>(0);
 
   React.useEffect(() => {
     return scrollY.on("change", (latest) => {
-      if (latest < 50) {
+      if (latest < 60) {
         setOsState(0);
-      } else if (latest >= 50 && latest < 450) {
+      } else if (latest >= 60 && latest < 750) {
         setOsState(1);
       } else {
         setOsState(2);
@@ -30,10 +30,14 @@ export function HeroSection() {
   }, [scrollY]);
 
   const getDeskAnimation = () => {
-    if (osState === 2) return { x: "22%", y: "-150px", opacity: 0 };
+    if (osState === 2) return { x: "0%", y: "0px", opacity: 1 };
     if (osState === 1) return { x: "22%", y: "0px", opacity: 1 };
     return { x: "0%", y: "0px", opacity: 1 };
   };
+
+  const scrollText =
+    t.scrollToExplore ||
+    (locale === "fa" ? "برای کاوش اسکرول کنید" : "Scroll to Explore");
 
   return (
     <div className="relative w-full">
@@ -66,34 +70,51 @@ export function HeroSection() {
             transition={{ type: "spring", stiffness: 60, damping: 16 }}
             className="w-full h-full flex items-center justify-center"
           >
-            <HeroCanvas />
+            <HeroCanvas osState={osState} />
           </motion.div>
         </div>
 
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 text-center pointer-events-none">
+        <div className="absolute bottom-12 left-0 right-0 mx-auto w-fit z-10 text-center pointer-events-none">
           <motion.p
             animate={
-              osState === 0 ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }
+              osState === 0
+                ? { opacity: 1, y: [0, -14, 0] }
+                : { opacity: 0, y: 15 }
             }
-            className="text-xs font-bold tracking-widest uppercase text-neutral-400 animate-bounce"
+            transition={
+              osState === 0
+                ? { repeat: Infinity, duration: 1.4, ease: "easeInOut" }
+                : { duration: 0.3 }
+            }
+            className="text-xs font-bold tracking-widest uppercase text-neutral-400"
           >
-            {t.scrollToExplore}
+            {scrollText}
           </motion.p>
         </div>
 
         <HeroContent
           active={osState === 1}
           exit={osState === 2}
-          title={t.heroTitle}
+          title="FreelanceOs"
           subtitle={t.heroSubtitle}
           ctaPrimary={t.accessDashboard}
           ctaSecondary={t.learnMore}
         />
-
-        <FeaturesGrid active={osState === 2} />
       </div>
 
-      <div className="h-[250vh] w-full pointer-events-none relative z-30" />
+      <div className="relative z-30 w-full flex flex-col items-center pointer-events-none">
+        <div className="h-screen w-full pointer-events-none" />
+
+        <div
+          className={`min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent transition-all ${
+            osState === 2 ? "pointer-events-auto" : "pointer-events-none"
+          }`}
+        >
+          <FeaturesGrid osState={osState} />
+        </div>
+
+        <div className="h-[150vh] w-full pointer-events-none relative z-30" />
+      </div>
     </div>
   );
 }
