@@ -76,4 +76,6 @@ export const en = {
   forgotPasswordDesc: "Enter your email to receive a 6-digit recovery code.",
   verifyCodeDesc: "We sent a security code to {email}",
   sendCodeButton: "Send Security Code",
+  confirmEmailTitle: "Confirm Email",
+  confirmEmailDesc: "We sent a 6-digit verification code to {email}",
 };

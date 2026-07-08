@@ -80,20 +80,31 @@ export default function RegisterVerifyScreen() {
           <Text
             className={`text-lg font-black ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
           >
-            Confirm Email
+            {t.confirmEmailTitle || "Confirm Email"}
           </Text>
           <View className="w-10" />
         </View>
 
         <Text className="text-sm text-neutral-500 text-center px-4">
-          We sent a 6-digit verification code to {email}
+          {(
+            t.confirmEmailDesc ||
+            "We sent a 6-digit verification code to {email}"
+          ).replace("{email}", email)}
         </Text>
 
         <View className="gap-y-4">
           <View
-            className={`flex-row items-center border rounded-xl px-3 h-12 ${isDark ? "border-neutral-800 bg-neutral-900" : "border-neutral-300 bg-white"}`}
+            className={`relative flex-row items-center border rounded-xl px-3 h-12 ${
+              isDark
+                ? "border-neutral-800 bg-neutral-900"
+                : "border-neutral-300 bg-white"
+            }`}
           >
-            <KeyRound size={18} color="#737373" style={{ marginRight: 10 }} />
+            <KeyRound
+              size={18}
+              color="#737373"
+              style={{ position: "absolute", left: 12 }}
+            />
             <TextInput
               style={{ color: dynamicText, textAlign: "center" }}
               maxLength={6}
