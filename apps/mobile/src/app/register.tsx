@@ -13,12 +13,11 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter, Link } from "expo-router";
-import { secureStore } from "@/services/secureStore";
 import * as Haptics from "expo-haptics";
-import { Lock, Mail, User, Eye, EyeOff } from "lucide-react-native";
+import { Lock, Mail, User, Eye, EyeOff, Globe } from "lucide-react-native";
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useApp } from "@/context/AppContext";
+import * as WebBrowser from "expo-web-browser";
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -28,6 +27,7 @@ export default function RegisterScreen() {
 
   const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = React.useState(false);
   const [apiError, setApiError] = React.useState<string | null>(null);
 
   const registerSchema = z.object({
@@ -55,27 +55,46 @@ export default function RegisterScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     try {
-      const response = await axios.post(
-        `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000"}/api/auth/register`,
+      await axios.post(
+        `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/register-request`,
         data,
       );
 
-      const { accessToken, refreshToken } = response.data;
-      if (accessToken && refreshToken) {
-        await secureStore.saveTokens(accessToken, refreshToken);
-        await AsyncStorage.removeItem("isAppLocked");
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        router.replace("/home");
-      } else {
-        throw new Error("Invalid token payload received from server");
-      }
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      router.push({
+        pathname: "/register-verify",
+        params: { email: data.email },
+      });
     } catch (err: any) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       setApiError(
-        err.response?.data?.message || err.message || "Registration failed",
+        err.response?.data?.message === "User already exists"
+          ? t.errorUserExists
+          : err.response?.data?.message || err.message || "Registration failed",
       );
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setIsGoogleLoading(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    const googleClientId =
+      Platform.OS === "android"
+        ? process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_ANDROID
+        : process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_IOS;
+
+    try {
+      await WebBrowser.openAuthSessionAsync(
+        `https://accounts.google.com/o/oauth2/v2/auth?response_type=token&client_id=${googleClientId}&scope=email%20profile`,
+        "freelanceos://",
+      );
+    } catch (error) {
+      console.error("Google Auth failed:", error);
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -84,8 +103,8 @@ export default function RegisterScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className={`flex-1 justify-center px-6 ${isDark ? "bg-neutral-950" : "bg-neutral-50"}`}
     >
-      <View className="space-y-6">
-        <View className="items-center mb-6">
+      <View className="gap-y-6">
+        <View className="items-center">
           <Text
             className={`text-3xl font-extrabold tracking-tight ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
           >
@@ -96,7 +115,7 @@ export default function RegisterScreen() {
           </Text>
         </View>
 
-        <View className="space-y-4 gap-2">
+        <View className="gap-y-4">
           <View>
             <Controller
               control={control}
@@ -214,6 +233,28 @@ export default function RegisterScreen() {
             >
               {t.signUpButton}
             </Text>
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleGoogleLogin}
+          disabled={isGoogleLoading}
+          className={`rounded-xl h-12 flex-row justify-center items-center border ${isDark ? "border-neutral-800 bg-neutral-900 active:bg-neutral-800" : "border-neutral-300 bg-white active:bg-neutral-100"}`}
+        >
+          {isGoogleLoading ? (
+            <ActivityIndicator size="small" color="#737373" />
+          ) : (
+            <>
+              <Globe
+                size={16}
+                color={isDark ? "#f5f5f5" : "#171717"}
+                style={{ marginRight: 8 }}
+              />
+              <Text
+                className={`font-bold text-sm ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
+              >
+                {t.continueWithGoogle}
+              </Text>
+            </>
           )}
         </TouchableOpacity>
 

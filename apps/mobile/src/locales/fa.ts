@@ -67,4 +67,16 @@ export const fa = {
   noProject: "بدون پروژه",
   completed: "انجام شد",
   inProgress: "در حال انجام",
+  errorInvalidCredentials: "آدرس ایمیل یا رمز عبور وارد شده اشتباه است.",
+  forgotPasswordLink: "رمز عبور خود را فراموش کرده‌اید؟",
+  continueWithGoogle: "ورود با حساب گوگل",
+  errorUserExists: "کاربری با این آدرس ایمیل قبلاً در سیستم ثبت‌نام کرده است.",
+  confirmAccountButton: "تایید نهایی حساب کاربری",
+  changeRegisterInfo: "← تغییر اطلاعات ورودی ثبت‌نام",
+  forgotPasswordTitle: "بازیابی کلمه عبور",
+  verifyCodeTitle: "تایید کد امنیتی",
+  forgotPasswordDesc:
+    "آدرس ایمیل خود را جهت دریافت کد ۶ رقمی امنیتی بازیابی وارد کنید.",
+  verifyCodeDesc: "ما یک کد امنیتی بازیابی به ایمیل {email} ارسال کردیم.",
+  sendCodeButton: "ارسال کد امنیتی بازیابی",
 };
