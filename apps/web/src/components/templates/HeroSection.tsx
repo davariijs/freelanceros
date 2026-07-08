@@ -30,7 +30,7 @@ export function HeroSection() {
   }, [scrollY]);
 
   const getDeskAnimation = () => {
-    if (osState === 2) return { x: "22%", y: "-180px", opacity: 0 };
+    if (osState === 2) return { x: "0%", y: "0px", opacity: 1 };
     if (osState === 1) return { x: "22%", y: "0px", opacity: 1 };
     return { x: "0%", y: "0px", opacity: 1 };
   };
@@ -113,7 +113,7 @@ export function HeroSection() {
           <FeaturesGrid osState={osState} />
         </div>
 
-        <div className="h-[50vh] w-full pointer-events-none" />
+        <div className="h-[150vh] w-full pointer-events-none relative z-30" />
       </div>
     </div>
   );

@@ -22,10 +22,13 @@ export function BentoCard({
   const { theme } = useApp();
   const isDark = theme === "dark";
 
+  const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
+  const [hovered, setHovered] = React.useState(false);
+
   const rotateX = useTransform(y, [-0.5, 0.5], [10, -10]);
   const rotateY = useTransform(x, [-0.5, 0.5], [-10, 10]);
 
-  const springConfig = { damping: 25, stiffness: 220 };
+  const springConfig = { damping: 16, stiffness: 450 };
   const xSpring = useSpring(rotateX, springConfig);
   const ySpring = useSpring(rotateY, springConfig);
 
@@ -33,8 +36,13 @@ export function BentoCard({
     const rect = e.currentTarget.getBoundingClientRect();
     const width = rect.width;
     const height = rect.height;
+
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
+
+    setMousePos({ x: mouseX, y: mouseY });
+    setHovered(true);
+
     const rX = mouseY / height - 0.5;
     const rY = mouseX / width - 0.5;
     x.set(rX);
@@ -44,6 +52,7 @@ export function BentoCard({
   const handleMouseLeave = () => {
     x.set(0);
     y.set(0);
+    setHovered(false);
   };
 
   const getBorderGlow = () => {
@@ -66,18 +75,25 @@ export function BentoCard({
         isDark
           ? "bg-[#09090e]/85 text-neutral-50"
           : "bg-white/92 text-neutral-900"
-      } ${getBorderGlow()} ${className}`}
+      } ${getBorderGlow()} ${className} group`}
     >
-      {isDark && (
-        <div
-          className="absolute -top-20 -left-20 w-44 h-48 rounded-full opacity-60 blur-3xl pointer-events-none"
-          style={{ backgroundColor: glowColor.replace("0.15", "0.08") }}
-        />
-      )}
+      <div
+        className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{
+          background: `radial-gradient(130px circle at ${mousePos.x}px ${mousePos.y}px, ${
+            isDark ? "rgba(16,185,129,0.12)" : "rgba(16,185,129,0.08)"
+          }, transparent 80%)`,
+        }}
+      />
+
+      <div
+        className="absolute w-36 h-36 border border-emerald-500/30 bg-emerald-500/3 rounded-full pointer-events-none blur-[0.5px] transition-transform duration-75 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 group-hover:scale-110 z-0 shadow-[0_0_30px_rgba(16,185,129,0.08)]"
+        style={{ left: mousePos.x, top: mousePos.y }}
+      />
 
       <div
         style={{ transform: "translateZ(30px)" }}
-        className="h-full flex flex-col justify-between relative z-10"
+        className="h-full flex flex-col justify-between relative z-10 transition-transform duration-500 ease-out group-hover:scale-[1.025]"
       >
         {children}
       </div>

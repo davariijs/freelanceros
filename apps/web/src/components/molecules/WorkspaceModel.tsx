@@ -10,6 +10,7 @@ import { LeftScreen } from "@/components/atoms/LeftScreen";
 import { RightScreen } from "@/components/atoms/RightScreen";
 import { OrbitingRings } from "@/components/atoms/OrbitingRings";
 import { DeskPapers } from "@/components/atoms/DeskPapers";
+import { CompanionBot } from "@/components/atoms/CompanionBot";
 
 interface WorkspaceModelProps {
   osState: 0 | 1 | 2;
@@ -26,7 +27,18 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
 
     const elapsed = state.clock.getElapsedTime();
 
-    mainGroupRef.current.position.y = Math.sin(elapsed * 1.0) * 0.08 + 0.3;
+    let targetMainY = 0.3;
+    if (osState === 2) {
+      targetMainY = 0.0;
+    } else {
+      targetMainY = Math.sin(elapsed * 1.0) * 0.08 + 0.3;
+    }
+
+    mainGroupRef.current.position.y = THREE.MathUtils.lerp(
+      mainGroupRef.current.position.y,
+      targetMainY,
+      0.08,
+    );
 
     const targetX = state.pointer.y * 0.1;
     const targetY = state.pointer.x * 0.15 + Math.PI * 0.9;
@@ -76,19 +88,23 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
 
   return (
     <group ref={mainGroupRef}>
-      <group ref={deskGroupRef}>
+      <group ref={deskGroupRef} visible={osState !== 2}>
         <Center>
           <primitive object={scene} scale={1.5} />
         </Center>
         <DeskLamp />
         <WorkTablet />
-        <LeftScreen />
-        <RightScreen active={isShifted} />
+        {osState !== 2 && (
+          <>
+            <LeftScreen/>
+            <RightScreen active={isShifted} />
+            <DeskPapers osState={osState} />
+          </>
+        )}
       </group>
 
       <OrbitingRings />
-
-      <DeskPapers osState={osState} />
+      <CompanionBot osState={osState} />
     </group>
   );
 }
