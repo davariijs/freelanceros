@@ -4,6 +4,7 @@ import * as React from "react";
 import { Html } from "@react-three/drei";
 import { motion, AnimatePresence } from "framer-motion";
 import { useApp } from "@/context/AppContext";
+import { ThreeEvent } from "@react-three/fiber";
 
 interface LeftScreenProps {
   active: boolean;
@@ -12,8 +13,25 @@ interface LeftScreenProps {
 export function RightScreen({ active }: LeftScreenProps) {
   const { t } = useApp();
 
-  const text = active ? t.leftScreenActiveText : t.leftScreenInactiveText;
-  const letters = Array.from(text || "");
+  const text = active ? "Start Today!" : "FreelanceOS";
+  const letters = Array.from(text);
+
+  const handleRedirect = (e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
+    const hasToken = document.cookie
+      .split("; ")
+      .some((row) => row.startsWith("token="));
+    window.location.href = hasToken ? "/dashboard" : "/login";
+  };
+
+  const handlePointerOver = (e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation();
+    document.body.style.cursor = "pointer";
+  };
+
+  const handlePointerOut = () => {
+    document.body.style.cursor = "auto";
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -50,12 +68,14 @@ export function RightScreen({ active }: LeftScreenProps) {
   } as const;
 
   return (
-    <group position={[-0.15, 0.95, 0.16]} rotation={[0, -Math.PI * -0.9, 0]}>
-      <Html
-        transform
-        distanceFactor={0.8}
-        className="pointer-events-none select-none"
-      >
+    <group
+      position={[-0.15, 0.94, 0.16]}
+      rotation={[0, -Math.PI * -0.9, 0]}
+      onClick={handleRedirect}
+      onPointerOver={handlePointerOver}
+      onPointerOut={handlePointerOut}
+    >
+      <Html transform distanceFactor={0.8} className="select-none">
         <div className="w-101 h-60 bg-neutral-950 border border-neutral-800 rounded-lg shadow-2xl overflow-hidden p-4 flex flex-col justify-between font-mono scale-[1.025] relative">
           <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0)_50%,rgba(0,0,0,0.4)_50%)] bg-size-[100%_4px] pointer-events-none z-20 opacity-80" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.06)_0%,transparent_100%)] z-0" />
@@ -108,7 +128,7 @@ export function RightScreen({ active }: LeftScreenProps) {
                   <motion.span
                     key={index}
                     variants={letterVariants}
-                    className="text-3xl font-black tracking-wider text-emerald-500 drop-shadow-[0_0_10px_rgba(16,185,129,0.6)]"
+                    className="text-3xl font-black tracking-wider text-emerald-500 drop-shadow-[0_0_12px_rgba(16,185,129,0.6)]"
                   >
                     {char === " " ? "\u00A0" : char}
                   </motion.span>

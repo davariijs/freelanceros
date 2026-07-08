@@ -4,15 +4,22 @@ import * as React from "react";
 import { Html } from "@react-three/drei";
 import { motion } from "framer-motion";
 import { useApp } from "@/context/AppContext";
+import { ThreeEvent } from "@react-three/fiber";
 
 export function LeftScreen() {
-  const { t } = useApp();
+  const { t, locale } = useApp();
+  const isRtl = locale === "fa";
 
-  const handleRedirect = () => {
-    window.location.href = "/login";
+  const handleRedirect = (e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
+    const hasToken = document.cookie
+      .split("; ")
+      .some((row) => row.startsWith("token="));
+    window.location.href = hasToken ? "/dashboard" : "/login";
   };
 
-  const handlePointerOver = () => {
+  const handlePointerOver = (e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation();
     document.body.style.cursor = "pointer";
   };
 
@@ -29,7 +36,10 @@ export function LeftScreen() {
       onPointerOut={handlePointerOut}
     >
       <Html transform distanceFactor={0.8} className="select-none">
-        <div className="w-103 h-59 bg-neutral-950 border border-neutral-800 rounded-lg shadow-2xl overflow-hidden p-4 flex flex-col justify-between font-mono scale-[1.025] relative">
+        <div
+          dir="ltr"
+          className="w-103 h-59 bg-neutral-950 border border-neutral-800 rounded-lg shadow-2xl overflow-hidden p-4 flex flex-col justify-between font-mono scale-[1.025] relative"
+        >
           <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0)_50%,rgba(0,0,0,0.4)_50%)] bg-size-[100%_4px] pointer-events-none z-20 opacity-80" />
 
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.06)_0%,transparent_100%)] z-0" />
@@ -59,14 +69,20 @@ export function LeftScreen() {
             className="absolute inset-x-0 h-6 bg-linear-to-b from-transparent via-emerald-500/15 to-transparent z-10 pointer-events-none"
           />
 
-          <div className="flex justify-between items-center border-b border-neutral-900 pb-2 z-10">
+          <div
+            dir={isRtl ? "rtl" : "ltr"}
+            className={`flex justify-between items-center border-b border-neutral-900 pb-2 z-10 ${isRtl ? "flex-row-reverse text-right" : "text-left"}`}
+          >
             <span className="text-[10px] font-black text-neutral-400">
               {t.rightScreenTitle}
             </span>
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
           </div>
 
-          <div className="flex gap-4 items-center my-3 z-10">
+          <div
+            dir={isRtl ? "rtl" : "ltr"}
+            className={`flex gap-4 items-center my-3 z-10 ${isRtl ? "flex-row-reverse text-right" : "text-left"}`}
+          >
             <div className="flex-1 flex flex-col gap-1">
               <span className="text-[9px] text-neutral-500 font-bold tracking-wider">
                 {t.rightScreenEfficiency}
@@ -99,7 +115,10 @@ export function LeftScreen() {
             </div>
           </div>
 
-          <div className="flex-1 bg-neutral-900/40 border border-neutral-800/30 rounded p-2.5 flex flex-col gap-1 overflow-hidden text-[9px] z-10">
+          <div
+            dir={isRtl ? "rtl" : "ltr"}
+            className={`flex-1 bg-neutral-900/40 border border-neutral-800/30 rounded p-2.5 flex flex-col gap-1 overflow-hidden text-[9px] z-10 ${isRtl ? "text-right items-end" : "text-left items-start"}`}
+          >
             <motion.span
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}

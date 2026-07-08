@@ -6,7 +6,11 @@ import { WorkspaceModel } from "@/components/molecules/WorkspaceModel";
 
 export default function HeroCanvas() {
   return (
-    <div className="w-full h-full absolute inset-0">
+    <div
+      dir="ltr"
+      style={{ direction: "ltr" }}
+      className="w-full h-full absolute inset-0"
+    >
       <Canvas
         camera={{ position: [0, 1.5, 4.5], fov: 40 }}
         gl={{ antialias: true }}
