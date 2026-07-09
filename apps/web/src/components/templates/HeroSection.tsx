@@ -30,7 +30,7 @@ export function HeroSection() {
   }, [scrollY]);
 
   const getDeskAnimation = () => {
-    if (osState === 2) return { x: "0%", y: "0px", opacity: 1 };
+    if (osState === 2) return { x: "0%", y: "-180px", opacity: 1 };
     if (osState === 1) return { x: "22%", y: "0px", opacity: 1 };
     return { x: "0%", y: "0px", opacity: 1 };
   };
@@ -41,7 +41,9 @@ export function HeroSection() {
 
   return (
     <div className="relative w-full">
-      <div className="fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-40 pointer-events-none">
+      <div
+        className={`fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-40 pointer-events-none`}
+      >
         <SystemWidget
           active={osState > 0}
           activeColor="bg-emerald-500"
@@ -50,7 +52,7 @@ export function HeroSection() {
           inactiveTitle={t.widgetInactiveTitleLeft}
           activeValue={t.widgetActiveValueLeft}
           inactiveValue={t.widgetInactiveValueLeft}
-          className="top-12 left-6 lg:left-12 pointer-events-auto"
+          className={`top-12 left-6 lg:left-12 ${osState === 2 ? "pointer-events-none" : "pointer-events-auto"}`}
         />
 
         <SystemWidget
@@ -61,7 +63,7 @@ export function HeroSection() {
           inactiveTitle={t.widgetInactiveTitleRight}
           activeValue={t.widgetActiveValueRight}
           inactiveValue={t.widgetInactiveValueRight}
-          className="top-12 right-6 lg:right-12 pointer-events-auto"
+          className={`top-12 right-6 lg:right-12 ${osState === 2 ? "pointer-events-none" : "pointer-events-auto"}`}
         />
 
         <div className="absolute inset-0 w-full h-full overflow-hidden">
@@ -74,7 +76,7 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-        <div className="absolute bottom-12 left-0 right-0 mx-auto w-fit z-10 text-center pointer-events-none">
+        <div className="absolute bottom-12 left-0 right-0 mx-auto w-fit text-center pointer-events-none">
           <motion.p
             animate={
               osState === 0
@@ -92,17 +94,19 @@ export function HeroSection() {
           </motion.p>
         </div>
 
-        <HeroContent
-          active={osState === 1}
-          exit={osState === 2}
-          title="FreelanceOs"
-          subtitle={t.heroSubtitle}
-          ctaPrimary={t.accessDashboard}
-          ctaSecondary={t.learnMore}
-        />
+        {osState !== 2 && (
+          <HeroContent
+            active={osState === 1}
+            exit={false}
+            title="FreelanceOs"
+            subtitle={t.heroSubtitle}
+            ctaPrimary={t.accessDashboard}
+            ctaSecondary={t.learnMore}
+          />
+        )}
       </div>
 
-      <div className="relative z-10 w-full flex flex-col items-center">
+      <div className="relative z-30 w-full flex flex-col items-center pointer-events-none">
         <div className="h-screen w-full pointer-events-none" />
 
         <div
