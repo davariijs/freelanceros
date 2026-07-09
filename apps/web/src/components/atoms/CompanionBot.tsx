@@ -35,9 +35,8 @@ export function CompanionBot({ osState }: CompanionBotProps) {
         legRot: 0,
         armRot: 0.2,
       },
-      // Mathematically aligned to sit exactly on top of Card 1 [-1.1, -0.1, 1.4] with matching perspective!
       state2: {
-        pos: new THREE.Vector3(-1.1, 0.12, 1.41),
+        pos: new THREE.Vector3(-1.1, 0.42, 1.41),
         rot: new THREE.Euler(0, -Math.PI * 0.85, 0),
         legRot: 0,
         armRot: 0.5,

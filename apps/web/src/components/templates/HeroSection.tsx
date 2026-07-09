@@ -41,7 +41,7 @@ export function HeroSection() {
 
   return (
     <div className="relative w-full">
-      <div className="fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-10">
+      <div className="fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-40 pointer-events-none">
         <SystemWidget
           active={osState > 0}
           activeColor="bg-emerald-500"
@@ -50,7 +50,7 @@ export function HeroSection() {
           inactiveTitle={t.widgetInactiveTitleLeft}
           activeValue={t.widgetActiveValueLeft}
           inactiveValue={t.widgetInactiveValueLeft}
-          className="top-12 left-6 lg:left-12"
+          className="top-12 left-6 lg:left-12 pointer-events-auto"
         />
 
         <SystemWidget
@@ -61,7 +61,7 @@ export function HeroSection() {
           inactiveTitle={t.widgetInactiveTitleRight}
           activeValue={t.widgetActiveValueRight}
           inactiveValue={t.widgetInactiveValueRight}
-          className="top-12 right-6 lg:right-12"
+          className="top-12 right-6 lg:right-12 pointer-events-auto"
         />
 
         <div className="absolute inset-0 w-full h-full overflow-hidden">
@@ -102,18 +102,16 @@ export function HeroSection() {
         />
       </div>
 
-      <div className="relative z-30 w-full flex flex-col items-center pointer-events-none">
+      <div className="relative z-10 w-full flex flex-col items-center">
         <div className="h-screen w-full pointer-events-none" />
 
         <div
-          className={`min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent transition-all ${
-            osState === 2 ? "pointer-events-auto" : "pointer-events-none"
-          }`}
+          className={`min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent transition-all pointer-events-auto`}
         >
           <FeaturesGrid osState={osState} />
         </div>
 
-        <div className="h-[150vh] w-full pointer-events-none relative z-30" />
+        <div className="h-[50vh] w-full pointer-events-none relative z-30" />
       </div>
     </div>
   );

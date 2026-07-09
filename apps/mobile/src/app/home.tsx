@@ -20,6 +20,7 @@ import { SkeletonCard } from "@/components/atoms/SkeletonCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useApp } from "@/context/AppContext";
 import { widgetSync } from "@/services/widgetSync";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -60,6 +61,12 @@ export default function HomeScreen() {
 
   const handleLogout = async () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    try {
+      await GoogleSignin.signOut();
+    } catch (e) {
+      console.log("Google SignOut info:", e);
+    }
+
     await AsyncStorage.setItem("isAppLocked", "true");
     router.replace("/login");
   };
