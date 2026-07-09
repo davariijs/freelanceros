@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useFrame } from "@react-three/fiber";
+import { Text, RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
 import { useApp } from "@/context/AppContext";
 
@@ -40,7 +41,7 @@ export function CompanionBot({ osState }: CompanionBotProps) {
         pos: new THREE.Vector3(-1.1, 0.12, 1.41),
         rot: new THREE.Euler(0, -Math.PI * 1.4, 0),
         legRot: 0,
-        armRot: 0.5,
+        armRot: 0.3,
       },
     }),
     [],
@@ -149,63 +150,187 @@ export function CompanionBot({ osState }: CompanionBotProps) {
 
   return (
     <group ref={botRef} scale={0.6}>
-      <mesh position={[0, 0.28, 0]} castShadow>
-        <boxGeometry args={[0.16, 0.12, 0.12]} />
-        <meshStandardMaterial color="#ededed" roughness={0.4} />
+      <group position={[0, 0.28, 0]}>
+        <RoundedBox
+          args={[0.16, 0.12, 0.12]}
+          radius={0.015}
+          smoothness={4}
+          castShadow
+        >
+          <meshStandardMaterial
+            color="#fafafc"
+            metalness={0.82}
+            roughness={0.12}
+          />
+        </RoundedBox>
+
+        <RoundedBox
+          args={[0.13, 0.08, 0.01]}
+          radius={0.005}
+          smoothness={4}
+          position={[0, 0, 0.056]}
+          castShadow
+        >
+          <meshStandardMaterial
+            color="#07090e"
+            roughness={0.15}
+            metalness={0.9}
+          />
+        </RoundedBox>
+
+        <group position={[-0.09, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <mesh castShadow>
+            <cylinderGeometry args={[0.024, 0.024, 0.012, 16]} />
+            <meshStandardMaterial
+              color="#222326"
+              metalness={0.9}
+              roughness={0.15}
+            />
+          </mesh>
+          <mesh position={[0, 0.007, 0]}>
+            <torusGeometry args={[0.015, 0.002, 8, 16]} />
+            <meshBasicMaterial color="#00f3ff" />
+          </mesh>
+        </group>
+
+        <group position={[0.09, 0, 0]} rotation={[0, 0, -Math.PI / 2]}>
+          <mesh castShadow>
+            <cylinderGeometry args={[0.024, 0.024, 0.012, 16]} />
+            <meshStandardMaterial
+              color="#222326"
+              metalness={0.9}
+              roughness={0.15}
+            />
+          </mesh>
+          <mesh position={[0, 0.007, 0]}>
+            <torusGeometry args={[0.015, 0.002, 8, 16]} />
+            <meshBasicMaterial color="#00f3ff" />
+          </mesh>
+        </group>
+
+        <Text
+          position={[-0.032, 0.006, 0.062]}
+          fontSize={0.038}
+          color="#00f3ff"
+          fontWeight="bold"
+        >
+          ^
+        </Text>
+        <Text
+          position={[0.032, 0.006, 0.062]}
+          fontSize={0.038}
+          color="#00f3ff"
+          fontWeight="bold"
+        >
+          ^
+        </Text>
+      </group>
+
+      <mesh position={[0, 0.2, 0]} castShadow>
+        <sphereGeometry args={[0.022, 16, 16]} />
+        <meshStandardMaterial
+          color="#888888"
+          metalness={1.0}
+          roughness={0.03}
+        />
       </mesh>
 
-      <mesh position={[0, 0.28, 0.056]} castShadow>
-        <boxGeometry args={[0.13, 0.08, 0.01]} />
-        <meshStandardMaterial color="#0c0e14" roughness={0.1} metalness={0.9} />
-      </mesh>
+      <group position={[0, 0.11, 0]}>
+        <RoundedBox
+          args={[0.13, 0.15, 0.09]}
+          radius={0.015}
+          smoothness={4}
+          castShadow
+        >
+          <meshStandardMaterial
+            color="#fafafc"
+            metalness={0.82}
+            roughness={0.12}
+          />
+        </RoundedBox>
+      </group>
 
-      <mesh position={[-0.035, 0.28, 0.062]}>
-        <sphereGeometry args={[0.012, 12, 12]} />
-        <meshBasicMaterial color="#00f3ff" />
-      </mesh>
-      <mesh position={[0.035, 0.28, 0.062]}>
-        <sphereGeometry args={[0.012, 12, 12]} />
-        <meshBasicMaterial color="#00f3ff" />
-      </mesh>
-
-      <mesh position={[0, 0.14, 0]} castShadow>
-        <boxGeometry args={[0.14, 0.16, 0.1]} />
-        <meshStandardMaterial color="#f7f7f7" roughness={0.4} />
-      </mesh>
-
-      <group ref={leftArmRef} position={[-0.08, 0.2, 0]}>
+      <group ref={leftArmRef} position={[-0.08, 0.15, 0]}>
+        <mesh castShadow>
+          <sphereGeometry args={[0.014, 12, 12]} />
+          <meshStandardMaterial
+            color="#888888"
+            metalness={1.0}
+            roughness={0.03}
+          />
+        </mesh>
         <mesh position={[0, -0.06, 0]} castShadow>
-          <cylinderGeometry args={[0.014, 0.014, 0.12, 8]} />
-          <meshStandardMaterial color="#decba4" roughness={0.8} />
+          <cylinderGeometry args={[0.01, 0.01, 0.12, 8]} />
+          <meshStandardMaterial
+            color="#fafafc"
+            metalness={0.8}
+            roughness={0.15}
+          />
         </mesh>
       </group>
 
-      <group ref={rightArmRef} position={[0.08, 0.2, 0]}>
+      <group ref={rightArmRef} position={[0.08, 0.15, 0]}>
+        <mesh castShadow>
+          <sphereGeometry args={[0.014, 12, 12]} />
+          <meshStandardMaterial
+            color="#888888"
+            metalness={1.0}
+            roughness={0.03}
+          />
+        </mesh>
         <mesh position={[0, -0.06, 0]} castShadow>
-          <cylinderGeometry args={[0.014, 0.014, 0.12, 8]} />
-          <meshStandardMaterial color="#decba4" roughness={0.8} />
+          <cylinderGeometry args={[0.01, 0.01, 0.12, 8]} />
+          <meshStandardMaterial
+            color="#fafafc"
+            metalness={0.8}
+            roughness={0.15}
+          />
         </mesh>
       </group>
 
-      <group ref={leftLegRef} position={[-0.035, 0.05, 0]}>
-        <mesh position={[0, -0.06, 0]} castShadow>
-          <cylinderGeometry args={[0.015, 0.015, 0.14, 8]} />
-          <meshStandardMaterial color="#decba4" roughness={0.8} />
+      <group ref={leftLegRef} position={[-0.035, 0.02, 0]}>
+        <mesh castShadow>
+          <sphereGeometry args={[0.014, 12, 12]} />
+          <meshStandardMaterial
+            color="#888888"
+            metalness={1.0}
+            roughness={0.03}
+          />
         </mesh>
-        <mesh position={[0, -0.13, 0.015]} castShadow>
-          <boxGeometry args={[0.024, 0.015, 0.04]} />
-          <meshStandardMaterial color="#111111" />
+        <mesh position={[0, -0.05, 0]} castShadow>
+          <cylinderGeometry args={[0.012, 0.012, 0.11, 8]} />
+          <meshStandardMaterial
+            color="#fafafc"
+            metalness={0.8}
+            roughness={0.15}
+          />
+        </mesh>
+        <mesh position={[0, -0.11, 0.012]} castShadow>
+          <boxGeometry args={[0.024, 0.014, 0.038]} />
+          <meshStandardMaterial color="#111111" roughness={0.4} />
         </mesh>
       </group>
 
-      <group ref={rightLegRef} position={[0.035, 0.05, 0]}>
-        <mesh position={[0, -0.06, 0]} castShadow>
-          <cylinderGeometry args={[0.015, 0.015, 0.14, 8]} />
-          <meshStandardMaterial color="#decba4" roughness={0.8} />
+      <group ref={rightLegRef} position={[0.035, 0.02, 0]}>
+        <mesh castShadow>
+          <sphereGeometry args={[0.014, 12, 12]} />
+          <meshStandardMaterial
+            color="#888888"
+            metalness={1.0}
+            roughness={0.03}
+          />
         </mesh>
-        <mesh position={[0, -0.13, 0.015]} castShadow>
-          <boxGeometry args={[0.024, 0.015, 0.04]} />
-          <meshStandardMaterial color="#111111" />
+        <mesh position={[0, -0.05, 0]} castShadow>
+          <cylinderGeometry args={[0.012, 0.012, 0.11, 8]} />
+          <meshStandardMaterial
+            color="#fafafc"
+            metalness={0.8}
+            roughness={0.15}
+          />
+        </mesh>
+        <mesh position={[0, -0.11, 0.012]} castShadow>
+          <boxGeometry args={[0.024, 0.014, 0.038]} />
+          <meshStandardMaterial color="#111111" roughness={0.4} />
         </mesh>
       </group>
     </group>
