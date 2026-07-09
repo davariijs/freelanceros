@@ -16,6 +16,7 @@ export default function HeroCanvas({ osState }: HeroCanvasProps) {
       className="w-full h-full absolute inset-0"
     >
       <Canvas
+        style={{ pointerEvents: osState === 2 ? "none" : "auto" }}
         camera={{ position: [0, 1.5, 4.5], fov: 40 }}
         gl={{ antialias: true }}
       >

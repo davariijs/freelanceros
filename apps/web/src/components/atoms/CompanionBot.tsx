@@ -20,6 +20,7 @@ export function CompanionBot({ osState }: CompanionBotProps) {
   const rightArmRef = React.useRef<THREE.Group>(null);
 
   const stateFactorRef = React.useRef(0);
+  const targetRotYRef = React.useRef(-Math.PI * 0.4);
 
   const config = React.useMemo(
     () => ({
@@ -36,8 +37,8 @@ export function CompanionBot({ osState }: CompanionBotProps) {
         armRot: 0.2,
       },
       state2: {
-        pos: new THREE.Vector3(-1.1, 0.42, 1.41),
-        rot: new THREE.Euler(0, -Math.PI * 0.85, 0),
+        pos: new THREE.Vector3(-1.1, 0.12, 1.41),
+        rot: new THREE.Euler(0, -Math.PI * 1.4, 0),
         legRot: 0,
         armRot: 0.5,
       },
@@ -88,10 +89,28 @@ export function CompanionBot({ osState }: CompanionBotProps) {
 
       const heightHump = Math.sin(segmentT * Math.PI) * 0.35;
       activePos.y += heightHump;
+
+      if (osState === 2 && stateFactorRef.current > 0.95) {
+        const walkCycle = Math.sin(time * 0.8);
+        const offsetX = walkCycle * 0.45 * segmentT;
+        activePos.x += offsetX;
+
+        const movingRight = Math.cos(time * 0.8) > 0;
+        targetRotYRef.current = movingRight ? -Math.PI * 1.45 : -Math.PI * 0.35;
+      }
     }
 
     botRef.current.position.copy(activePos);
-    botRef.current.rotation.copy(activeRot);
+
+    if (osState === 2 && stateFactorRef.current > 0.95) {
+      botRef.current.rotation.y = THREE.MathUtils.lerp(
+        botRef.current.rotation.y,
+        targetRotYRef.current,
+        0.08,
+      );
+    } else {
+      botRef.current.rotation.copy(activeRot);
+    }
 
     if (osState === 0) {
       const dangle = Math.sin(time * 3.5) * 0.3;
@@ -113,12 +132,12 @@ export function CompanionBot({ osState }: CompanionBotProps) {
       if (rightArmRef.current)
         rightArmRef.current.rotation.x = -Math.sin(time * 2.0) * 0.05;
     } else if (osState === 2) {
-      const walk = Math.sin(time * 7.5) * 0.4;
+      const walk = Math.sin(time * 8.5) * 0.4;
       if (leftLegRef.current) leftLegRef.current.rotation.x = walk;
       if (rightLegRef.current) rightLegRef.current.rotation.x = -walk;
       if (leftArmRef.current)
         leftArmRef.current.rotation.z =
-          Math.PI / 3 + Math.sin(time * 8.0) * 0.2;
+          Math.PI / 3 + Math.sin(time * 8.0) * 0.15;
       if (rightArmRef.current) rightArmRef.current.rotation.x = -walk;
     }
   });
