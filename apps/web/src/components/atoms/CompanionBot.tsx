@@ -135,10 +135,15 @@ export function CompanionBot({ osState }: CompanionBotProps) {
       const walk = Math.sin(time * 8.5) * 0.4;
       if (leftLegRef.current) leftLegRef.current.rotation.x = walk;
       if (rightLegRef.current) rightLegRef.current.rotation.x = -walk;
-      if (leftArmRef.current)
-        leftArmRef.current.rotation.z =
-          Math.PI / 3 + Math.sin(time * 8.0) * 0.15;
-      if (rightArmRef.current) rightArmRef.current.rotation.x = -walk;
+
+      if (leftArmRef.current) {
+        leftArmRef.current.rotation.x = -walk * 0.8;
+        leftArmRef.current.rotation.z = 0;
+      }
+      if (rightArmRef.current) {
+        rightArmRef.current.rotation.x = walk * 0.8;
+        rightArmRef.current.rotation.z = 0;
+      }
     }
   });
 
