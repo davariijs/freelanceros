@@ -227,4 +227,15 @@ export const en = {
   notesDocTitle: "Workspace Brief.txt",
   notesDocContent:
     "FreelanceOS allows you to sync CRM clients, manage active boards, and structure notes under a unified operations console.",
+  pipelineSectionTitle: "Automated Workflows",
+  pipelineSectionSubtitle: "SaaS Project Conduits & Deadline Monitoring",
+  pipelineClientLabel: "CLIENT CONTROL",
+  pipelineProjectLabel: "PROJECT STATUS PIPELINE",
+  pipelineProjectActive: "ACTIVE",
+  pipelineProjectPaused: "PAUSED",
+  pipelineDeadlineWarn: "DEADLINE WARNING",
+  pipelineMailSent: "Warning Email Dispatched to Client",
+  projectMobileUI: "Acme Mobile App Design",
+  projectPostgres: "Database Provisioning",
+  projectPrisma: "Prisma Schemas Configuration",
 };

@@ -6,7 +6,7 @@ import { useApp } from "@/context/AppContext";
 import { BentoCard } from "@/components/atoms/BentoCard";
 
 interface FeaturesGridProps {
-  osState: 0 | 1 | 2;
+  osState: 0 | 1 | 2 | 3;
 }
 
 export function FeaturesGrid({ osState }: FeaturesGridProps) {

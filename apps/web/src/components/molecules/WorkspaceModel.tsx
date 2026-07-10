@@ -13,7 +13,7 @@ import { DeskPapers } from "@/components/atoms/DeskPapers";
 import { CompanionBot } from "@/components/atoms/CompanionBot";
 
 interface WorkspaceModelProps {
-  osState: 0 | 1 | 2;
+  osState: 0 | 1 | 2 | 3;
 }
 
 export function WorkspaceModel({ osState }: WorkspaceModelProps) {
@@ -28,7 +28,7 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
     const elapsed = state.clock.getElapsedTime();
 
     let targetMainY = 0.3;
-    if (osState === 2) {
+    if (osState >= 2) {
       targetMainY = 0.0;
     } else {
       targetMainY = Math.sin(elapsed * 1.0) * 0.08 + 0.3;
@@ -58,7 +58,7 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
     let targetDeskZ = 0;
     let targetDeskScale = 1.0;
 
-    if (osState === 2) {
+    if (osState >= 2) {
       targetDeskY = -1.6;
       targetDeskZ = -2.2;
       targetDeskScale = 0.7;
@@ -85,16 +85,18 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
     const hasScroll = window.scrollY > 50;
     setIsShifted(hasScroll);
   });
+  const deskActive = osState < 2;
 
   return (
     <group ref={mainGroupRef}>
-      <group ref={deskGroupRef} visible={osState !== 2}>
+      <group ref={deskGroupRef} visible={deskActive}>
         <Center>
           <primitive object={scene} scale={1.5} />
         </Center>
         <DeskLamp />
         <WorkTablet />
-        {osState !== 2 && (
+
+        {deskActive && (
           <>
             <LeftScreen/>
             <RightScreen active={isShifted} />
