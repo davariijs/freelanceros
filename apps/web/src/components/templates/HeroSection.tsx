@@ -7,6 +7,7 @@ import { motion, useScroll } from "framer-motion";
 import { SystemWidget } from "@/components/molecules/SystemWidget";
 import { HeroContent } from "@/components/organisms/HeroContent";
 import { FeaturesGrid } from "@/components/organisms/FeaturesGrid";
+import { WorkflowPipeline } from "@/components/organisms/WorkflowPipeline";
 
 const HeroCanvas = dynamic(() => import("@/components/organisms/HeroCanvas"), {
   ssr: false,
@@ -14,23 +15,26 @@ const HeroCanvas = dynamic(() => import("@/components/organisms/HeroCanvas"), {
 
 export function HeroSection() {
   const { t, locale } = useApp();
+  const isRtl = locale === "fa";
   const { scrollY } = useScroll();
-  const [osState, setOsState] = React.useState<0 | 1 | 2>(0);
+  const [osState, setOsState] = React.useState<0 | 1 | 2 | 3>(0);
 
   React.useEffect(() => {
     return scrollY.on("change", (latest) => {
       if (latest < 60) {
         setOsState(0);
-      } else if (latest >= 60 && latest < 750) {
+      } else if (latest >= 60 && latest < 600) {
         setOsState(1);
-      } else {
+      } else if (latest >= 600 && latest < 1200) {
         setOsState(2);
+      } else {
+        setOsState(3);
       }
     });
   }, [scrollY]);
 
   const getDeskAnimation = () => {
-    if (osState === 2) return { x: "0%", y: "-180px", opacity: 1 };
+    if (osState >= 2) return { x: "0%", y: "-180px", opacity: 1 };
     if (osState === 1) return { x: "22%", y: "0px", opacity: 1 };
     return { x: "0%", y: "0px", opacity: 1 };
   };
@@ -52,7 +56,7 @@ export function HeroSection() {
           inactiveTitle={t.widgetInactiveTitleLeft}
           activeValue={t.widgetActiveValueLeft}
           inactiveValue={t.widgetInactiveValueLeft}
-          className={`top-12 left-6 lg:left-12 ${osState === 2 ? "pointer-events-none" : "pointer-events-auto"}`}
+          className={`top-12 left-6 lg:left-12 ${osState >= 2 ? "pointer-events-none" : "pointer-events-auto"}`}
         />
 
         <SystemWidget
@@ -63,10 +67,12 @@ export function HeroSection() {
           inactiveTitle={t.widgetInactiveTitleRight}
           activeValue={t.widgetActiveValueRight}
           inactiveValue={t.widgetInactiveValueRight}
-          className={`top-12 right-6 lg:right-12 ${osState === 2 ? "pointer-events-none" : "pointer-events-auto"}`}
+          className={`top-12 right-6 lg:right-12 ${osState >= 2 ? "pointer-events-none" : "pointer-events-auto"}`}
         />
 
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
+        <div
+          className={`absolute inset-0 w-full h-full overflow-hidden ${osState >= 2 ? "pointer-events-none" : "pointer-events-auto"}`}
+        >
           <motion.div
             animate={getDeskAnimation()}
             transition={{ type: "spring", stiffness: 60, damping: 16 }}
@@ -94,7 +100,7 @@ export function HeroSection() {
           </motion.p>
         </div>
 
-        {osState !== 2 && (
+        {osState < 2 && (
           <HeroContent
             active={osState === 1}
             exit={false}
@@ -109,10 +115,20 @@ export function HeroSection() {
       <div className="relative z-30 w-full flex flex-col items-center pointer-events-none">
         <div className="h-screen w-full pointer-events-none" />
 
-        <div
-          className={`min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent transition-all pointer-events-auto`}
-        >
+        <div className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto">
           <FeaturesGrid osState={osState} />
+        </div>
+
+        <div className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto">
+          <div className="max-w-4xl text-center mb-12">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-500">
+              {isRtl ? "اتومیشن پیشرفته" : "WORKSPACE AUTOMATION"}
+            </span>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight mt-2 text-neutral-900 dark:text-neutral-50">
+              {isRtl ? "موتور هوشمند گردش کار" : "Dynamic Operations Machine"}
+            </h2>
+          </div>
+          <WorkflowPipeline osState={osState} />
         </div>
 
         <div className="h-[50vh] w-full pointer-events-none relative z-30" />

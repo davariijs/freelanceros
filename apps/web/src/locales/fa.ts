@@ -212,4 +212,16 @@ export const fa = {
   bentoNotesTitle: "یادداشت‌های متصل غنی",
   bentoNotesDesc:
     "یادداشت‌های متنی پیوند خورده با تسک‌ها را بنویسید که با بسترهای همگام‌سازی به طور خودکار ذخیره می‌شوند.",
+  pipelineSectionTitle: "اتوماسیون و مانیتورینگ",
+  pipelineSectionSubtitle:
+    "پایپ‌لاین پروژه‌ها و موتور مانیتورینگ خودکار ددلاین‌ها",
+  pipelineClientLabel: "کنترل وضعیت مشتری",
+  pipelineProjectLabel: "جریان وضعیت پروژه‌ها",
+  pipelineProjectActive: "فعال",
+  pipelineProjectPaused: "تعلیق شده",
+  pipelineDeadlineWarn: "هشدار مهلت تحویل!",
+  pipelineMailSent: "ایمیل هشدار خودکار برای مشتری ارسال شد",
+  projectMobileUI: "طراحی رابط کاربری Acme",
+  projectPostgres: "راه‌اندازی پایگاه‌داده",
+  projectPrisma: "پیکربندی اسکیماهای پریزما",
 };

@@ -5,10 +5,9 @@ import { useFrame } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import * as THREE from "three";
 import { useApp } from "@/context/AppContext";
-import { BentoCard } from "@/components/atoms/BentoCard";
 
 interface DeskPapersProps {
-  osState: 0 | 1 | 2;
+  osState: 0 | 1 | 2 | 3;
 }
 
 export function DeskPapers({ osState }: DeskPapersProps) {
