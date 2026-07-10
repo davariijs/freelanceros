@@ -8,7 +8,7 @@ import { SystemWidget } from "@/components/molecules/SystemWidget";
 import { HeroContent } from "@/components/organisms/HeroContent";
 import { FeaturesGrid } from "@/components/organisms/FeaturesGrid";
 import { WorkflowPipeline } from "@/components/organisms/WorkflowPipeline";
-import { CommandPaletteMock } from "@/components/molecules/CommandPaletteMock";
+import { CommandPaletteMockLanding } from "@/components/molecules/CommandPaletteMockLading";
 
 const HeroCanvas = dynamic(() => import("@/components/organisms/HeroCanvas"), {
   ssr: false,
@@ -165,7 +165,7 @@ export function HeroSection() {
         <div className="h-[50vh] w-full pointer-events-none relative z-30" />
       </div>
 
-      <CommandPaletteMock
+      <CommandPaletteMockLanding
         isOpen={isPaletteOpen}
         onClose={() => setIsPaletteOpen(false)}
       />

@@ -12,7 +12,7 @@ interface FloatingKeysProps {
 }
 
 export function FloatingKeys({ osState }: FloatingKeysProps) {
-  const { theme } = useApp();
+  const { theme, setIsCommandOpen } = useApp();
   const isDark = theme === "dark";
   const active = osState === 4;
 
@@ -24,10 +24,9 @@ export function FloatingKeys({ osState }: FloatingKeysProps) {
 
   const positionsRef = React.useRef({
     state0: [new THREE.Vector3(0, -2.5, 0), new THREE.Vector3(0, -2.5, 0)],
-    // Symmetrically spaced and shifted: Ctrl on Left (X = 0.7), K on Right (X = -0.1) with zero overlapping!
     state4: [
-      new THREE.Vector3(0.7, -0.05, 1.25),
-      new THREE.Vector3(-0.1, 0.15, 1.25),
+      new THREE.Vector3(-0.05, -0.05, 1.25),
+      new THREE.Vector3(0.7, 0.15, 1.25),
     ],
   });
 
@@ -119,6 +118,11 @@ export function FloatingKeys({ osState }: FloatingKeysProps) {
     }
   });
 
+  const handleToggle = (e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
+    setIsCommandOpen(true);
+  };
+
   const handlePointerOver = (
     e: ThreeEvent<PointerEvent>,
     setHover: (h: boolean) => void,
@@ -135,9 +139,9 @@ export function FloatingKeys({ osState }: FloatingKeysProps) {
 
   return (
     <group>
-      {/* Key 1: Ctrl */}
       <group
         ref={key1Ref}
+        onClick={handleToggle}
         onPointerOver={(e) => handlePointerOver(e, setHoveredCtrl)}
         onPointerOut={() => handlePointerOut(setHoveredCtrl)}
       >
@@ -148,7 +152,7 @@ export function FloatingKeys({ osState }: FloatingKeysProps) {
           castShadow
         >
           <meshStandardMaterial
-            color={isDark ? "#2a2c30" : "#111111"}
+            color={isDark ? "#909194" : "#111111"}
             metalness={isDark ? 0.8 : 0.2}
             roughness={0.12}
           />
@@ -164,9 +168,9 @@ export function FloatingKeys({ osState }: FloatingKeysProps) {
         </Text>
       </group>
 
-      {/* Key 2: K */}
       <group
         ref={key2Ref}
+        onClick={handleToggle}
         onPointerOver={(e) => handlePointerOver(e, setHoveredK)}
         onPointerOut={() => handlePointerOut(setHoveredK)}
       >
@@ -177,7 +181,7 @@ export function FloatingKeys({ osState }: FloatingKeysProps) {
           castShadow
         >
           <meshStandardMaterial
-            color={isDark ? "#10b981" : "#ff7a00"}
+            color={isDark ? "#169921" : "#ff7a00"}
             emissive={isDark ? "#064e3b" : "#000000"}
             emissiveIntensity={isDark ? 1.5 : 0}
             metalness={isDark ? 0.5 : 0.2}

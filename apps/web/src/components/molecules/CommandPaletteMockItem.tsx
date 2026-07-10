@@ -8,7 +8,6 @@ import {
   FileText,
   Zap,
   Sparkles,
-  LayoutDashboard,
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { cn } from "@/lib/utils";
@@ -37,26 +36,8 @@ export const CommandPaletteMockItem: React.FC<CommandPaletteMockItemProps> = ({
 }) => {
   const { t } = useApp();
 
-  const getIcon = (type: SearchItem["type"], title: string) => {
+  const getIcon = (type: SearchItem["type"]) => {
     const iconClass = `h-4 w-4 transition-transform duration-300 ${isFocused ? "scale-110 animate-bounce" : ""}`;
-    const lowerTitle = title.toLowerCase();
-
-    if (lowerTitle.includes("dashboard")) {
-      return <LayoutDashboard className={`${iconClass} text-teal-500`} />;
-    }
-    if (lowerTitle.includes("task")) {
-      return <CheckSquare className={`${iconClass} text-blue-500`} />;
-    }
-    if (lowerTitle.includes("project")) {
-      return <Folder className={`${iconClass} text-yellow-500`} />;
-    }
-    if (lowerTitle.includes("client")) {
-      return <Users className={`${iconClass} text-purple-500`} />;
-    }
-    if (lowerTitle.includes("note")) {
-      return <FileText className={`${iconClass} text-green-500`} />;
-    }
-
     switch (type) {
       case "task":
         return <CheckSquare className={`${iconClass} text-blue-500`} />;
@@ -91,7 +72,7 @@ export const CommandPaletteMockItem: React.FC<CommandPaletteMockItemProps> = ({
       )}
     >
       <div className="flex items-center gap-3 min-w-0 z-10">
-        <div className="shrink-0">{getIcon(item.type, item.title)}</div>
+        <div className="shrink-0">{getIcon(item.type)}</div>
         <div className="truncate">
           <span className="text-neutral-900 dark:text-neutral-100 block truncate">
             {item.title}

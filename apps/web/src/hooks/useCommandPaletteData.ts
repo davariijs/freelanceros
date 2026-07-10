@@ -46,31 +46,31 @@ export function useCommandPaletteData({
       {
         id: "nav-dash",
         title: t.commandGoDashboard || "Go to Dashboard",
-        type: "navigation",
+        type: "action",
         path: "/dashboard",
       },
       {
         id: "nav-tasks",
         title: t.commandGoTasks || "Go to Tasks Board",
-        type: "navigation",
+        type: "task",
         path: "/dashboard/tasks",
       },
       {
         id: "nav-projects",
         title: t.commandGoProjects || "Go to Projects Timeline",
-        type: "navigation",
+        type: "project",
         path: "/dashboard/projects",
       },
       {
         id: "nav-clients",
         title: t.commandGoClients || "Go to Clients Roster",
-        type: "navigation",
+        type: "client",
         path: "/dashboard/clients",
       },
       {
         id: "nav-notes",
         title: t.commandGoNotes || "Go to Notes Archive",
-        type: "navigation",
+        type: "note",
         path: "/dashboard/notes",
       },
 
@@ -249,7 +249,7 @@ export function useCommandPaletteData({
 
     if (!trimmed) {
       return searchItems.filter(
-        (i) => i.type === "navigation" || i.id.startsWith("help-"),
+        (i) => i.id.startsWith("nav-") || i.id.startsWith("help-"),
       );
     }
 
