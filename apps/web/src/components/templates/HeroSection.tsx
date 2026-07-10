@@ -21,15 +21,10 @@ export function HeroSection() {
 
   React.useEffect(() => {
     return scrollY.on("change", (latest) => {
-      if (latest < 60) {
-        setOsState(0);
-      } else if (latest >= 60 && latest < 600) {
-        setOsState(1);
-      } else if (latest >= 600 && latest < 1200) {
-        setOsState(2);
-      } else {
-        setOsState(3);
-      }
+      const vh = window.innerHeight;
+      const sectionIndex = Math.round(latest / vh);
+      const clamped = Math.min(3, Math.max(0, sectionIndex)) as 0 | 1 | 2 | 3;
+      setOsState(clamped);
     });
   }, [scrollY]);
 
@@ -45,9 +40,7 @@ export function HeroSection() {
 
   return (
     <div className="relative w-full">
-      <div
-        className={`fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-40 pointer-events-none`}
-      >
+      <div className="fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-40 pointer-events-none">
         <SystemWidget
           active={osState > 0}
           activeColor="bg-emerald-500"
@@ -100,26 +93,29 @@ export function HeroSection() {
           </motion.p>
         </div>
 
-        {osState < 2 && (
+        <div
+          className={`${
+            osState >= 2 ? "pointer-events-none" : "pointer-events-auto"
+          } flex items-center`}
+        >
           <HeroContent
             active={osState === 1}
-            exit={false}
+            exit={osState >= 2}
             title="FreelanceOs"
             subtitle={t.heroSubtitle}
             ctaPrimary={t.accessDashboard}
             ctaSecondary={t.learnMore}
           />
-        )}
+        </div>
       </div>
 
       <div className="relative z-30 w-full flex flex-col items-center pointer-events-none">
-        <div className="h-screen w-full pointer-events-none" />
-
-        <div className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto">
+        <div className="h-screen w-full pointer-events-none snap-start snap-always" />
+        <div className="h-screen w-full pointer-events-none snap-start snap-always" />
+        <div className="h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden">
           <FeaturesGrid osState={osState} />
         </div>
-
-        <div className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto">
+        <div className="h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden">
           <div className="max-w-4xl text-center mb-12">
             <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-500">
               {isRtl ? "اتومیشن پیشرفته" : "WORKSPACE AUTOMATION"}

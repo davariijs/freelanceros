@@ -36,3 +36,7 @@
   background-color: var(--color-neutral-950);
   color: var(--color-neutral-100);
 }
+
+html {
+  scroll-snap-type: y mandatory;
+}

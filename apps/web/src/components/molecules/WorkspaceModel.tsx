@@ -81,10 +81,15 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
       targetDeskScale,
     );
     deskGroupRef.current.scale.lerp(scaleVec, 0.08);
-
-    const hasScroll = window.scrollY > 50;
-    setIsShifted(hasScroll);
   });
+
+  React.useEffect(() => {
+    const handleScroll = () => setIsShifted(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const deskActive = osState < 2;
 
   return (
