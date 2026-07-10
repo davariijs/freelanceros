@@ -5,10 +5,11 @@ import { Suspense } from "react";
 import { WorkspaceModel } from "@/components/molecules/WorkspaceModel";
 
 interface HeroCanvasProps {
-  osState: 0 | 1 | 2 | 3;
+  osState: 0 | 1 | 2 | 3 | 4;
 }
 
 export default function HeroCanvas({ osState }: HeroCanvasProps) {
+  const isPointerDisabled = osState === 2 || osState === 3;
   return (
     <div
       dir="ltr"
@@ -16,7 +17,7 @@ export default function HeroCanvas({ osState }: HeroCanvasProps) {
       className="w-full h-full absolute inset-0"
     >
       <Canvas
-        style={{ pointerEvents: osState === 2 ? "none" : "auto" }}
+        style={{ pointerEvents: isPointerDisabled ? "none" : "auto" }}
         camera={{ position: [0, 1.5, 4.5], fov: 40 }}
         gl={{ antialias: true }}
       >
