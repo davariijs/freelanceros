@@ -254,4 +254,13 @@ export const en = {
   cmdProjectSubtitle: "Instantly create a new project contract",
   cmdGoTitle: "> go [Project]",
   cmdGoSubtitle: "Instantly jump to a specific project page",
+  mobileSectionTitle: "Mobile Access",
+  mobileSectionSubtitle: "FreelanceOS on the Go",
+  downloadTodayTitle: "Download Today",
+  downloadTodayDesc:
+    "Manage your clients, track active project timelines, and capture notes instantly from your pocket. Native, fast, and fully synced.",
+  notifyDeadline: "Deadline Alert: Project Due Today",
+  notifyAdded: "New Project 'Figma App' Added",
+  notifyProgress: "Project Progress is 40% Complete",
+  notifyTask: "Task 'Launch Website' Created",
 };

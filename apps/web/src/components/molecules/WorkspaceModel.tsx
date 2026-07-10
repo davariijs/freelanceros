@@ -12,9 +12,10 @@ import { OrbitingRings } from "@/components/atoms/OrbitingRings";
 import { DeskPapers } from "@/components/atoms/DeskPapers";
 import { CompanionBot } from "@/components/atoms/CompanionBot";
 import { FloatingKeys } from "@/components/atoms/FloatingKeys";
+import { FloatingMobileApp } from "@/components/atoms/FloatingMobileApp";
 
 interface WorkspaceModelProps {
-  osState: 0 | 1 | 2 | 3 | 4;
+  osState: 0 | 1 | 2 | 3 | 4 | 5;
 }
 
 export function WorkspaceModel({ osState }: WorkspaceModelProps) {
@@ -91,13 +92,13 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
 
   return (
     <group ref={mainGroupRef}>
-      <group ref={deskGroupRef} visible={deskActive}>
+      <group ref={deskGroupRef} visible={osState < 2 && osState !== 5}>
         <Center>
           <primitive object={scene} scale={1.5} />
         </Center>
         <DeskLamp />
         <WorkTablet />
-        {deskActive && (
+        {osState < 2 && (
           <>
             <LeftScreen />
             <RightScreen active={isShifted} />
@@ -111,6 +112,7 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
       {osState < 4 && <CompanionBot osState={osState} />}
 
       <FloatingKeys osState={osState} />
+      <FloatingMobileApp osState={osState} />
     </group>
   );
 }
