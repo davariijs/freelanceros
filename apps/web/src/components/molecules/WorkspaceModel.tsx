@@ -11,9 +11,10 @@ import { RightScreen } from "@/components/atoms/RightScreen";
 import { OrbitingRings } from "@/components/atoms/OrbitingRings";
 import { DeskPapers } from "@/components/atoms/DeskPapers";
 import { CompanionBot } from "@/components/atoms/CompanionBot";
+import { FloatingKeys } from "@/components/atoms/FloatingKeys";
 
 interface WorkspaceModelProps {
-  osState: 0 | 1 | 2 | 3;
+  osState: 0 | 1 | 2 | 3 | 4;
 }
 
 export function WorkspaceModel({ osState }: WorkspaceModelProps) {
@@ -81,14 +82,10 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
       targetDeskScale,
     );
     deskGroupRef.current.scale.lerp(scaleVec, 0.08);
-  });
 
-  React.useEffect(() => {
-    const handleScroll = () => setIsShifted(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    const hasScroll = window.scrollY > 50;
+    setIsShifted(hasScroll);
+  });
 
   const deskActive = osState < 2;
 
@@ -100,10 +97,9 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
         </Center>
         <DeskLamp />
         <WorkTablet />
-
         {deskActive && (
           <>
-            <LeftScreen/>
+            <LeftScreen />
             <RightScreen active={isShifted} />
             <DeskPapers osState={osState} />
           </>
@@ -111,7 +107,10 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
       </group>
 
       <OrbitingRings />
-      <CompanionBot osState={osState} />
+
+      {osState < 4 && <CompanionBot osState={osState} />}
+
+      <FloatingKeys osState={osState} />
     </group>
   );
 }

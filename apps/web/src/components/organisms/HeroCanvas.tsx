@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { WorkspaceModel } from "@/components/molecules/WorkspaceModel";
 
 interface HeroCanvasProps {
-  osState: 0 | 1 | 2 | 3;
+  osState: 0 | 1 | 2 | 3 | 4;
 }
 
 export default function HeroCanvas({ osState }: HeroCanvasProps) {

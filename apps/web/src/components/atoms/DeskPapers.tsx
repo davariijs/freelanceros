@@ -7,7 +7,7 @@ import * as THREE from "three";
 import { useApp } from "@/context/AppContext";
 
 interface DeskPapersProps {
-  osState: 0 | 1 | 2 | 3;
+  osState: 0 | 1 | 2 | 3 | 4;
 }
 
 export function DeskPapers({ osState }: DeskPapersProps) {
