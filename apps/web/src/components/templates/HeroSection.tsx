@@ -15,18 +15,17 @@ const HeroCanvas = dynamic(() => import("@/components/organisms/HeroCanvas"), {
 });
 
 export function HeroSection() {
-  const { t, locale } = useApp();
+  const { t, locale, setIsCommandOpen, isCommandOpen } = useApp();
   const isRtl = locale === "fa";
   const { scrollY } = useScroll();
-  const [osState, setOsState] = React.useState<0 | 1 | 2 | 3 | 4>(0);
-  const [isPaletteOpen, setIsPaletteOpen] = React.useState(false);
+  const [osState, setOsState] = React.useState<0 | 1 | 2 | 3 | 4 | 5>(0);
 
   React.useEffect(() => {
     return scrollY.on("change", (latest) => {
       const vh = window.innerHeight;
       const sectionIndex = Math.round(latest / vh);
-      const clamped = Math.min(4, Math.max(0, sectionIndex)) as
-        0 | 1 | 2 | 3 | 4;
+      const clamped = Math.min(5, Math.max(0, sectionIndex)) as
+        0 | 1 | 2 | 3 | 4 | 5;
       setOsState(clamped);
     });
   }, [scrollY]);
@@ -35,15 +34,12 @@ export function HeroSection() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.code === "KeyK") {
         e.preventDefault();
-        setIsPaletteOpen((prev) => !prev);
-      }
-      if (e.key === "Escape") {
-        setIsPaletteOpen(false);
+        setIsCommandOpen(!isCommandOpen);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [isCommandOpen, setIsCommandOpen]);
 
   const getDeskAnimation = () => {
     if (osState >= 2) return { x: "0%", y: "-180px", opacity: 1 };
@@ -55,9 +51,15 @@ export function HeroSection() {
     t.scrollToExplore ||
     (locale === "fa" ? "برای کاوش اسکرول کنید" : "Scroll to Explore");
 
+  const isPointerDisabled = osState === 2 || osState === 3;
+
   return (
     <div className="relative w-full">
-      <div className="fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-10">
+      <div
+        className={`fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-40 ${
+          isPointerDisabled ? "pointer-events-none" : "pointer-events-auto"
+        }`}
+      >
         <SystemWidget
           active={osState > 0}
           activeColor="bg-emerald-500"
@@ -66,7 +68,7 @@ export function HeroSection() {
           inactiveTitle={t.widgetInactiveTitleLeft}
           activeValue={t.widgetActiveValueLeft}
           inactiveValue={t.widgetInactiveValueLeft}
-          className={`top-12 left-6 lg:left-12 ${osState >= 2 ? "pointer-events-none" : "pointer-events-auto"}`}
+          className={`top-12 left-6 lg:left-12 ${isPointerDisabled ? "pointer-events-none" : "pointer-events-auto"}`}
         />
 
         <SystemWidget
@@ -77,11 +79,11 @@ export function HeroSection() {
           inactiveTitle={t.widgetInactiveTitleRight}
           activeValue={t.widgetActiveValueRight}
           inactiveValue={t.widgetInactiveValueRight}
-          className={`top-12 right-6 lg:right-12 ${osState >= 2 ? "pointer-events-none" : "pointer-events-auto"}`}
+          className={`top-12 right-6 lg:right-12 ${isPointerDisabled ? "pointer-events-none" : "pointer-events-auto"}`}
         />
 
         <div
-          className={`absolute inset-0 w-full h-full overflow-hidden ${osState >= 2 ? "pointer-events-none" : "pointer-events-auto"}`}
+          className={`absolute inset-0 w-full h-full overflow-hidden ${isPointerDisabled ? "pointer-events-none" : "pointer-events-auto"}`}
         >
           <motion.div
             animate={getDeskAnimation()}
@@ -111,14 +113,10 @@ export function HeroSection() {
         </div>
 
         {osState < 2 && (
-          <div
-            className={`${
-              osState >= 2 ? "pointer-events-none" : "pointer-events-auto"
-            } flex items-center`}
-          >
+          <div className="flex items-center pointer-events-auto">
             <HeroContent
               active={osState === 1}
-              exit={osState >= 2}
+              exit={false}
               title="FreelanceOs"
               subtitle={t.heroSubtitle}
               ctaPrimary={t.accessDashboard}
@@ -147,10 +145,18 @@ export function HeroSection() {
         </div>
 
         <div
-          onClick={() => setIsPaletteOpen(true)}
+          onClick={() => setIsCommandOpen(true)}
           className="h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden cursor-pointer"
         >
-          <div className="max-w-4xl text-center mb-12">
+          <motion.div
+            animate={
+              osState === 4
+                ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }
+                : { opacity: 0, y: 45, scale: 0.95, filter: "blur(8px)" }
+            }
+            transition={{ type: "spring", stiffness: 70, damping: 15 }}
+            className="max-w-4xl text-center mb-12"
+          >
             <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-500">
               {isRtl ? "کماند پالت سراسری" : "COMMAND PALETTE SHOWCASE"}
             </span>
@@ -159,6 +165,43 @@ export function HeroSection() {
                 ? "ناوبری فوق‌سریع با میانبرها"
                 : "Keyboard-First Visual Navigation"}
             </h2>
+          </motion.div>
+        </div>
+
+        <div
+          className={`h-screen w-full snap-start snap-always flex flex-col items-center justify-center py-24 relative bg-transparent ${osState === 5 ? "pointer-events-none" : "pointer-events-auto"}`}
+        >
+          <div className="max-w-5xl w-full px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <motion.div
+              animate={
+                osState === 5
+                  ? { opacity: 1, x: 0, filter: "blur(0px)" }
+                  : { opacity: 0, x: -50, filter: "blur(8px)" }
+              }
+              transition={{ type: "spring", stiffness: 70, damping: 15 }}
+              className={`flex flex-col items-start gap-6 text-left pointer-events-auto ${isRtl ? "text-right items-end mr-auto" : ""}`}
+            >
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-500">
+                {t.mobileSectionTitle || "Mobile Access"}
+              </span>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 dark:text-neutral-50 leading-tight">
+                {t.downloadTodayTitle || "Download Today"}
+              </h2>
+              <p className="text-sm md:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm">
+                {t.downloadTodayDesc}
+              </p>
+
+              <div className="flex gap-4 mt-4">
+                <button className="px-6 py-3 bg-neutral-900 dark:bg-neutral-50 hover:bg-neutral-800 dark:hover:bg-neutral-200 text-neutral-50 dark:text-neutral-950 font-bold rounded-xl text-xs shadow-md transition-colors cursor-pointer">
+                  App Store
+                </button>
+                <button className="px-6 py-3 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-bold rounded-xl text-xs shadow-sm transition-colors cursor-pointer">
+                  Google Play
+                </button>
+              </div>
+            </motion.div>
+
+            <div className="md:col-span-1 pointer-events-none" />
           </div>
         </div>
 
@@ -166,8 +209,8 @@ export function HeroSection() {
       </div>
 
       <CommandPaletteMockLanding
-        isOpen={isPaletteOpen}
-        onClose={() => setIsPaletteOpen(false)}
+        isOpen={isCommandOpen}
+        onClose={() => setIsCommandOpen(false)}
       />
     </div>
   );

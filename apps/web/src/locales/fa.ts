@@ -240,4 +240,13 @@ export const fa = {
   cmdProjectSubtitle: "ایجاد آنی یک قرارداد پروژه جدید",
   cmdGoTitle: "> go [پروژه]",
   cmdGoSubtitle: "انتقال سریع به صفحه یک پروژه خاص",
+  mobileSectionTitle: "دسترسی موبایل",
+  mobileSectionSubtitle: "فریلنس‌آس در دستان شما",
+  downloadTodayTitle: "امروز دانلود کنید",
+  downloadTodayDesc:
+    "مشتریان خود را مدیریت کنید، پروژه‌ها را ردیابی کنید و یادداشت‌های خود را مستقیماً از جیب خود ثبت کنید. بومی، سریع و کاملاً هماهنگ.",
+  notifyDeadline: "هشدار ددلاین: تحویل پروژه امروز است!",
+  notifyAdded: "پروژه جدید فریلنس‌آس اضافه شد",
+  notifyProgress: "پروژه ۴۰٪ پیشرفت داشته است",
+  notifyTask: "تسک لانچ وب‌سایت ایجاد شد",
 };
