@@ -169,32 +169,52 @@ export function HeroSection() {
         </div>
 
         <div
-          className={`h-screen w-full snap-start snap-always flex flex-col items-center justify-center py-24 relative bg-transparent ${osState === 5 ? "pointer-events-none" : "pointer-events-auto"}`}
+          className={`h-screen w-full snap-start snap-always flex flex-col items-center justify-center py-24 relative bg-transparent ${
+            osState === 5 ? "pointer-events-none" : "pointer-events-auto"
+          }`}
         >
-          <div className="max-w-5xl w-full px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div
+            dir="ltr"
+            className="max-w-5xl w-full px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
+          >
             <motion.div
               animate={
                 osState === 5
                   ? { opacity: 1, x: 0, filter: "blur(0px)" }
                   : { opacity: 0, x: -50, filter: "blur(8px)" }
               }
-              transition={{ type: "spring", stiffness: 70, damping: 15 }}
+              transition={{
+                type: "spring",
+                stiffness: 70,
+                damping: 15,
+              }}
               className={`flex flex-col items-start gap-6 text-left pointer-events-auto ${isRtl ? "text-right items-end mr-auto" : ""}`}
             >
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-500">
+              <span
+                className={`text-[10px] font-extrabold uppercase tracking-widest text-emerald-500 ${
+                  isRtl ? "self-end text-right" : ""
+                }`}
+              >
                 {t.mobileSectionTitle || "Mobile Access"}
               </span>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 dark:text-neutral-50 leading-tight">
+
+              <h2
+                className={`text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 dark:text-neutral-50 leading-tight ${
+                  isRtl ? "self-end text-right" : ""
+                }`}
+              >
                 {t.downloadTodayTitle || "Download Today"}
               </h2>
-              <p className="text-sm md:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm">
+
+              <p
+                className={`text-sm md:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm ${
+                  isRtl ? "self-end text-right" : "text-left"
+                }`}
+              >
                 {t.downloadTodayDesc}
               </p>
 
-              <div className="flex gap-4 mt-4">
-                <button className="px-6 py-3 bg-neutral-900 dark:bg-neutral-50 hover:bg-neutral-800 dark:hover:bg-neutral-200 text-neutral-50 dark:text-neutral-950 font-bold rounded-xl text-xs shadow-md transition-colors cursor-pointer">
-                  App Store
-                </button>
+              <div className={`flex gap-4 mt-4 ${isRtl ? "self-end" : ""}`}>
                 <button className="px-6 py-3 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-bold rounded-xl text-xs shadow-sm transition-colors cursor-pointer">
                   Google Play
                 </button>

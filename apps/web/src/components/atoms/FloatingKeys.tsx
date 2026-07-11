@@ -176,7 +176,7 @@ export function FloatingKeys({ osState }: FloatingKeysProps) {
           castShadow
         >
           <meshStandardMaterial
-            color={isDark ? "#2a2c30" : "#111111"}
+            color={isDark ? "#9ba0aa" : "#111111"}
             metalness={isDark ? 0.8 : 0.2}
             roughness={0.12}
           />
@@ -205,7 +205,7 @@ export function FloatingKeys({ osState }: FloatingKeysProps) {
           castShadow
         >
           <meshStandardMaterial
-            color={isDark ? "#10b981" : "#ff7a00"}
+            color={isDark ? "#10b926" : "#ff7a00"}
             emissive={isDark ? "#064e3b" : "#000000"}
             emissiveIntensity={isDark ? 1.5 : 0}
             metalness={isDark ? 0.5 : 0.2}
