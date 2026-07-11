@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { RoundedBox, Text } from "@react-three/drei";
 import * as THREE from "three";
 import { useApp } from "@/context/AppContext";
@@ -27,6 +27,9 @@ function DraggableCapsule({
   const meshRef = React.useRef<THREE.Group>(null);
   const [isDragging, setIsDragging] = React.useState(false);
   const [dragPos, setDragPos] = React.useState(new THREE.Vector3());
+  const { size, viewport } = useThree();
+
+  const aspect = viewport.width / size.width;
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
@@ -37,26 +40,33 @@ function DraggableCapsule({
   const handlePointerUp = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     setIsDragging(false);
+    setDragOffset({ x: 0, y: 0 });
     (e.target as HTMLElement).releasePointerCapture(e.pointerId);
   };
+
+  const [dragOffset, setDragOffset] = React.useState({ x: 0, y: 0 });
 
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (!isDragging) return;
     e.stopPropagation();
-    setDragPos(e.point);
+    setDragOffset({
+      x: e.movementX * aspect,
+      y: -e.movementY * aspect,
+    });
   };
 
   useFrame(() => {
     if (!meshRef.current) return;
 
     if (isDragging) {
-      const localPos = meshRef.current.parent!.worldToLocal(dragPos.clone());
-      meshRef.current.position.lerp(localPos, 0.3);
+      meshRef.current.position.x += dragOffset.x;
+      meshRef.current.position.y += dragOffset.y;
       meshRef.current.position.z = THREE.MathUtils.lerp(
         meshRef.current.position.z,
-        0.4,
+        homePos.z + 0.5,
         0.2,
       );
+      setDragOffset({ x: 0, y: 0 });
     } else {
       meshRef.current.position.lerp(homePos, 0.1);
     }
@@ -120,7 +130,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
 
   const positionsRef = React.useRef({
     state0: new THREE.Vector3(0, -2.5, 0),
-    state5: new THREE.Vector3(-0.85, 0.0, 1.1),
+    state5: new THREE.Vector3(-0.85, -0.5, 1.1),
   });
 
   useFrame((state) => {
@@ -151,6 +161,70 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
     }
   });
 
+  const screenTexture = React.useMemo(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1024;
+    canvas.height = 2048;
+    const ctx = canvas.getContext("2d")!;
+    const bg = ctx.createLinearGradient(0, 0, 0, canvas.height);
+
+    bg.addColorStop(0, "#d9f7f8");
+    bg.addColorStop(0.45, "#f4f0ff");
+    bg.addColorStop(1, "#8cafac");
+
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const purple = ctx.createRadialGradient(
+      canvas.width * 0.48,
+      canvas.height * 0.63,
+      0,
+      canvas.width * 0.48,
+      canvas.height * 0.63,
+      300,
+    );
+
+    purple.addColorStop(0, "rgba(88, 20, 151, 0.55)");
+    purple.addColorStop(1, "rgba(201,145,255,0)");
+
+    ctx.fillStyle = purple;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const blue = ctx.createRadialGradient(
+      canvas.width * 0.35,
+      canvas.height * 0.18,
+      0,
+      canvas.width * 0.35,
+      canvas.height * 0.18,
+      250,
+    );
+
+    blue.addColorStop(0, "rgba(170,245,255,0.45)");
+    blue.addColorStop(1, "rgba(170,245,255,0)");
+
+    ctx.fillStyle = blue;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const white = ctx.createRadialGradient(
+      canvas.width * 0.55,
+      canvas.height * 0.4,
+      0,
+      canvas.width * 0.55,
+      canvas.height * 0.4,
+      350,
+    );
+
+    white.addColorStop(0, "rgba(255,255,255,0.55)");
+    white.addColorStop(1, "rgba(255,255,255,0)");
+
+    ctx.fillStyle = white;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.needsUpdate = true;
+
+    return texture;
+  }, []);
+
   return (
     <group ref={phoneRef}>
       <group>
@@ -167,52 +241,73 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
           />
         </RoundedBox>
 
-        <RoundedBox
-          args={[0.35, 0.71, 0.01]}
-          radius={0.02}
-          smoothness={4}
-          position={[0, 0, 0.018]}
-        >
-          <meshPhysicalMaterial
-            color="#a8baee"
-            emissive="#73e6bf"
-            emissiveIntensity={0.2}
-            roughness={0.15}
-            metalness={0.6}
-            clearcoat={0.8}
-            clearcoatRoughness={0.2}
-          />
-        </RoundedBox>
+        <group position={[0, 0, 0.05]}>
+          <RoundedBox args={[0.35, 0.71, 0.005]} radius={0.02} smoothness={4}>
+            <meshStandardMaterial
+              map={screenTexture}
+              emissiveMap={screenTexture}
+              emissive="#74d474"
+              emissiveIntensity={0.15}
+              roughness={0.35}
+            />
+          </RoundedBox>
 
-        <group position={[0, 0.1, 0.026]}>
           <RoundedBox
-            args={[0.12, 0.12, 0.02]}
+            args={[0.35, 0.71, 0.006]}
             radius={0.02}
+            smoothness={4}
+            position={[0, 0, 0.004]}
+          >
+            <meshPhysicalMaterial
+              color="#ffffff"
+              transmission={0.95}
+              roughness={0.15}
+              ior={1.5}
+              thickness={0.06}
+              transparent
+              opacity={0.3}
+            />
+          </RoundedBox>
+        </group>
+
+        <group position={[0, 0.12, 0.024]} scale={1.25}>
+          <RoundedBox
+            args={[0.09, 0.09, 0.03]}
+            radius={0.015}
             smoothness={4}
             castShadow
           >
             <meshStandardMaterial
               color="#fbbf24"
+              metalness={0.5}
               roughness={0.2}
-              metalness={0.1}
             />
           </RoundedBox>
-          <mesh position={[0, 0, 0.012]}>
-            <sphereGeometry args={[0.03, 16, 16]} />
-            <meshBasicMaterial color="#ffffff" />
-          </mesh>
+          <RoundedBox
+            args={[0.07, 0.07, 0.04]}
+            radius={0.012}
+            smoothness={4}
+            position={[0, 0, -0.005]}
+          >
+            <meshStandardMaterial
+              color="#ffffff"
+              emissive="#ffffff"
+              emissiveIntensity={0.5}
+              roughness={0.1}
+            />
+          </RoundedBox>
         </group>
       </group>
 
       <DraggableCapsule
-        homePos={new THREE.Vector3(-0.35, 0.15, 0.06)}
+        homePos={new THREE.Vector3(-0.42, 0.15, 0.06)}
         color="#ff7a00"
         text={t.notifyDeadline || "Project Due Today"}
         isDark={isDark}
       />
 
       <DraggableCapsule
-        homePos={new THREE.Vector3(0.35, 0.22, 0.08)}
+        homePos={new THREE.Vector3(0.42, 0.22, 0.08)}
         color="#3b82f6"
         text={t.notifyAdded || "New Project Added"}
         tailLeft
@@ -220,14 +315,14 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
       />
 
       <DraggableCapsule
-        homePos={new THREE.Vector3(-0.32, -0.15, 0.08)}
+        homePos={new THREE.Vector3(-0.38, -0.15, 0.08)}
         color="#10b981"
         text={t.notifyProgress || "Progress: 40%"}
         isDark={isDark}
       />
 
       <DraggableCapsule
-        homePos={new THREE.Vector3(0.32, -0.12, 0.06)}
+        homePos={new THREE.Vector3(0.38, -0.12, 0.06)}
         color="#a855f7"
         text={t.notifyTask || "Task Created"}
         tailLeft
