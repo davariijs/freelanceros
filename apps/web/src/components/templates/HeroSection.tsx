@@ -177,7 +177,7 @@ export function HeroSection() {
           ref={(el) => {
             sectionsRef.current[2] = el;
           }}
-          className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden px-6"
+          className="min-h-screen w-full flex flex-col items-center justify-center py-10 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden"
         >
           <FeaturesGrid osState={osState} />
         </div>
@@ -186,7 +186,7 @@ export function HeroSection() {
           ref={(el) => {
             sectionsRef.current[3] = el;
           }}
-          className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden px-6"
+          className="min-h-screen w-full flex flex-col items-center justify-center py-10 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden"
         >
           <div className="max-w-4xl text-center mb-12 px-6">
             <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-500">

@@ -141,7 +141,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
     return {
       state0: new THREE.Vector3(0, -2.5, 0),
       state5: new THREE.Vector3(
-        isMobileSize ? 0.0 : -0.85,
+        isMobileSize ? 0.3 : -0.85,
         isMobileSize ? 0.42 : -0.5,
         1.1,
       ),
@@ -239,7 +239,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
   }, []);
 
   return (
-    <group ref={phoneRef}>
+    <group ref={phoneRef} position={[0, -2.5, 0]} scale={0}>
       <group>
         <RoundedBox
           args={[0.38, 0.74, 0.04]}
