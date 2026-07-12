@@ -55,9 +55,9 @@ export function HeroContent({
     <motion.div
       animate={getAnimationState()}
       transition={{ type: "spring", stiffness: 75, damping: 16 }}
-      className="absolute left-6 lg:left-32 z-20 max-w-xl text-left rtl:text-right flex flex-col items-start gap-6 pointer-events-auto"
+      className="absolute bottom-16 left-6 right-6 md:bottom-auto md:top-1/3 md:left-32 z-20 max-w-xl text-center md:text-left rtl:md:text-right flex flex-col items-center md:items-start gap-6 pointer-events-auto"
     >
-      <div dir="ltr" className="text-left w-full">
+      <div dir="ltr" className="text-center md:text-left w-full">
         <LetterReveal text={title} active={active && !exit} />
       </div>
 
@@ -65,7 +65,7 @@ export function HeroContent({
         variants={subtitleVariants}
         initial="hidden"
         animate={active && !exit ? "visible" : "hidden"}
-        className="text-base sm:text-lg text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-md"
+        className="text-base sm:text-lg text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-md mx-auto md:mx-0"
       >
         {subtitle}
       </motion.p>
@@ -74,7 +74,7 @@ export function HeroContent({
         variants={buttonsVariants}
         initial="hidden"
         animate={active && !exit ? "visible" : "hidden"}
-        className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
+        className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center"
       >
         <Link href="/login" className="w-full sm:w-auto">
           <ShimmerButton label={ctaPrimary} />

@@ -41,7 +41,7 @@ export function FeaturesGrid({ osState }: FeaturesGridProps) {
       variants={containerVariants}
       initial="hidden"
       animate={active ? "visible" : "hidden"}
-      className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-8 pointer-events-auto"
+      className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-8 pointer-events-auto px-6 md:px-8"
     >
       <motion.div variants={cardVariants} className="md:col-span-2 h-68">
         <BentoCard active={active} glowColor="rgba(16,185,129,0.18)">

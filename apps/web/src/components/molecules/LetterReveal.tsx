@@ -39,15 +39,15 @@ export function LetterReveal({ text = "", active }: LetterRevealProps) {
       variants={containerVariants}
       initial="hidden"
       animate={active ? "visible" : "hidden"}
-      className="flex flex-wrap"
+      className="flex flex-wrap justify-center md:justify-start"
     >
       {letters.map((char, index) => (
         <motion.span
           key={index}
           variants={letterVariants}
-          className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none bg-clip-text text-transparent bg-linear-to-b from-neutral-900 via-neutral-800 to-neutral-600 dark:from-neutral-50 dark:via-neutral-100 dark:to-neutral-400"
+          className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none bg-clip-text text-transparent bg-linear-to-b from-neutral-900 via-neutral-800 to-neutral-600 dark:from-neutral-50 dark:via-neutral-100 dark:to-neutral-400"
         >
-          {char}
+          {char === " " ? "\u00A0" : char}
         </motion.span>
       ))}
     </motion.div>

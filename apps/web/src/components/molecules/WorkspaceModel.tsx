@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF, Center } from "@react-three/drei";
 import * as THREE from "three";
 import { DeskLamp } from "@/components/molecules/DeskLamp";
@@ -24,6 +24,9 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
   const deskGroupRef = React.useRef<THREE.Group>(null);
   const [isShifted, setIsShifted] = React.useState(false);
 
+  const { size } = useThree();
+  const isMobileSize = size.width < 768;
+
   useFrame((state) => {
     if (!mainGroupRef.current || !deskGroupRef.current) return;
 
@@ -33,7 +36,7 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
     if (osState >= 2) {
       targetMainY = 0.0;
     } else {
-      targetMainY = Math.sin(elapsed * 1.0) * 0.08 + 0.3;
+      targetMainY = Math.sin(elapsed * 1.0) * 0.08 + (isMobileSize ? 0.0 : 0.3);
     }
 
     mainGroupRef.current.position.y = THREE.MathUtils.lerp(
@@ -42,7 +45,7 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
       0.08,
     );
 
-    const targetX = state.pointer.y * 0.1;
+    const targetX = state.pointer.y * 0.1 + (isMobileSize ? -0.18 : 0);
     const targetY = state.pointer.x * 0.15 + Math.PI * 0.9;
 
     mainGroupRef.current.rotation.x = THREE.MathUtils.lerp(
@@ -58,12 +61,12 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
 
     let targetDeskY = 0;
     let targetDeskZ = 0;
-    let targetDeskScale = 1.0;
+    let targetDeskScale = isMobileSize ? 0.65 : 1.0;
 
     if (osState >= 2) {
-      targetDeskY = -1.6;
-      targetDeskZ = -2.2;
-      targetDeskScale = 0.7;
+      targetDeskY = isMobileSize ? -1.0 : -1.6;
+      targetDeskZ = isMobileSize ? -1.8 : -2.2;
+      targetDeskScale = isMobileSize ? 0.45 : 0.7;
     }
 
     deskGroupRef.current.position.y = THREE.MathUtils.lerp(
@@ -87,8 +90,6 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
     const hasScroll = window.scrollY > 50;
     setIsShifted(hasScroll);
   });
-
-  const deskActive = osState < 2;
 
   return (
     <group ref={mainGroupRef}>
