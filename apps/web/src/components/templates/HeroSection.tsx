@@ -3,7 +3,7 @@
 import * as React from "react";
 import dynamic from "next/dynamic";
 import { useApp } from "@/context/AppContext";
-import { motion, useScroll } from "framer-motion";
+import { motion } from "framer-motion";
 import { SystemWidget } from "@/components/molecules/SystemWidget";
 import { HeroContent } from "@/components/organisms/HeroContent";
 import { FeaturesGrid } from "@/components/organisms/FeaturesGrid";
@@ -17,18 +17,45 @@ const HeroCanvas = dynamic(() => import("@/components/organisms/HeroCanvas"), {
 export function HeroSection() {
   const { t, locale, setIsCommandOpen, isCommandOpen } = useApp();
   const isRtl = locale === "fa";
-  const { scrollY } = useScroll();
   const [osState, setOsState] = React.useState<0 | 1 | 2 | 3 | 4 | 5>(0);
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  const sectionsRef = React.useRef<(HTMLDivElement | null)[]>([]);
 
   React.useEffect(() => {
-    return scrollY.on("change", (latest) => {
-      const vh = window.innerHeight;
-      const sectionIndex = Math.round(latest / vh);
-      const clamped = Math.min(5, Math.max(0, sectionIndex)) as
-        0 | 1 | 2 | 3 | 4 | 5;
-      setOsState(clamped);
-    });
-  }, [scrollY]);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const viewportHeight = window.innerHeight;
+      let activeIndex = 0;
+      let minDistance = Infinity;
+
+      sectionsRef.current.forEach((el, index) => {
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const distance = Math.abs(
+          rect.top + rect.height / 2 - viewportHeight / 2,
+        );
+        if (distance < minDistance) {
+          minDistance = distance;
+          activeIndex = index;
+        }
+      });
+
+      setOsState(activeIndex as 0 | 1 | 2 | 3 | 4 | 5);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -42,8 +69,14 @@ export function HeroSection() {
   }, [isCommandOpen, setIsCommandOpen]);
 
   const getDeskAnimation = () => {
-    if (osState >= 2) return { x: "0%", y: "-180px", opacity: 1 };
-    if (osState === 1) return { x: "22%", y: "0px", opacity: 1 };
+    if (osState >= 2)
+      return { x: "0%", y: isMobile ? "-100px" : "-180px", opacity: 1 };
+    if (osState === 1)
+      return {
+        x: isMobile ? "0%" : "22%",
+        y: isMobile ? "-140px" : "0px",
+        opacity: 1,
+      };
     return { x: "0%", y: "0px", opacity: 1 };
   };
 
@@ -113,7 +146,7 @@ export function HeroSection() {
         </div>
 
         {osState < 2 && (
-          <div className="flex items-center pointer-events-auto">
+          <div className="flex items-center pointer-events-auto w-full justify-center md:justify-start">
             <HeroContent
               active={osState === 1}
               exit={false}
@@ -127,17 +160,39 @@ export function HeroSection() {
       </div>
 
       <div className="relative z-30 w-full flex flex-col items-center pointer-events-none">
-        <div className="h-screen w-full pointer-events-none snap-start snap-always" />
-        <div className="h-screen w-full pointer-events-none snap-start snap-always" />
-        <div className="h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden">
+        <div
+          ref={(el) => {
+            sectionsRef.current[0] = el;
+          }}
+          className="h-screen w-full pointer-events-none snap-start snap-always"
+        />
+        <div
+          ref={(el) => {
+            sectionsRef.current[1] = el;
+          }}
+          className="h-screen w-full pointer-events-none snap-start snap-always"
+        />
+
+        <div
+          ref={(el) => {
+            sectionsRef.current[2] = el;
+          }}
+          className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden px-6"
+        >
           <FeaturesGrid osState={osState} />
         </div>
-        <div className="h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden">
-          <div className="max-w-4xl text-center mb-12">
+
+        <div
+          ref={(el) => {
+            sectionsRef.current[3] = el;
+          }}
+          className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden px-6"
+        >
+          <div className="max-w-4xl text-center mb-12 px-6">
             <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-500">
               {isRtl ? "اتومیشن پیشرفته" : "WORKSPACE AUTOMATION"}
             </span>
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight mt-2 text-neutral-900 dark:text-neutral-50">
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight mt-2 text-neutral-900 dark:text-neutral-50">
               {isRtl ? "موتور هوشمند گردش کار" : "Dynamic Operations Machine"}
             </h2>
           </div>
@@ -145,8 +200,11 @@ export function HeroSection() {
         </div>
 
         <div
+          ref={(el) => {
+            sectionsRef.current[4] = el;
+          }}
           onClick={() => setIsCommandOpen(true)}
-          className="h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden cursor-pointer"
+          className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto z-50 snap-start snap-always overflow-hidden cursor-pointer px-6"
         >
           <motion.div
             animate={
@@ -155,12 +213,12 @@ export function HeroSection() {
                 : { opacity: 0, y: 45, scale: 0.95, filter: "blur(8px)" }
             }
             transition={{ type: "spring", stiffness: 70, damping: 15 }}
-            className="max-w-4xl text-center mb-12"
+            className="max-w-4xl text-center mb-12 px-8 font-pointer-events-auto"
           >
             <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-500">
               {isRtl ? "کماند پالت سراسری" : "COMMAND PALETTE SHOWCASE"}
             </span>
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight mt-2 text-neutral-900 dark:text-neutral-50">
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight mt-2 text-neutral-900 dark:text-neutral-50">
               {isRtl
                 ? "ناوبری فوق‌سریع با میانبرها"
                 : "Keyboard-First Visual Navigation"}
@@ -169,13 +227,16 @@ export function HeroSection() {
         </div>
 
         <div
-          className={`h-screen w-full snap-start snap-always flex flex-col items-center justify-center py-24 relative bg-transparent ${
+          ref={(el) => {
+            sectionsRef.current[5] = el;
+          }}
+          className={`min-h-screen w-full snap-start snap-always flex flex-col items-center justify-center py-24 relative bg-transparent ${
             osState === 5 ? "pointer-events-none" : "pointer-events-auto"
           }`}
         >
           <div
             dir="ltr"
-            className="max-w-5xl w-full px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
+            className="max-w-5xl w-full px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
           >
             <motion.div
               animate={
@@ -188,33 +249,33 @@ export function HeroSection() {
                 stiffness: 70,
                 damping: 15,
               }}
-              className={`flex flex-col items-start gap-6 text-left pointer-events-auto ${isRtl ? "text-right items-end mr-auto" : ""}`}
+              className={`flex flex-col items-center md:items-start gap-6 text-center md:text-left pointer-events-auto pt-[28vh] md:pt-0 ${isRtl ? "md:text-right md:items-end mr-auto" : ""}`}
             >
               <span
                 className={`text-[10px] font-extrabold uppercase tracking-widest text-emerald-500 ${
-                  isRtl ? "self-end text-right" : ""
+                  isRtl ? "md:self-end md:text-right" : ""
                 }`}
               >
                 {t.mobileSectionTitle || "Mobile Access"}
               </span>
 
               <h2
-                className={`text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 dark:text-neutral-50 leading-tight ${
-                  isRtl ? "self-end text-right" : ""
+                className={`text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 dark:text-neutral-50 leading-tight ${
+                  isRtl ? "md:self-end md:text-right" : ""
                 }`}
               >
                 {t.downloadTodayTitle || "Download Today"}
               </h2>
 
               <p
-                className={`text-sm md:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm ${
-                  isRtl ? "self-end text-right" : "text-left"
+                className={`text-sm md:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm text-center ${
+                  isRtl ? "md:self-end md:text-right" : "md:text-left"
                 }`}
               >
                 {t.downloadTodayDesc}
               </p>
 
-              <div className={`flex gap-4 mt-4 ${isRtl ? "self-end" : ""}`}>
+              <div className={`flex gap-4 mt-4 ${isRtl ? "md:self-end" : ""}`}>
                 <button className="px-6 py-3 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-bold rounded-xl text-xs shadow-sm transition-colors cursor-pointer">
                   Google Play
                 </button>

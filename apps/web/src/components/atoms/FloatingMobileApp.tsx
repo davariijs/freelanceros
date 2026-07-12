@@ -16,17 +16,17 @@ function DraggableCapsule({
   color,
   text,
   tailLeft = false,
-  isDark,
+  isMobileSize = false,
 }: {
   homePos: THREE.Vector3;
   color: string;
   text: string;
   tailLeft?: boolean;
   isDark: boolean;
+  isMobileSize?: boolean;
 }) {
   const meshRef = React.useRef<THREE.Group>(null);
   const [isDragging, setIsDragging] = React.useState(false);
-  const [dragPos, setDragPos] = React.useState(new THREE.Vector3());
   const { size, viewport } = useThree();
 
   const aspect = viewport.width / size.width;
@@ -55,6 +55,11 @@ function DraggableCapsule({
     });
   };
 
+  const responsiveHomePos = React.useMemo(() => {
+    if (!isMobileSize) return homePos;
+    return new THREE.Vector3(homePos.x * 0.7, homePos.y * 0.9, homePos.z);
+  }, [homePos, isMobileSize]);
+
   useFrame(() => {
     if (!meshRef.current) return;
 
@@ -63,12 +68,12 @@ function DraggableCapsule({
       meshRef.current.position.y += dragOffset.y;
       meshRef.current.position.z = THREE.MathUtils.lerp(
         meshRef.current.position.z,
-        homePos.z + 0.5,
+        responsiveHomePos.z + 0.5,
         0.2,
       );
       setDragOffset({ x: 0, y: 0 });
     } else {
-      meshRef.current.position.lerp(homePos, 0.1);
+      meshRef.current.position.lerp(responsiveHomePos, 0.1);
     }
   });
 
@@ -85,6 +90,7 @@ function DraggableCapsule({
       onPointerOut={() => {
         document.body.style.cursor = "auto";
       }}
+      scale={isMobileSize ? 0.75 : 1.0}
     >
       <RoundedBox
         args={[0.34, 0.11, 0.04]}
@@ -126,23 +132,30 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
   const isDark = theme === "dark";
   const active = osState === 5;
 
+  const { size } = useThree();
+  const isMobileSize = size.width < 768;
+
   const phoneRef = React.useRef<THREE.Group>(null);
 
-  const positionsRef = React.useRef({
-    state0: new THREE.Vector3(0, -2.5, 0),
-    state5: new THREE.Vector3(-0.85, -0.5, 1.1),
-  });
+  const positionsRef = React.useMemo(() => {
+    return {
+      state0: new THREE.Vector3(0, -2.5, 0),
+      state5: new THREE.Vector3(
+        isMobileSize ? 0.0 : -0.85,
+        isMobileSize ? 0.42 : -0.5,
+        1.1,
+      ),
+    };
+  }, [isMobileSize]);
 
   useFrame((state) => {
     if (!phoneRef.current) return;
     const time = state.clock.getElapsedTime();
 
-    const targetPos = active
-      ? positionsRef.current.state5
-      : positionsRef.current.state0;
+    const targetPos = active ? positionsRef.state5 : positionsRef.state0;
     phoneRef.current.position.lerp(targetPos, 0.08);
 
-    const targetScale = active ? 2.0 : 0.0;
+    const targetScale = active ? (isMobileSize ? 1.4 : 2.0) : 0.0;
     const scaleVec = new THREE.Vector3(targetScale, targetScale, targetScale);
     phoneRef.current.scale.lerp(scaleVec, 0.08);
 
@@ -150,7 +163,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
       phoneRef.current.position.y += Math.sin(time * 1.5) * 0.005;
       phoneRef.current.rotation.y = THREE.MathUtils.lerp(
         phoneRef.current.rotation.y,
-        -Math.PI * 1.05,
+        isMobileSize ? -Math.PI * 1.0 : -Math.PI * 1.05,
         0.08,
       );
       phoneRef.current.rotation.x = THREE.MathUtils.lerp(
@@ -304,6 +317,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
         color="#ff7a00"
         text={t.notifyDeadline || "Project Due Today"}
         isDark={isDark}
+        isMobileSize={isMobileSize}
       />
 
       <DraggableCapsule
@@ -312,6 +326,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
         text={t.notifyAdded || "New Project Added"}
         tailLeft
         isDark={isDark}
+        isMobileSize={isMobileSize}
       />
 
       <DraggableCapsule
@@ -319,6 +334,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
         color="#10b981"
         text={t.notifyProgress || "Progress: 40%"}
         isDark={isDark}
+        isMobileSize={isMobileSize}
       />
 
       <DraggableCapsule
@@ -327,6 +343,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
         text={t.notifyTask || "Task Created"}
         tailLeft
         isDark={isDark}
+        isMobileSize={isMobileSize}
       />
     </group>
   );
