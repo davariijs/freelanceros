@@ -45,7 +45,7 @@ export function LetterReveal({ text = "", active }: LetterRevealProps) {
         <motion.span
           key={index}
           variants={letterVariants}
-          className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none bg-clip-text text-transparent bg-linear-to-b from-neutral-900 via-neutral-800 to-neutral-600 dark:from-neutral-50 dark:via-neutral-100 dark:to-neutral-400"
+          className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none bg-clip-text text-transparent bg-linear-to-b from-neutral-900 via-neutral-800 to-neutral-600 dark:from-neutral-50 dark:via-neutral-100 dark:to-neutral-400 drop-shadow-[0_0_12px_rgba(52,211,153,0.3)] [-webkit-text-stroke:1px_rgba(52,211,153,0.35)] dark:drop-shadow-none dark:[-webkit-text-stroke:0px]"
         >
           {char === " " ? "\u00A0" : char}
         </motion.span>

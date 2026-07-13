@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useApp } from "@/context/AppContext";
 import { LetterReveal } from "@/components/molecules/LetterReveal";
 import { ShimmerButton } from "@/components/atoms/ShimmerButton";
 import { SlideFillButton } from "@/components/atoms/SlideFillButton";
@@ -24,8 +23,6 @@ export function HeroContent({
   ctaPrimary,
   ctaSecondary,
 }: HeroContentProps) {
-  const { locale } = useApp();
-
   const subtitleVariants = {
     hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
     visible: {
