@@ -13,6 +13,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useMutation } from "@tanstack/react-query";
 import { apiClient } from "@/lib/apiClient";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export const LoginForm: React.FC = () => {
   const { t } = useApp();
@@ -65,7 +66,12 @@ export const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-sm space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 15, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ type: "spring", stiffness: 100, damping: 15 }}
+      className="w-full max-w-sm space-y-6 animate-in fade-in duration-300"
+    >
       <div className="text-center space-y-2">
         <h1 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
           {t.loginTitle}
@@ -74,7 +80,7 @@ export const LoginForm: React.FC = () => {
           {t.loginDescription}
         </p>
       </div>
-      <div className="border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl bg-white dark:bg-neutral-900 shadow-sm">
+      <div className="border border-neutral-200 dark:border-emerald-500/30 p-6 rounded-2xl bg-white dark:bg-neutral-900 shadow-sm">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             label={t.email}
@@ -140,7 +146,16 @@ export const LoginForm: React.FC = () => {
             text="signin_with"
           />
         </div>
+
+        <div className="text-center mt-5">
+          <Link
+            href="/register"
+            className="text-xs text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 underline"
+          >
+            {t.noAccount || "Don't have an account? Sign Up"}
+          </Link>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

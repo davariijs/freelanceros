@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function RegisterPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-neutral-50 dark:bg-neutral-950 transition-colors duration-200 relative">
+    <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-[#eaf3e7] dark:bg-[#030014]  transition-colors duration-200 relative">
       <AuthHeader />
       <RegisterForm />
     </main>

@@ -28,7 +28,7 @@ export function SystemWidget({
     <div className={`fixed z-40 hidden md:block ${className}`}>
       <motion.div
         layout
-        className="p-4 rounded-2xl border border-neutral-300/10 dark:border-neutral-800/10 bg-white/5 dark:bg-neutral-900/5 backdrop-blur-xl shadow-xl flex items-center gap-3"
+        className="p-4 rounded-2xl border border-neutral-300/10 dark:border-emerald-500/30 bg-white/5 dark:bg-neutral-900/5 backdrop-blur-xl shadow-xl flex items-center gap-3"
       >
         <StatusDot
           active={active}

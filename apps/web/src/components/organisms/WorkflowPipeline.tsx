@@ -47,7 +47,7 @@ export function WorkflowPipeline({ osState }: WorkflowPipelineProps) {
         variants={itemVariants}
         className={`p-6 rounded-3xl border backdrop-blur-2xl flex flex-col justify-between h-72 ${
           isDark
-            ? "bg-[#09090e]/85 border-neutral-800/40 shadow-2xl text-white"
+            ? "bg-[#09090e]/85 border-emerald-500/30 shadow-2xl text-white"
             : "bg-white/92 border-neutral-200/60 shadow-xl text-neutral-900"
         }`}
       >
@@ -92,7 +92,7 @@ export function WorkflowPipeline({ osState }: WorkflowPipelineProps) {
         variants={itemVariants}
         className={`md:col-span-2 p-6 rounded-3xl border backdrop-blur-2xl flex flex-col justify-between h-72 ${
           isDark
-            ? "bg-[#09090e]/85 border-neutral-800/40 shadow-2xl text-white"
+            ? "bg-[#09090e]/85 border-emerald-500/30 shadow-2xl text-white"
             : "bg-white/92 border-neutral-200/60 shadow-xl text-neutral-900"
         }`}
       >

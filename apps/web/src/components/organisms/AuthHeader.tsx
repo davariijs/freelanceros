@@ -11,7 +11,7 @@ export const AuthHeader: React.FC = () => {
 
   return (
     <div
-      className={`absolute top-4 ${dir === "rtl" ? "left-4" : "right-4"} flex items-center gap-1 p-1 rounded-full border border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm z-50`}
+      className={`absolute top-4 ${dir === "rtl" ? "left-4" : "right-4"} flex items-center gap-1 p-1 rounded-full border border-neutral-200 dark:border-emerald-500/30 bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm z-50`}
     >
       <Link
         href="/"

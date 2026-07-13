@@ -51,24 +51,32 @@ export const AppProvider: React.FC<AppProviderProps> = ({
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedTheme = localStorage.getItem("theme") as Theme;
-      const savedLocale = localStorage.getItem("locale") as Locale;
-      if (savedTheme) setThemeState(savedTheme);
-      if (savedLocale) setLocale(savedLocale);
+      try {
+        const savedTheme = localStorage.getItem("theme") as Theme;
+        const savedLocale = localStorage.getItem("locale") as Locale;
+        if (savedTheme) setThemeState(savedTheme);
+        if (savedLocale) setLocale(savedLocale);
+      } catch (e) {}
     }
   }, []);
 
   React.useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.remove("light", "dark");
-    root.classList.add(theme);
+    if (typeof window !== "undefined") {
+      const root = document.documentElement;
+      root.classList.remove("light");
+      root.classList.remove("dark");
+      root.classList.add(theme);
+    }
   }, [theme]);
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
     if (typeof window !== "undefined") {
-      localStorage.setItem("theme", newTheme);
-      document.cookie = `theme=${newTheme}; path=/; max-age=31536000; SameSite=Lax; Secure`;
+      try {
+        localStorage.setItem("theme", newTheme);
+      } catch (e) {}
+      const isSecure = window.location.protocol === "https:";
+      document.cookie = `theme=${newTheme}; path=/; max-age=31536000; SameSite=Lax${isSecure ? "; Secure" : ""}`;
     }
   };
 
@@ -76,8 +84,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     setLocale((prev) => {
       const next = prev === "en" ? "fa" : "en";
       if (typeof window !== "undefined") {
-        localStorage.setItem("locale", next);
-        document.cookie = `locale=${next}; path=/; max-age=31536000; SameSite=Lax; Secure`;
+        try {
+          localStorage.setItem("locale", next);
+        } catch (e) {}
+        const isSecure = window.location.protocol === "https:";
+        document.cookie = `locale=${next}; path=/; max-age=31536000; SameSite=Lax${isSecure ? "; Secure" : ""}`;
       }
       return next;
     });
