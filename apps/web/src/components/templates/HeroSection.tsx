@@ -9,6 +9,8 @@ import { HeroContent } from "@/components/organisms/HeroContent";
 import { FeaturesGrid } from "@/components/organisms/FeaturesGrid";
 import { WorkflowPipeline } from "@/components/organisms/WorkflowPipeline";
 import { CommandPaletteMockLanding } from "@/components/molecules/CommandPaletteMockLading";
+import { FloatingActions } from "@/components/molecules/FloatingActions";
+import { FloatingFooter } from "@/components/organisms/FloatingFooter";
 
 const HeroCanvas = dynamic(() => import("@/components/organisms/HeroCanvas"), {
   ssr: false,
@@ -185,7 +187,7 @@ export function HeroSection() {
           ref={(el) => {
             sectionsRef.current[2] = el;
           }}
-          className="min-h-screen w-full flex flex-col items-center justify-center py-10 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden"
+          className="min-h-screen w-full flex flex-col items-center justify-center py-10 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden px-6"
         >
           <FeaturesGrid osState={osState} />
         </div>
@@ -194,7 +196,7 @@ export function HeroSection() {
           ref={(el) => {
             sectionsRef.current[3] = el;
           }}
-          className="min-h-screen w-full flex flex-col items-center justify-center py-10 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden"
+          className="min-h-screen w-full flex flex-col items-center justify-center py-10 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden px-6"
         >
           <div className="max-w-4xl text-center mb-12 px-6">
             <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-500">
@@ -235,75 +237,112 @@ export function HeroSection() {
         </div>
 
         <div
+          id="mobile-download-section"
           ref={(el) => {
             sectionsRef.current[5] = el;
           }}
-          className="min-h-screen w-full snap-start snap-always flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-none z-50"
+          className={`min-h-screen w-full snap-start snap-always flex flex-col items-center justify-between py-16 md:py-24 relative bg-transparent ${
+            osState === 5 ? "pointer-events-auto" : "pointer-events-none"
+          }`}
         >
-          <div
-            dir="ltr"
-            className="max-w-5xl w-full px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center pointer-events-none"
-          >
-            <motion.div
-              animate={
-                osState === 5
-                  ? { opacity: 1, x: 0, filter: "blur(0px)" }
-                  : { opacity: 0, x: -50, filter: "blur(8px)" }
-              }
-              transition={{
-                type: "spring",
-                stiffness: 70,
-                damping: 15,
-              }}
-              className={`flex flex-col items-center md:items-start gap-6 text-center md:text-left pointer-events-auto pt-[28vh] md:pt-0 ${isRtl ? "md:text-right md:items-end mr-auto" : ""}`}
+          <div className="grow flex items-center justify-center w-full">
+            <div
+              dir="ltr"
+              className="max-w-5xl w-full px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
             >
-              <span
-                className={`text-[10px] font-extrabold uppercase tracking-widest text-emerald-500 ${
-                  isRtl ? "md:self-end md:text-right" : ""
-                }`}
+              <motion.div
+                animate={
+                  osState === 5
+                    ? { opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }
+                    : { opacity: 0, y: 35, filter: "blur(6px)", scale: 0.95 }
+                }
+                transition={{
+                  type: "spring",
+                  stiffness: 80,
+                  damping: 15,
+                }}
+                className={`flex flex-col items-center md:items-start gap-6 text-center md:text-left pointer-events-auto pt-[24vh] md:pt-0 ${isRtl ? "md:text-right md:items-end mr-auto" : ""}`}
               >
-                {t.mobileSectionTitle || "Mobile Access"}
-              </span>
-
-              <h2
-                className={`text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 dark:text-neutral-50 leading-tight ${
-                  isRtl ? "md:self-end md:text-right" : ""
-                }`}
-              >
-                {t.downloadTodayTitle || "Download Today"}
-              </h2>
-
-              <p
-                className={`text-sm md:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm text-center ${
-                  isRtl ? "md:self-end md:text-right" : "md:text-left"
-                }`}
-              >
-                {t.downloadTodayDesc}
-              </p>
-
-              <div
-                className={`flex gap-4 mt-4 pointer-events-auto ${isRtl ? "md:self-end" : ""}`}
-              >
-                <motion.button
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.25)",
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 15 }}
-                  className="px-6 py-3 bg-neutral-900 dark:bg-neutral-50 text-white dark:text-neutral-950 font-extrabold rounded-xl text-xs shadow-md border border-neutral-800 dark:border-neutral-200 cursor-pointer relative overflow-hidden group"
+                <span
+                  className={`text-[10px] font-extrabold uppercase tracking-widest text-emerald-500 ${
+                    isRtl ? "md:self-end md:text-right" : ""
+                  }`}
                 >
-                  <span className="relative z-10">Google Play</span>
-                </motion.button>
-              </div>
-            </motion.div>
+                  {t.mobileSectionTitle || "Mobile Access"}
+                </span>
 
-            <div className="md:col-span-1 pointer-events-none" />
+                <h2
+                  className={`text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 dark:text-neutral-50 leading-tight ${
+                    isRtl ? "md:self-end md:text-right" : ""
+                  }`}
+                >
+                  {t.downloadTodayTitle || "Download Today"}
+                </h2>
+
+                <p
+                  className={`text-sm md:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm text-center ${
+                    isRtl ? "md:self-end md:text-right" : "md:text-left"
+                  }`}
+                >
+                  {t.downloadTodayDesc}
+                </p>
+
+                <div
+                  className={`flex gap-4 mt-4 ${isRtl ? "md:self-end" : ""}`}
+                >
+                  <motion.button
+                    whileHover={{
+                      scale: 1.05,
+                      boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.25)",
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                    className="px-6 py-3 bg-neutral-900 dark:bg-neutral-50 text-white dark:text-neutral-950 font-extrabold rounded-xl text-xs shadow-md border border-neutral-800 dark:border-neutral-200 cursor-pointer relative overflow-hidden group"
+                  >
+                    <span className="absolute inset-0 bg-linear-to-r from-emerald-500/10 to-sky-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    <span className="relative z-10">Google Play</span>
+                  </motion.button>
+                </div>
+              </motion.div>
+
+              <div className="md:col-span-1 pointer-events-none" />
+            </div>
           </div>
+
+          <motion.div
+            animate={
+              osState === 5
+                ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    rotateX: 0,
+                    filter: "blur(0px)",
+                  }
+                : {
+                    opacity: 0,
+                    y: 60,
+                    scale: 0.9,
+                    rotateX: 15,
+                    filter: "blur(8px)",
+                  }
+            }
+            transition={{
+              type: "spring",
+              stiffness: 70,
+              damping: 14,
+              delay: 0.15,
+            }}
+            className="w-full z-40 pointer-events-auto"
+          >
+            <FloatingFooter />
+          </motion.div>
         </div>
 
         <div className="h-[50vh] w-full pointer-events-none relative z-30" />
       </div>
+
+      <FloatingActions osState={osState} />
 
       <CommandPaletteMockLanding
         isOpen={isCommandOpen}

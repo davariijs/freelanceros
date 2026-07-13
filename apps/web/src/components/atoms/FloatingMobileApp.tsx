@@ -150,7 +150,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
       state0: new THREE.Vector3(0, -2.5, 0),
       state5: new THREE.Vector3(
         isMobileSize ? 0.3 : isTabletSize ? -0.5 : -0.85,
-        isMobileSize ? 0.35 : -0.5,
+        isMobileSize ? 0.55 : -0.5,
         1.1,
       ),
     };
@@ -161,7 +161,21 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
     const time = state.clock.getElapsedTime();
 
     const targetPos = active ? positionsRef.state5 : positionsRef.state0;
-    phoneRef.current.position.lerp(targetPos, 0.08);
+    const tempPos = targetPos.clone();
+
+    let scaleFactor = 1.0;
+
+    if (active && isMobileSize) {
+      const sec5 = document.getElementById("mobile-download-section");
+      if (sec5) {
+        const rect = sec5.getBoundingClientRect();
+        const scrollProgress = Math.max(0, -rect.top);
+        tempPos.y += scrollProgress * 0.0035;
+        scaleFactor = Math.max(0.0, 1.0 - scrollProgress * 0.004);
+      }
+    }
+
+    phoneRef.current.position.lerp(tempPos, 0.08);
 
     const targetScale = active
       ? isMobileSize
