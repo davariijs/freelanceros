@@ -50,8 +50,8 @@ export function FloatingFooter() {
         }}
         className={`w-full max-w-5xl rounded-3xl p-5 md:py-3.5 md:px-8 border backdrop-blur-2xl transition-all duration-500 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl ${
           isDark
-            ? "bg-[#09090e]/75 border-neutral-800/40 text-neutral-400"
-            : "bg-white/80 border-neutral-200/50 text-neutral-600"
+            ? "bg-[#09090e]/75 border-emerald-500/30 text-neutral-400"
+            : "bg-white/80 border-white/20 text-neutral-600"
         }`}
       >
         <div

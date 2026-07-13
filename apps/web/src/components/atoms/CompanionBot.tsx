@@ -39,8 +39,8 @@ export function CompanionBot({ osState }: CompanionBotProps) {
       },
       state2: {
         pos: new THREE.Vector3(
-          isMobileSize ? -0.2 : -1.1 * factor,
-          0.12 * factor,
+          isMobileSize ? -0.15 : -1.1 * factor,
+          isMobileSize ? 1.1 : 0.3 * factor,
           isMobileSize ? 1.0 : 1.41 * factor,
         ),
         rot: new THREE.Euler(0, -Math.PI * 1.4, 0),
@@ -50,7 +50,7 @@ export function CompanionBot({ osState }: CompanionBotProps) {
       state3: {
         pos: new THREE.Vector3(
           isMobileSize ? 0.0 : -0.35 * factor,
-          -0.05 * factor,
+          isMobileSize ? 0.35 : -0.05 * factor,
           isMobileSize ? 1.0 : 1.25 * factor,
         ),
         rot: new THREE.Euler(0, -Math.PI * 0.95, 0),
