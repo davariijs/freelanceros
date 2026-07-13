@@ -36,14 +36,18 @@ function DraggableCapsule({
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     setIsDragging(true);
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    if (e.target && "setPointerCapture" in e.target) {
+      (e.target as any).setPointerCapture(e.pointerId);
+    }
   };
 
   const handlePointerUp = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     setIsDragging(false);
     setDragOffset({ x: 0, y: 0 });
-    (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+    if (e.target && "releasePointerCapture" in e.target) {
+      (e.target as any).releasePointerCapture(e.pointerId);
+    }
   };
 
   const [dragOffset, setDragOffset] = React.useState({ x: 0, y: 0 });

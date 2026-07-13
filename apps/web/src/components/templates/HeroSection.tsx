@@ -94,15 +94,9 @@ export function HeroSection() {
     t.scrollToExplore ||
     (locale === "fa" ? "برای کاوش اسکرول کنید" : "Scroll to Explore");
 
-  const isPointerDisabled = osState >= 2;
-
   return (
     <div className="relative w-full">
-      <div
-        className={`fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-40 ${
-          isPointerDisabled ? "pointer-events-none" : "pointer-events-auto"
-        }`}
-      >
+      <div className="fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-40 pointer-events-none">
         <SystemWidget
           active={osState > 0}
           activeColor="bg-emerald-500"
@@ -111,7 +105,7 @@ export function HeroSection() {
           inactiveTitle={t.widgetInactiveTitleLeft}
           activeValue={t.widgetActiveValueLeft}
           inactiveValue={t.widgetInactiveValueLeft}
-          className={`top-12 left-6 lg:left-12 ${isPointerDisabled ? "pointer-events-none" : "pointer-events-auto"}`}
+          className="top-12 left-6 lg:left-12 pointer-events-auto"
         />
 
         <SystemWidget
@@ -122,12 +116,10 @@ export function HeroSection() {
           inactiveTitle={t.widgetInactiveTitleRight}
           activeValue={t.widgetActiveValueRight}
           inactiveValue={t.widgetInactiveValueRight}
-          className={`top-12 right-6 lg:right-12 ${isPointerDisabled ? "pointer-events-none" : "pointer-events-auto"}`}
+          className="top-12 right-6 lg:right-12 pointer-events-auto"
         />
 
-        <div
-          className={`absolute inset-0 w-full h-full overflow-hidden ${isPointerDisabled ? "pointer-events-none" : "pointer-events-auto"}`}
-        >
+        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-auto">
           <motion.div
             animate={getDeskAnimation()}
             transition={{ type: "spring", stiffness: 60, damping: 16 }}
@@ -169,7 +161,7 @@ export function HeroSection() {
         )}
       </div>
 
-      <div className="relative z-30 w-full flex flex-col items-center pointer-events-none">
+      <div className="relative z-50 w-full flex flex-col items-center pointer-events-none">
         <div
           ref={(el) => {
             sectionsRef.current[0] = el;
@@ -187,7 +179,7 @@ export function HeroSection() {
           ref={(el) => {
             sectionsRef.current[2] = el;
           }}
-          className="min-h-screen w-full flex flex-col items-center justify-center py-10 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden px-6"
+          className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden px-6"
         >
           <FeaturesGrid osState={osState} />
         </div>
@@ -196,7 +188,7 @@ export function HeroSection() {
           ref={(el) => {
             sectionsRef.current[3] = el;
           }}
-          className="min-h-screen w-full flex flex-col items-center justify-center py-10 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden px-6"
+          className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden px-6"
         >
           <div className="max-w-4xl text-center mb-12 px-6">
             <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-500">
@@ -213,8 +205,7 @@ export function HeroSection() {
           ref={(el) => {
             sectionsRef.current[4] = el;
           }}
-          onClick={() => setIsCommandOpen(true)}
-          className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto z-50 snap-start snap-always overflow-hidden cursor-pointer px-6"
+          className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-none snap-start snap-always overflow-hidden px-6"
         >
           <motion.div
             animate={
@@ -223,7 +214,7 @@ export function HeroSection() {
                 : { opacity: 0, y: 45, scale: 0.95, filter: "blur(8px)" }
             }
             transition={{ type: "spring", stiffness: 70, damping: 15 }}
-            className="max-w-4xl text-center mb-12 px-8 font-pointer-events-auto"
+            className="max-w-4xl text-center mb-12 px-8 pointer-events-none"
           >
             <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-500">
               {isRtl ? "کماند پالت سراسری" : "COMMAND PALETTE SHOWCASE"}
@@ -241,14 +232,12 @@ export function HeroSection() {
           ref={(el) => {
             sectionsRef.current[5] = el;
           }}
-          className={`min-h-screen w-full snap-start snap-always flex flex-col items-center justify-between py-16 md:py-24 relative bg-transparent ${
-            osState === 5 ? "pointer-events-auto" : "pointer-events-none"
-          }`}
+          className={`min-h-screen w-full snap-start snap-always flex flex-col items-center justify-between py-16 md:py-24 relative bg-transparent pointer-events-none`}
         >
           <div className="grow flex items-center justify-center w-full">
             <div
               dir="ltr"
-              className="max-w-5xl w-full px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
+              className="max-w-5xl w-full px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center pointer-events-none"
             >
               <motion.div
                 animate={
@@ -261,7 +250,7 @@ export function HeroSection() {
                   stiffness: 80,
                   damping: 15,
                 }}
-                className={`flex flex-col items-center md:items-start gap-6 text-center md:text-left pointer-events-auto pt-[24vh] md:pt-0 ${isRtl ? "md:text-right md:items-end mr-auto" : ""}`}
+                className={`flex flex-col items-center md:items-start gap-6 text-center md:text-left pointer-events-none md:pointer-events-auto pt-[28vh] md:pt-0 ${isRtl ? "md:text-right md:items-end mr-auto" : ""}`}
               >
                 <span
                   className={`text-[10px] font-extrabold uppercase tracking-widest text-emerald-500 ${
@@ -288,7 +277,7 @@ export function HeroSection() {
                 </p>
 
                 <div
-                  className={`flex gap-4 mt-4 ${isRtl ? "md:self-end" : ""}`}
+                  className={`flex gap-4 mt-4 pointer-events-auto ${isRtl ? "md:self-end" : ""}`}
                 >
                   <motion.button
                     whileHover={{
