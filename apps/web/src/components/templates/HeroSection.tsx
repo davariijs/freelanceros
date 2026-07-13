@@ -19,11 +19,13 @@ export function HeroSection() {
   const isRtl = locale === "fa";
   const [osState, setOsState] = React.useState<0 | 1 | 2 | 3 | 4 | 5>(0);
   const [isMobile, setIsMobile] = React.useState(false);
+  const [windowWidth, setWindowWidth] = React.useState(0);
 
   const sectionsRef = React.useRef<(HTMLDivElement | null)[]>([]);
 
   React.useEffect(() => {
     const handleResize = () => {
+      setWindowWidth(window.innerWidth);
       setIsMobile(window.innerWidth < 768);
     };
     handleResize();
@@ -71,12 +73,18 @@ export function HeroSection() {
   const getDeskAnimation = () => {
     if (osState >= 2)
       return { x: "0%", y: isMobile ? "-100px" : "-180px", opacity: 1 };
-    if (osState === 1)
-      return {
-        x: isMobile ? "0%" : "22%",
-        y: isMobile ? "-140px" : "0px",
-        opacity: 1,
-      };
+    if (osState === 1) {
+      if (isMobile) {
+        return { x: "0%", y: "-140px", opacity: 1 };
+      }
+      let xShift = "22%";
+      if (windowWidth >= 1450 && windowWidth <= 1669) {
+        xShift = "27%";
+      } else if (windowWidth >= 768 && windowWidth < 1450) {
+        xShift = "19%";
+      }
+      return { x: xShift, y: "0px", opacity: 1 };
+    }
     return { x: "0%", y: "0px", opacity: 1 };
   };
 

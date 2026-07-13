@@ -12,6 +12,7 @@ interface CompanionBotProps {
 export function CompanionBot({ osState }: CompanionBotProps) {
   const { size } = useThree();
   const isMobileSize = size.width < 768;
+  const isTabletSize = size.width >= 768 && size.width < 1450;
 
   const botRef = React.useRef<THREE.Group>(null);
   const leftLegRef = React.useRef<THREE.Group>(null);
@@ -22,7 +23,7 @@ export function CompanionBot({ osState }: CompanionBotProps) {
   const stateFactorRef = React.useRef(0);
 
   const config = React.useMemo(() => {
-    const factor = isMobileSize ? 0.6 : 1.0;
+    const factor = isMobileSize ? 0.65 : isTabletSize ? 0.8 : 1.0;
     return {
       state0: {
         pos: new THREE.Vector3(-1 * factor, 0.1 * factor, -1.2 * factor),
@@ -57,7 +58,7 @@ export function CompanionBot({ osState }: CompanionBotProps) {
         armRot: 0.3,
       },
     };
-  }, [isMobileSize]);
+  }, [isMobileSize, isTabletSize]);
 
   useFrame((state) => {
     if (!botRef.current) return;
@@ -105,7 +106,8 @@ export function CompanionBot({ osState }: CompanionBotProps) {
 
       if (osState === 2 && stateFactorRef.current > 0.64) {
         const walkCycle = Math.sin(time * 0.8);
-        const offsetX = walkCycle * (isMobileSize ? 0.2 : 0.45);
+        const offsetX =
+          walkCycle * (isMobileSize ? 0.2 : isTabletSize ? 0.35 : 0.45);
         activePos.x += offsetX;
 
         const movingRight = Math.cos(time * 0.8) > 0;
@@ -132,7 +134,8 @@ export function CompanionBot({ osState }: CompanionBotProps) {
 
       if (osState === 3 && stateFactorRef.current > 0.95) {
         const walkCycle = Math.sin(time * 1.4);
-        activePos.x += walkCycle * (isMobileSize ? 0.05 : 0.12);
+        activePos.x +=
+          walkCycle * (isMobileSize ? 0.05 : isTabletSize ? 0.09 : 0.12);
       }
     }
 
@@ -178,7 +181,7 @@ export function CompanionBot({ osState }: CompanionBotProps) {
   });
 
   return (
-    <group ref={botRef} scale={isMobileSize ? 0.45 : 0.6}>
+    <group ref={botRef} scale={isMobileSize ? 0.45 : isTabletSize ? 0.52 : 0.6}>
       <group position={[0, 0.28, 0]}>
         <RoundedBox
           args={[0.16, 0.12, 0.12]}

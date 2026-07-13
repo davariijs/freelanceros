@@ -26,6 +26,7 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
 
   const { size } = useThree();
   const isMobileSize = size.width < 768;
+  const isTabletSize = size.width >= 768 && size.width < 1450;
 
   useFrame((state) => {
     if (!mainGroupRef.current || !deskGroupRef.current) return;
@@ -61,12 +62,12 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
 
     let targetDeskY = 0;
     let targetDeskZ = 0;
-    let targetDeskScale = isMobileSize ? 0.65 : 1.0;
+    let targetDeskScale = isMobileSize ? 0.65 : isTabletSize ? 0.8 : 1.0;
 
     if (osState >= 2) {
       targetDeskY = isMobileSize ? -1.0 : -1.6;
       targetDeskZ = isMobileSize ? -1.8 : -2.2;
-      targetDeskScale = isMobileSize ? 0.45 : 0.7;
+      targetDeskScale = isMobileSize ? 0.45 : isTabletSize ? 0.55 : 0.7;
     }
 
     deskGroupRef.current.position.y = THREE.MathUtils.lerp(

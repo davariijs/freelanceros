@@ -71,7 +71,7 @@ export function BentoCard({
         rotateY: ySpring,
         transformStyle: "preserve-3d",
       }}
-      className={`p-6 h-full w-full rounded-[28px] border backdrop-blur-2xl flex flex-col justify-between relative overflow-hidden transition-all duration-700 cursor-default ${
+      className={`p-6 md:p-2 lg:p-6 h-full w-full rounded-[28px] border backdrop-blur-2xl flex flex-col justify-between relative overflow-hidden transition-all duration-700 cursor-default ${
         isDark
           ? "bg-[#09090e]/85 text-neutral-50"
           : "bg-white/92 text-neutral-900"
