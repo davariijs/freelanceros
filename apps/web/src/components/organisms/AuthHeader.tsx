@@ -1,17 +1,25 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useApp } from "@/context/AppContext";
-import { Globe, Sun, Moon } from "lucide-react";
+import { Globe, Sun, Moon, Home } from "lucide-react";
 import { Button } from "@/components/atoms/Button";
 
 export const AuthHeader: React.FC = () => {
-  const { toggleLocale, setTheme, theme, locale, t, dir } = useApp();
+  const { toggleLocale, setTheme, theme, locale, dir } = useApp();
 
   return (
     <div
-      className={`absolute top-4 ${dir === "rtl" ? "left-4" : "right-4"} flex items-center gap-1 p-1 rounded-full border border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm`}
+      className={`absolute top-4 ${dir === "rtl" ? "left-4" : "right-4"} flex items-center gap-1 p-1 rounded-full border border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm z-50`}
     >
+      <Link
+        href="/"
+        className="h-8 w-8 p-0 rounded-full hover:bg-neutral-200 dark:hover:bg-neutral-800 flex items-center justify-center transition-colors text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100"
+      >
+        <Home className="h-3.5 w-3.5" />
+      </Link>
+      <div className="w-px h-4 bg-neutral-200 dark:bg-neutral-800" />
       <Button
         onClick={toggleLocale}
         variant="ghost"

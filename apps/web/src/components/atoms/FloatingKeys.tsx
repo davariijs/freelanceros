@@ -165,6 +165,8 @@ export function FloatingKeys({ osState }: FloatingKeysProps) {
     <group>
       <group
         ref={key1Ref}
+        position={[0, -2.5, 0]}
+        scale={0}
         onClick={handleToggle}
         onPointerOver={(e) => handlePointerOver(e, setHoveredCtrl)}
         onPointerOut={() => handlePointerOut(setHoveredCtrl)}
@@ -194,6 +196,8 @@ export function FloatingKeys({ osState }: FloatingKeysProps) {
 
       <group
         ref={key2Ref}
+        position={[0, -2.5, 0]}
+        scale={0}
         onClick={handleToggle}
         onPointerOver={(e) => handlePointerOver(e, setHoveredK)}
         onPointerOut={() => handlePointerOut(setHoveredK)}

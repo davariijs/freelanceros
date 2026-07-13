@@ -17,6 +17,7 @@ function DraggableCapsule({
   text,
   tailLeft = false,
   isMobileSize = false,
+  isTabletSize = false,
 }: {
   homePos: THREE.Vector3;
   color: string;
@@ -24,6 +25,7 @@ function DraggableCapsule({
   tailLeft?: boolean;
   isDark: boolean;
   isMobileSize?: boolean;
+  isTabletSize?: boolean;
 }) {
   const meshRef = React.useRef<THREE.Group>(null);
   const [isDragging, setIsDragging] = React.useState(false);
@@ -34,14 +36,18 @@ function DraggableCapsule({
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     setIsDragging(true);
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    if (e.target && "setPointerCapture" in e.target) {
+      (e.target as any).setPointerCapture(e.pointerId);
+    }
   };
 
   const handlePointerUp = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     setIsDragging(false);
     setDragOffset({ x: 0, y: 0 });
-    (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+    if (e.target && "releasePointerCapture" in e.target) {
+      (e.target as any).releasePointerCapture(e.pointerId);
+    }
   };
 
   const [dragOffset, setDragOffset] = React.useState({ x: 0, y: 0 });
@@ -56,9 +62,14 @@ function DraggableCapsule({
   };
 
   const responsiveHomePos = React.useMemo(() => {
-    if (!isMobileSize) return homePos;
-    return new THREE.Vector3(homePos.x * 0.7, homePos.y * 0.9, homePos.z);
-  }, [homePos, isMobileSize]);
+    if (isMobileSize) {
+      return new THREE.Vector3(homePos.x * 0.7, homePos.y * 0.9, homePos.z);
+    }
+    if (isTabletSize) {
+      return new THREE.Vector3(homePos.x * 0.85, homePos.y * 0.95, homePos.z);
+    }
+    return homePos;
+  }, [homePos, isMobileSize, isTabletSize]);
 
   useFrame(() => {
     if (!meshRef.current) return;
@@ -90,7 +101,7 @@ function DraggableCapsule({
       onPointerOut={() => {
         document.body.style.cursor = "auto";
       }}
-      scale={isMobileSize ? 0.75 : 1.0}
+      scale={isMobileSize ? 0.75 : isTabletSize ? 0.85 : 1.0}
     >
       <RoundedBox
         args={[0.34, 0.11, 0.04]}
@@ -134,6 +145,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
 
   const { size } = useThree();
   const isMobileSize = size.width < 768;
+  const isTabletSize = size.width >= 768 && size.width < 1112;
 
   const phoneRef = React.useRef<THREE.Group>(null);
 
@@ -141,21 +153,41 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
     return {
       state0: new THREE.Vector3(0, -2.5, 0),
       state5: new THREE.Vector3(
-        isMobileSize ? 0.0 : -0.85,
-        isMobileSize ? 0.42 : -0.5,
+        isMobileSize ? 0.3 : isTabletSize ? -0.5 : -0.85,
+        isMobileSize ? 0.55 : -0.5,
         1.1,
       ),
     };
-  }, [isMobileSize]);
+  }, [isMobileSize, isTabletSize]);
 
   useFrame((state) => {
     if (!phoneRef.current) return;
     const time = state.clock.getElapsedTime();
 
     const targetPos = active ? positionsRef.state5 : positionsRef.state0;
-    phoneRef.current.position.lerp(targetPos, 0.08);
+    const tempPos = targetPos.clone();
 
-    const targetScale = active ? (isMobileSize ? 1.4 : 2.0) : 0.0;
+    let scaleFactor = 1.0;
+
+    if (active && isMobileSize) {
+      const sec5 = document.getElementById("mobile-download-section");
+      if (sec5) {
+        const rect = sec5.getBoundingClientRect();
+        const scrollProgress = Math.max(0, -rect.top);
+        tempPos.y += scrollProgress * 0.0035;
+        scaleFactor = Math.max(0.0, 1.0 - scrollProgress * 0.004);
+      }
+    }
+
+    phoneRef.current.position.lerp(tempPos, 0.08);
+
+    const targetScale = active
+      ? isMobileSize
+        ? 1.0
+        : isTabletSize
+          ? 1.6
+          : 2.0
+      : 0.0;
     const scaleVec = new THREE.Vector3(targetScale, targetScale, targetScale);
     phoneRef.current.scale.lerp(scaleVec, 0.08);
 
@@ -239,7 +271,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
   }, []);
 
   return (
-    <group ref={phoneRef}>
+    <group ref={phoneRef} position={[0, -2.5, 0]} scale={0}>
       <group>
         <RoundedBox
           args={[0.38, 0.74, 0.04]}
@@ -318,6 +350,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
         text={t.notifyDeadline || "Project Due Today"}
         isDark={isDark}
         isMobileSize={isMobileSize}
+        isTabletSize={isTabletSize}
       />
 
       <DraggableCapsule
@@ -327,6 +360,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
         tailLeft
         isDark={isDark}
         isMobileSize={isMobileSize}
+        isTabletSize={isTabletSize}
       />
 
       <DraggableCapsule
@@ -335,6 +369,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
         text={t.notifyProgress || "Progress: 40%"}
         isDark={isDark}
         isMobileSize={isMobileSize}
+        isTabletSize={isTabletSize}
       />
 
       <DraggableCapsule
@@ -344,6 +379,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
         tailLeft
         isDark={isDark}
         isMobileSize={isMobileSize}
+        isTabletSize={isTabletSize}
       />
     </group>
   );

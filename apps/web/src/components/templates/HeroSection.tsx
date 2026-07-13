@@ -9,6 +9,8 @@ import { HeroContent } from "@/components/organisms/HeroContent";
 import { FeaturesGrid } from "@/components/organisms/FeaturesGrid";
 import { WorkflowPipeline } from "@/components/organisms/WorkflowPipeline";
 import { CommandPaletteMockLanding } from "@/components/molecules/CommandPaletteMockLading";
+import { FloatingActions } from "@/components/molecules/FloatingActions";
+import { FloatingFooter } from "@/components/organisms/FloatingFooter";
 
 const HeroCanvas = dynamic(() => import("@/components/organisms/HeroCanvas"), {
   ssr: false,
@@ -19,11 +21,13 @@ export function HeroSection() {
   const isRtl = locale === "fa";
   const [osState, setOsState] = React.useState<0 | 1 | 2 | 3 | 4 | 5>(0);
   const [isMobile, setIsMobile] = React.useState(false);
+  const [windowWidth, setWindowWidth] = React.useState(0);
 
   const sectionsRef = React.useRef<(HTMLDivElement | null)[]>([]);
 
   React.useEffect(() => {
     const handleResize = () => {
+      setWindowWidth(window.innerWidth);
       setIsMobile(window.innerWidth < 768);
     };
     handleResize();
@@ -71,12 +75,18 @@ export function HeroSection() {
   const getDeskAnimation = () => {
     if (osState >= 2)
       return { x: "0%", y: isMobile ? "-100px" : "-180px", opacity: 1 };
-    if (osState === 1)
-      return {
-        x: isMobile ? "0%" : "22%",
-        y: isMobile ? "-140px" : "0px",
-        opacity: 1,
-      };
+    if (osState === 1) {
+      if (isMobile) {
+        return { x: "0%", y: "-140px", opacity: 1 };
+      }
+      let xShift = "22%";
+      if (windowWidth >= 1450 && windowWidth <= 1669) {
+        xShift = "27%";
+      } else if (windowWidth >= 768 && windowWidth < 1450) {
+        xShift = "19%";
+      }
+      return { x: xShift, y: "0px", opacity: 1 };
+    }
     return { x: "0%", y: "0px", opacity: 1 };
   };
 
@@ -84,15 +94,9 @@ export function HeroSection() {
     t.scrollToExplore ||
     (locale === "fa" ? "برای کاوش اسکرول کنید" : "Scroll to Explore");
 
-  const isPointerDisabled = osState === 2 || osState === 3;
-
   return (
     <div className="relative w-full">
-      <div
-        className={`fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-40 ${
-          isPointerDisabled ? "pointer-events-none" : "pointer-events-auto"
-        }`}
-      >
+      <div className="fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-40 pointer-events-none">
         <SystemWidget
           active={osState > 0}
           activeColor="bg-emerald-500"
@@ -101,7 +105,7 @@ export function HeroSection() {
           inactiveTitle={t.widgetInactiveTitleLeft}
           activeValue={t.widgetActiveValueLeft}
           inactiveValue={t.widgetInactiveValueLeft}
-          className={`top-12 left-6 lg:left-12 ${isPointerDisabled ? "pointer-events-none" : "pointer-events-auto"}`}
+          className="top-12 left-6 lg:left-12 pointer-events-auto"
         />
 
         <SystemWidget
@@ -112,12 +116,10 @@ export function HeroSection() {
           inactiveTitle={t.widgetInactiveTitleRight}
           activeValue={t.widgetActiveValueRight}
           inactiveValue={t.widgetInactiveValueRight}
-          className={`top-12 right-6 lg:right-12 ${isPointerDisabled ? "pointer-events-none" : "pointer-events-auto"}`}
+          className="top-12 right-6 lg:right-12 pointer-events-auto"
         />
 
-        <div
-          className={`absolute inset-0 w-full h-full overflow-hidden ${isPointerDisabled ? "pointer-events-none" : "pointer-events-auto"}`}
-        >
+        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-auto">
           <motion.div
             animate={getDeskAnimation()}
             transition={{ type: "spring", stiffness: 60, damping: 16 }}
@@ -159,7 +161,7 @@ export function HeroSection() {
         )}
       </div>
 
-      <div className="relative z-30 w-full flex flex-col items-center pointer-events-none">
+      <div className="relative z-50 w-full flex flex-col items-center pointer-events-none">
         <div
           ref={(el) => {
             sectionsRef.current[0] = el;
@@ -203,8 +205,7 @@ export function HeroSection() {
           ref={(el) => {
             sectionsRef.current[4] = el;
           }}
-          onClick={() => setIsCommandOpen(true)}
-          className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto z-50 snap-start snap-always overflow-hidden cursor-pointer px-6"
+          className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-none snap-start snap-always overflow-hidden px-6"
         >
           <motion.div
             animate={
@@ -213,7 +214,7 @@ export function HeroSection() {
                 : { opacity: 0, y: 45, scale: 0.95, filter: "blur(8px)" }
             }
             transition={{ type: "spring", stiffness: 70, damping: 15 }}
-            className="max-w-4xl text-center mb-12 px-8 font-pointer-events-auto"
+            className="max-w-4xl text-center mb-12 px-8 pointer-events-none"
           >
             <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-500">
               {isRtl ? "کماند پالت سراسری" : "COMMAND PALETTE SHOWCASE"}
@@ -227,67 +228,110 @@ export function HeroSection() {
         </div>
 
         <div
+          id="mobile-download-section"
           ref={(el) => {
             sectionsRef.current[5] = el;
           }}
-          className={`min-h-screen w-full snap-start snap-always flex flex-col items-center justify-center py-24 relative bg-transparent ${
-            osState === 5 ? "pointer-events-none" : "pointer-events-auto"
-          }`}
+          className={`min-h-screen w-full snap-start snap-always flex flex-col items-center justify-between py-16 md:py-24 relative bg-transparent pointer-events-none`}
         >
-          <div
-            dir="ltr"
-            className="max-w-5xl w-full px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
-          >
-            <motion.div
-              animate={
-                osState === 5
-                  ? { opacity: 1, x: 0, filter: "blur(0px)" }
-                  : { opacity: 0, x: -50, filter: "blur(8px)" }
-              }
-              transition={{
-                type: "spring",
-                stiffness: 70,
-                damping: 15,
-              }}
-              className={`flex flex-col items-center md:items-start gap-6 text-center md:text-left pointer-events-auto pt-[28vh] md:pt-0 ${isRtl ? "md:text-right md:items-end mr-auto" : ""}`}
+          <div className="grow flex items-center justify-center w-full">
+            <div
+              dir="ltr"
+              className="max-w-5xl w-full px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center pointer-events-none"
             >
-              <span
-                className={`text-[10px] font-extrabold uppercase tracking-widest text-emerald-500 ${
-                  isRtl ? "md:self-end md:text-right" : ""
-                }`}
+              <motion.div
+                animate={
+                  osState === 5
+                    ? { opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }
+                    : { opacity: 0, y: 35, filter: "blur(6px)", scale: 0.95 }
+                }
+                transition={{
+                  type: "spring",
+                  stiffness: 80,
+                  damping: 15,
+                }}
+                className={`flex flex-col items-center md:items-start gap-6 text-center md:text-left pointer-events-none md:pointer-events-auto pt-[28vh] md:pt-0 ${isRtl ? "md:text-right md:items-end mr-auto" : ""}`}
               >
-                {t.mobileSectionTitle || "Mobile Access"}
-              </span>
+                <span
+                  className={`text-[10px] font-extrabold uppercase tracking-widest text-emerald-500 ${
+                    isRtl ? "md:self-end md:text-right" : ""
+                  }`}
+                >
+                  {t.mobileSectionTitle || "Mobile Access"}
+                </span>
 
-              <h2
-                className={`text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 dark:text-neutral-50 leading-tight ${
-                  isRtl ? "md:self-end md:text-right" : ""
-                }`}
-              >
-                {t.downloadTodayTitle || "Download Today"}
-              </h2>
+                <h2
+                  className={`text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 dark:text-neutral-50 leading-tight ${
+                    isRtl ? "md:self-end md:text-right" : ""
+                  }`}
+                >
+                  {t.downloadTodayTitle || "Download Today"}
+                </h2>
 
-              <p
-                className={`text-sm md:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm text-center ${
-                  isRtl ? "md:self-end md:text-right" : "md:text-left"
-                }`}
-              >
-                {t.downloadTodayDesc}
-              </p>
+                <p
+                  className={`text-sm md:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm text-center ${
+                    isRtl ? "md:self-end md:text-right" : "md:text-left"
+                  }`}
+                >
+                  {t.downloadTodayDesc}
+                </p>
 
-              <div className={`flex gap-4 mt-4 ${isRtl ? "md:self-end" : ""}`}>
-                <button className="px-6 py-3 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-bold rounded-xl text-xs shadow-sm transition-colors cursor-pointer">
-                  Google Play
-                </button>
-              </div>
-            </motion.div>
+                <div
+                  className={`flex gap-4 mt-4 pointer-events-auto ${isRtl ? "md:self-end" : ""}`}
+                >
+                  <motion.button
+                    whileHover={{
+                      scale: 1.05,
+                      boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.25)",
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                    className="px-6 py-3 bg-neutral-900 dark:bg-neutral-50 text-white dark:text-neutral-950 font-extrabold rounded-xl text-xs shadow-md border border-neutral-800 dark:border-neutral-200 cursor-pointer relative overflow-hidden group"
+                  >
+                    <span className="absolute inset-0 bg-linear-to-r from-emerald-500/10 to-sky-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    <span className="relative z-10">Google Play</span>
+                  </motion.button>
+                </div>
+              </motion.div>
 
-            <div className="md:col-span-1 pointer-events-none" />
+              <div className="md:col-span-1 pointer-events-none" />
+            </div>
           </div>
+
+          <motion.div
+            animate={
+              osState === 5
+                ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    rotateX: 0,
+                    filter: "blur(0px)",
+                  }
+                : {
+                    opacity: 0,
+                    y: 60,
+                    scale: 0.9,
+                    rotateX: 15,
+                    filter: "blur(8px)",
+                  }
+            }
+            transition={{
+              type: "spring",
+              stiffness: 70,
+              damping: 14,
+              delay: 0.15,
+            }}
+            className="w-full z-40 pointer-events-auto"
+          >
+            <FloatingFooter />
+          </motion.div>
         </div>
 
         <div className="h-[50vh] w-full pointer-events-none relative z-30" />
       </div>
+
+      <FloatingActions osState={osState} />
 
       <CommandPaletteMockLanding
         isOpen={isCommandOpen}

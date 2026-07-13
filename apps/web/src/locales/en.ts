@@ -201,8 +201,10 @@ export const en = {
   rightScreenEfficiency: "WEEKLY EFFICIENCY",
   rightScreenLog1: "> sync crm: active",
   rightScreenLog2: "> database synced (postgres)",
-  rightScreenLog3: '> task "Acme Mobile" completed',
+  rightScreenLog3: 'task "Acme Mobile" completed',
   rightScreenAction: "CLICK TO LOGIN",
+  bentoSectionTitle: "Outstanding Features of FreelanceOS",
+  bentoSectionSubtitle: "Integrated tools to centralize your workflow",
   bentoCrmTitle: "Active CRM Engine",
   bentoCrmDesc:
     "Centralize client relationships. Deactivating a client automatically pauses all associated projects instantly.",
