@@ -11,6 +11,7 @@ import { WorkflowPipeline } from "@/components/organisms/WorkflowPipeline";
 import { CommandPaletteMockLanding } from "@/components/molecules/CommandPaletteMockLading";
 import { FloatingActions } from "@/components/molecules/FloatingActions";
 import { FloatingFooter } from "@/components/organisms/FloatingFooter";
+import { createPortal } from "react-dom";
 
 const HeroCanvas = dynamic(() => import("@/components/organisms/HeroCanvas"), {
   ssr: false,
@@ -22,6 +23,7 @@ export function HeroSection() {
   const [osState, setOsState] = React.useState<0 | 1 | 2 | 3 | 4 | 5>(0);
   const [isMobile, setIsMobile] = React.useState(false);
   const [windowWidth, setWindowWidth] = React.useState(0);
+  const [mounted, setMounted] = React.useState(false);
 
   const sectionsRef = React.useRef<(HTMLDivElement | null)[]>([]);
 
@@ -36,29 +38,39 @@ export function HeroSection() {
   }, []);
 
   React.useEffect(() => {
-    const handleScroll = () => {
-      const viewportHeight = window.innerHeight;
-      let activeIndex = 0;
-      let minDistance = Infinity;
+    setMounted(true);
+  }, []);
 
-      sectionsRef.current.forEach((el, index) => {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const distance = Math.abs(
-          rect.top + rect.height / 2 - viewportHeight / 2,
-        );
-        if (distance < minDistance) {
-          minDistance = distance;
-          activeIndex = index;
-        }
-      });
-
-      setOsState(activeIndex as 0 | 1 | 2 | 3 | 4 | 5);
+  React.useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: "-25% 0px -25% 0px",
+      threshold: 0.05,
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const index = sectionsRef.current.indexOf(
+            entry.target as HTMLDivElement,
+          );
+          if (index !== -1) {
+            setOsState(index as 0 | 1 | 2 | 3 | 4 | 5);
+          }
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      observerCallback,
+      observerOptions,
+    );
+
+    sectionsRef.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   React.useEffect(() => {
@@ -94,72 +106,77 @@ export function HeroSection() {
     t.scrollToExplore ||
     (locale === "fa" ? "برای کاوش اسکرول کنید" : "Scroll to Explore");
 
+  const fixedLayer = (
+    <div className="fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-40 pointer-events-none">
+      <SystemWidget
+        active={osState > 0}
+        activeColor="bg-emerald-500"
+        inactiveColor="bg-amber-500"
+        activeTitle={t.widgetActiveTitleLeft}
+        inactiveTitle={t.widgetInactiveTitleLeft}
+        activeValue={t.widgetActiveValueLeft}
+        inactiveValue={t.widgetInactiveValueLeft}
+        className="top-12 left-6 lg:left-12 pointer-events-auto"
+      />
+
+      <SystemWidget
+        active={osState > 0}
+        activeColor="bg-sky-500"
+        inactiveColor="bg-neutral-400"
+        activeTitle={t.widgetActiveTitleRight}
+        inactiveTitle={t.widgetInactiveTitleRight}
+        activeValue={t.widgetActiveValueRight}
+        inactiveValue={t.widgetInactiveValueRight}
+        className="top-12 right-6 lg:right-12 pointer-events-auto"
+      />
+
+      <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-auto">
+        <motion.div
+          animate={getDeskAnimation()}
+          transition={{ type: "spring", stiffness: 60, damping: 16 }}
+          className="w-full h-full flex items-center justify-center"
+        >
+          <HeroCanvas osState={osState} />
+        </motion.div>
+      </div>
+
+      <div className="absolute bottom-12 left-0 right-0 mx-auto w-fit z-10 text-center pointer-events-none">
+        <motion.p
+          animate={
+            osState === 0
+              ? { opacity: 1, y: [0, -14, 0] }
+              : { opacity: 0, y: 15 }
+          }
+          transition={
+            osState === 0
+              ? { repeat: Infinity, duration: 1.4, ease: "easeInOut" }
+              : { duration: 0.3 }
+          }
+          className="text-xs font-bold tracking-widest uppercase text-neutral-400"
+        >
+          {scrollText}
+        </motion.p>
+      </div>
+
+      {osState < 2 && (
+        <div className="flex items-center pointer-events-auto w-full justify-center md:justify-start">
+          <HeroContent
+            active={osState === 1}
+            exit={false}
+            title="FreelanceOs"
+            subtitle={t.heroSubtitle}
+            ctaPrimary={t.accessDashboard}
+            ctaSecondary={t.learnMore}
+          />
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="relative w-full">
-      <div className="fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-40 pointer-events-none">
-        <SystemWidget
-          active={osState > 0}
-          activeColor="bg-emerald-500"
-          inactiveColor="bg-amber-500"
-          activeTitle={t.widgetActiveTitleLeft}
-          inactiveTitle={t.widgetInactiveTitleLeft}
-          activeValue={t.widgetActiveValueLeft}
-          inactiveValue={t.widgetInactiveValueLeft}
-          className="top-12 left-6 lg:left-12 pointer-events-auto"
-        />
 
-        <SystemWidget
-          active={osState > 0}
-          activeColor="bg-sky-500"
-          inactiveColor="bg-neutral-400"
-          activeTitle={t.widgetActiveTitleRight}
-          inactiveTitle={t.widgetInactiveTitleRight}
-          activeValue={t.widgetActiveValueRight}
-          inactiveValue={t.widgetInactiveValueRight}
-          className="top-12 right-6 lg:right-12 pointer-events-auto"
-        />
-
-        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-auto">
-          <motion.div
-            animate={getDeskAnimation()}
-            transition={{ type: "spring", stiffness: 60, damping: 16 }}
-            className="w-full h-full flex items-center justify-center"
-          >
-            <HeroCanvas osState={osState} />
-          </motion.div>
-        </div>
-
-        <div className="absolute bottom-12 left-0 right-0 mx-auto w-fit z-10 text-center pointer-events-none">
-          <motion.p
-            animate={
-              osState === 0
-                ? { opacity: 1, y: [0, -14, 0] }
-                : { opacity: 0, y: 15 }
-            }
-            transition={
-              osState === 0
-                ? { repeat: Infinity, duration: 1.4, ease: "easeInOut" }
-                : { duration: 0.3 }
-            }
-            className="text-xs font-bold tracking-widest uppercase text-neutral-400"
-          >
-            {scrollText}
-          </motion.p>
-        </div>
-
-        {osState < 2 && (
-          <div className="flex items-center pointer-events-auto w-full justify-center md:justify-start">
-            <HeroContent
-              active={osState === 1}
-              exit={false}
-              title="FreelanceOs"
-              subtitle={t.heroSubtitle}
-              ctaPrimary={t.accessDashboard}
-              ctaSecondary={t.learnMore}
-            />
-          </div>
-        )}
-      </div>
+      {mounted && createPortal(fixedLayer, document.body)}
 
       <div className="relative z-50 w-full flex flex-col items-center pointer-events-none">
         <div

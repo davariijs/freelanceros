@@ -148,6 +148,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
   const isTabletSize = size.width >= 768 && size.width < 1112;
 
   const phoneRef = React.useRef<THREE.Group>(null);
+  const scrollProgressRef = React.useRef(0);
 
   const positionsRef = React.useMemo(() => {
     return {
@@ -160,6 +161,21 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
     };
   }, [isMobileSize, isTabletSize]);
 
+  React.useEffect(() => {
+    if (!isMobileSize) return;
+
+    const sec5 = document.getElementById("mobile-download-section");
+    const handleScroll = () => {
+      if (sec5) {
+        const rect = sec5.getBoundingClientRect();
+        scrollProgressRef.current = Math.max(0, -rect.top);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isMobileSize]);
+
   useFrame((state) => {
     if (!phoneRef.current) return;
     const time = state.clock.getElapsedTime();
@@ -170,20 +186,15 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
     let scaleFactor = 1.0;
 
     if (active && isMobileSize) {
-      const sec5 = document.getElementById("mobile-download-section");
-      if (sec5) {
-        const rect = sec5.getBoundingClientRect();
-        const scrollProgress = Math.max(0, -rect.top);
-        tempPos.y += scrollProgress * 0.0035;
-        scaleFactor = Math.max(0.0, 1.0 - scrollProgress * 0.004);
-      }
+      tempPos.y += scrollProgressRef.current * 0.0035;
+      scaleFactor = Math.max(0.0, 1.0 - scrollProgressRef.current * 0.004);
     }
 
     phoneRef.current.position.lerp(tempPos, 0.08);
 
     const targetScale = active
       ? isMobileSize
-        ? 1.0
+        ? 0.72 * scaleFactor
         : isTabletSize
           ? 1.6
           : 2.0
@@ -303,14 +314,11 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
             smoothness={4}
             position={[0, 0, 0.004]}
           >
-            <meshPhysicalMaterial
+            <meshStandardMaterial
               color="#ffffff"
-              transmission={0.95}
-              roughness={0.15}
-              ior={1.5}
-              thickness={0.06}
               transparent
-              opacity={0.3}
+              opacity={0.15}
+              roughness={0.3}
             />
           </RoundedBox>
         </group>

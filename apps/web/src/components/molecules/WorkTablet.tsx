@@ -41,12 +41,12 @@ export function WorkTablet() {
       onPointerOut={handlePointerOut}
       scale={1.8}
     >
-      <mesh position={[0, -0.05, -0.03]} rotation={[0.35, 0, 0]} castShadow>
+      <mesh position={[0, -0.05, -0.03]} rotation={[0.35, 0, 0]}>
         <boxGeometry args={[0.08, 0.06, 0.04]} />
         <meshStandardMaterial color="#111111" roughness={0.9} />
       </mesh>
 
-      <mesh castShadow receiveShadow>
+      <mesh receiveShadow>
         <boxGeometry args={[0.22, 0.15, 0.01]} />
         <meshStandardMaterial color="#1a1a1a" roughness={0.5} metalness={0.8} />
       </mesh>

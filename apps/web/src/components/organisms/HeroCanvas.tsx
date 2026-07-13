@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { WorkspaceModel } from "@/components/molecules/WorkspaceModel";
 
 interface HeroCanvasProps {
@@ -9,6 +9,12 @@ interface HeroCanvasProps {
 }
 
 export default function HeroCanvas({ osState }: HeroCanvasProps) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
   return (
     <div
       dir="ltr"
@@ -16,8 +22,15 @@ export default function HeroCanvas({ osState }: HeroCanvasProps) {
       className="w-full h-full absolute inset-0"
     >
       <Canvas
+        shadows={!isMobile}
         camera={{ position: [0, 1.5, 4.5], fov: 40 }}
-        gl={{ antialias: true }}
+        gl={{
+          antialias: !isMobile,
+          powerPreference: "default",
+          alpha: true,
+        }}
+        dpr={isMobile ? 1 : [1, 1.5]}
+        frameloop="always"
       >
         <ambientLight intensity={1.5} />
         <directionalLight position={[5, 8, 5]} intensity={2.0} />
