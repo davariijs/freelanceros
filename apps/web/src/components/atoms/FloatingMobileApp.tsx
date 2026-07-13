@@ -150,7 +150,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
       state0: new THREE.Vector3(0, -2.5, 0),
       state5: new THREE.Vector3(
         isMobileSize ? 0.3 : isTabletSize ? -0.5 : -0.85,
-        isMobileSize ? 0.42 : -0.5,
+        isMobileSize ? 0.35 : -0.5,
         1.1,
       ),
     };
@@ -165,7 +165,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
 
     const targetScale = active
       ? isMobileSize
-        ? 1.4
+        ? 1.0
         : isTabletSize
           ? 1.6
           : 2.0
