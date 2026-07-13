@@ -92,7 +92,7 @@ export function HeroSection() {
     t.scrollToExplore ||
     (locale === "fa" ? "برای کاوش اسکرول کنید" : "Scroll to Explore");
 
-  const isPointerDisabled = osState === 2 || osState === 3;
+  const isPointerDisabled = osState >= 2;
 
   return (
     <div className="relative w-full">
@@ -238,13 +238,11 @@ export function HeroSection() {
           ref={(el) => {
             sectionsRef.current[5] = el;
           }}
-          className={`min-h-screen w-full snap-start snap-always flex flex-col items-center justify-center py-24 relative bg-transparent ${
-            osState === 5 ? "pointer-events-none" : "pointer-events-auto"
-          }`}
+          className="min-h-screen w-full snap-start snap-always flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-none z-50"
         >
           <div
             dir="ltr"
-            className="max-w-5xl w-full px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
+            className="max-w-5xl w-full px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center pointer-events-none"
           >
             <motion.div
               animate={
@@ -283,10 +281,20 @@ export function HeroSection() {
                 {t.downloadTodayDesc}
               </p>
 
-              <div className={`flex gap-4 mt-4 ${isRtl ? "md:self-end" : ""}`}>
-                <button className="px-6 py-3 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-bold rounded-xl text-xs shadow-sm transition-colors cursor-pointer">
-                  Google Play
-                </button>
+              <div
+                className={`flex gap-4 mt-4 pointer-events-auto ${isRtl ? "md:self-end" : ""}`}
+              >
+                <motion.button
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.25)",
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                  className="px-6 py-3 bg-neutral-900 dark:bg-neutral-50 text-white dark:text-neutral-950 font-extrabold rounded-xl text-xs shadow-md border border-neutral-800 dark:border-neutral-200 cursor-pointer relative overflow-hidden group"
+                >
+                  <span className="relative z-10">Google Play</span>
+                </motion.button>
               </div>
             </motion.div>
 

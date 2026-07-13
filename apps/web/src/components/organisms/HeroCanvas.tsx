@@ -9,7 +9,7 @@ interface HeroCanvasProps {
 }
 
 export default function HeroCanvas({ osState }: HeroCanvasProps) {
-  const isPointerDisabled = osState === 2 || osState === 3;
+  const isPointerDisabled = osState >= 2;
   return (
     <div
       dir="ltr"
