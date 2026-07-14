@@ -30,6 +30,9 @@ export default function ClientsPage() {
   const handleCreateClient = (data: {
     name: string;
     email?: string;
+    phone?: string;
+    website?: string;
+    socials?: { platform: string; value: string }[];
     status: any;
   }) => {
     createClientMutation.mutate(data);
@@ -37,7 +40,14 @@ export default function ClientsPage() {
 
   const handleUpdateClient = (
     id: string,
-    data: { name: string; email?: string; status: any },
+    data: {
+      name: string;
+      email?: string;
+      phone?: string;
+      website?: string;
+      socials?: { platform: string; value: string }[];
+      status: any;
+    },
   ) => {
     updateClientMutation.mutate({ id, ...data });
   };

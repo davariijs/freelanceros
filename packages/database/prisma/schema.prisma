@@ -23,6 +23,9 @@ model Client {
   id         String       @id @default(cuid())
   name       String
   email      String?
+  phone      String?
+  website    String?
+  socials    Json?
   status     ClientStatus @default(ACTIVE)
   userId     String
   user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
