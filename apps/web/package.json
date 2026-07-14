@@ -12,6 +12,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/utilities": "^3.2.2",
     "@freelanceos/database": "workspace:*",
     "@hookform/resolvers": "^5.4.0",
     "@react-oauth/google": "^0.13.5",

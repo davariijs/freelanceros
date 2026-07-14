@@ -5,6 +5,7 @@ import { Task } from "@/schemas/task";
 import { useApp } from "@/context/AppContext";
 import { cn } from "@/lib/utils";
 import { Pencil } from "lucide-react";
+import { useDraggable } from "@dnd-kit/core";
 
 interface TaskCardProps {
   task: Task;
@@ -12,18 +13,25 @@ interface TaskCardProps {
 
 export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const { dir } = useApp();
-  const [isDragging, setIsDragging] = React.useState(false);
 
-  const handleDragStart = (e: React.DragEvent) => {
-    e.dataTransfer.setData("text/plain", task.id);
-    e.dataTransfer.effectAllowed = "move";
-    setTimeout(() => {
-      setIsDragging(true);
-    }, 0);
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: task.id,
+    });
+
+  const style = {
+    transform: transform
+      ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+      : undefined,
   };
 
-  const handleDragEnd = () => {
-    setIsDragging(false);
+  const stripMarkdown = (text: string) => {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, "$1")
+      .replace(/\*(.*?)\*/g, "$1")
+      .replace(/`(.*?)`/g, "$1")
+      .replace(/^#\s+(.*$)/gim, "$1")
+      .replace(/\n/g, " ");
   };
 
   const priorityColor = {
@@ -38,15 +46,18 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
   return (
     <div
-      draggable
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
       className={cn(
-        "p-4 rounded-xl border shadow-sm cursor-grab active:cursor-grabbing transition-all duration-200 select-none group",
+        "p-4 rounded-xl border shadow-sm cursor-grab active:cursor-grabbing transition-all duration-200 select-none group touch-none",
         isDone
           ? "bg-green-50/50 dark:bg-green-950/20 border-green-200/50 dark:border-green-900/50 hover:border-green-300 dark:hover:border-green-800"
           : "bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700",
-        isDragging ? "opacity-50 border-dashed" : "opacity-100",
+        isDragging
+          ? "opacity-30 border-dashed bg-neutral-50/50 dark:bg-neutral-900/50"
+          : "opacity-100",
       )}
     >
       <div className="flex flex-col gap-3">
@@ -77,7 +88,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                 : "text-neutral-400 dark:text-neutral-500",
             )}
           >
-            {task.description}
+            {stripMarkdown(task.description)}
           </p>
         )}
       </div>

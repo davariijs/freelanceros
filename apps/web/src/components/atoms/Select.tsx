@@ -15,6 +15,7 @@ interface CustomSelectProps {
   options: SelectOption[];
   onChange: (value: string) => void;
   className?: string;
+  dropdownHeightClass?: string;
 }
 
 export const Select: React.FC<CustomSelectProps> = ({
@@ -22,6 +23,7 @@ export const Select: React.FC<CustomSelectProps> = ({
   options,
   onChange,
   className,
+  dropdownHeightClass = "max-h-60",
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const { dir } = useApp();
@@ -63,7 +65,12 @@ export const Select: React.FC<CustomSelectProps> = ({
 
       {isOpen && (
         <div className="absolute top-full left-0 right-0 mt-2 z-50 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-          <ul className="max-h-60 overflow-y-auto py-1">
+          <ul
+            className={cn(
+              "overflow-y-auto py-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-200 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-800 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-neutral-700",
+              dropdownHeightClass,
+            )}
+          >
             {options.map((option) => (
               <li
                 key={option.value}

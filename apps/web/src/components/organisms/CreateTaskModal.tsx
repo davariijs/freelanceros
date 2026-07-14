@@ -8,6 +8,7 @@ import { Dialog } from "@/components/atoms/Dialog";
 import { FormField } from "@/components/molecules/FormField";
 import { Select, SelectOption } from "@/components/atoms/Select";
 import { Button } from "@/components/atoms/Button";
+import { RichTextEditor } from "@/components/molecules/RichTextEditor";
 import { z } from "zod";
 import { TaskStatus, TaskPriority } from "@/schemas/task";
 import { useRouter } from "next/navigation";
@@ -61,6 +62,10 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
 
   const { field: priorityField } = useController({ name: "priority", control });
   const { field: projectField } = useController({ name: "projectId", control });
+  const { field: descriptionField } = useController({
+    name: "description",
+    control,
+  });
 
   const priorityOptions: SelectOption[] = [
     { label: t.priorityLow, value: "LOW" },
@@ -97,7 +102,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
 
   return (
     <Dialog isOpen={isOpen} onClose={onClose} title={t.createTask}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 relative">
         <FormField
           label={t.title}
           placeholder={t.placeholderTaskTitle}
@@ -105,14 +110,20 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
           errorMessage={errors.title ? t.titleRequired : undefined}
           {...register("title")}
         />
-        <FormField
-          label={t.descriptionTask}
-          placeholder={t.placeholderTaskDesc}
-          {...register("description")}
-        />
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1.5 relative z-20">
+          <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+            {t.descriptionTask || "Description"}
+          </label>
+          <RichTextEditor
+            value={descriptionField.value || ""}
+            onChange={descriptionField.onChange}
+            placeholder={t.placeholderTaskDesc}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 relative z-40">
+          <div className="flex flex-col gap-1.5 relative z-40">
             <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
               {t.priority}
             </label>
@@ -122,7 +133,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
               options={priorityOptions}
             />
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1.5 relative z-40">
             <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
               {t.projects}
             </label>
@@ -130,6 +141,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
               value={projectField.value}
               onChange={handleProjectSelect}
               options={projectOptions}
+              dropdownHeightClass="max-h-44"
             />
           </div>
         </div>

@@ -40,6 +40,14 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
     }
   }, [tasks]);
 
+  const stripMarkdown = (text: string) => {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, "$1")
+      .replace(/\*(.*?)\*/g, "$1")
+      .replace(/`(.*?)`/g, "$1")
+      .replace(/\n/g, " ");
+  };
+
   const getPriorityStyles = (priority: string) => {
     switch (priority) {
       case "LOW":
@@ -117,7 +125,7 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
                   )}
                   numberOfLines={1}
                 >
-                  {item.description}
+                  {stripMarkdown(item.description)}
                 </Text>
               )}
             </View>

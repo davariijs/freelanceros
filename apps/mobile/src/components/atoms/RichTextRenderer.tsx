@@ -1,6 +1,12 @@
+"use client";
+
 import * as React from "react";
-import { Text, View } from "react-native";
-import { useColorScheme } from "react-native";
+import {
+  Text,
+  View,
+  useColorScheme as useSystemColorScheme,
+} from "react-native";
+import { useApp } from "@/context/AppContext";
 
 interface RichTextRendererProps {
   text?: string | null;
@@ -11,8 +17,9 @@ export const RichTextRenderer: React.FC<RichTextRendererProps> = ({
   text,
   placeholder = "...",
 }) => {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { theme } = useApp();
+  const systemTheme = useSystemColorScheme();
+  const isDark = theme === "system" ? systemTheme === "dark" : theme === "dark";
 
   if (!text) {
     return (

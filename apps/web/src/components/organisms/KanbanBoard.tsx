@@ -6,6 +6,17 @@ import { Task, TaskStatus } from "@/schemas/task";
 import { useUpdateTaskMutation } from "@/hooks/useTasks";
 import { useKanbanNavigation } from "@/hooks/useKanbanNavigation";
 import { KanbanColumn } from "@/components/molecules/KanbanColumn";
+import { TaskCard } from "@/components/atoms/TaskCard";
+import {
+  DndContext,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
+} from "@dnd-kit/core";
 
 interface KanbanBoardProps {
   tasks: Task[];
@@ -19,6 +30,16 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
   const { t } = useApp();
   const updateTaskMutation = useUpdateTaskMutation();
   const { getColumnTasks } = useKanbanNavigation({ tasks, onTaskClick });
+  const [activeId, setActiveId] = React.useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 220, tolerance: 6 },
+    }),
+  );
 
   const columns: { id: TaskStatus; title: string; color: string }[] =
     React.useMemo(
@@ -42,23 +63,51 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
       [t],
     );
 
-  const handleDropTask = (taskId: string, status: TaskStatus) => {
-    updateTaskMutation.mutate({ id: taskId, status });
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
   };
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveId(null);
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const taskId = active.id as string;
+      const status = over.id as TaskStatus;
+      updateTaskMutation.mutate({ id: taskId, status });
+    }
+  };
+
+  const activeTask = React.useMemo(
+    () => tasks.find((t) => t.id === activeId),
+    [tasks, activeId],
+  );
+
   return (
-    <div className="grid gap-6 md:grid-cols-3 h-full items-start">
-      {columns.map((column) => (
-        <KanbanColumn
-          key={column.id}
-          id={column.id}
-          title={column.title}
-          color={column.color}
-          columnTasks={getColumnTasks(column.id)}
-          onTaskClick={onTaskClick}
-          onDropTask={handleDropTask}
-        />
-      ))}
-    </div>
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="grid gap-6 md:grid-cols-3 h-full items-start">
+        {columns.map((column) => (
+          <KanbanColumn
+            key={column.id}
+            id={column.id}
+            title={column.title}
+            color={column.color}
+            columnTasks={getColumnTasks(column.id)}
+            onTaskClick={onTaskClick}
+          />
+        ))}
+      </div>
+
+      <DragOverlay>
+        {activeTask ? (
+          <div className="scale-105 rotate-1 shadow-2xl">
+            <TaskCard task={activeTask} />
+          </div>
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
 };

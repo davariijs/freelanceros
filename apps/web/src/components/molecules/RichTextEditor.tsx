@@ -23,8 +23,25 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const { theme, t } = useApp();
   const [tab, setTab] = React.useState<"edit" | "preview">("edit");
   const [showEmojis, setShowEmojis] = React.useState(false);
+  const [pickerSize, setPickerSize] = React.useState({
+    width: 320,
+    height: 320,
+  });
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const emojiRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 480) {
+        setPickerSize({ width: 280, height: 280 });
+      } else {
+        setPickerSize({ width: 320, height: 320 });
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   React.useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -89,8 +106,8 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const pickerTheme = theme === "dark" ? "dark" : "light";
 
   return (
-    <div className="border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden bg-neutral-50 dark:bg-neutral-950 flex flex-col h-full min-h-75">
-      <div className="h-fit py-2 md:py-1 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 px-3 flex flex-col md:flex-row items-start md:items-center justify-between">
+    <div className="border border-neutral-200 dark:border-neutral-800 rounded-xl bg-neutral-50 dark:bg-neutral-950 flex flex-col h-full min-h-75 relative z-30">
+      <div className="h-fit py-2 md:py-1 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 px-3 flex flex-col md:flex-row items-start md:items-center justify-between rounded-t-xl">
         <div className="flex items-center gap-1">
           <Button
             type="button"
@@ -121,7 +138,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         </div>
 
         {tab === "edit" && (
-          <div className="flex items-center gap-1 relative" ref={emojiRef}>
+          <div className="flex items-center gap-1 relative z-40" ref={emojiRef}>
             <Button
               type="button"
               variant="ghost"
@@ -169,13 +186,15 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             </Button>
 
             {showEmojis && (
-              <div className="absolute right-0 top-10 z-50 shadow-2xl">
+              <div className="absolute -right-22.5 sm:right-0 top-10 z-100 shadow-2xl">
                 <EmojiPicker
                   onEmojiClick={(emojiData) => {
                     injectText(emojiData.emoji);
                     setShowEmojis(false);
                   }}
                   theme={pickerTheme as any}
+                  width={pickerSize.width}
+                  height={pickerSize.height}
                 />
               </div>
             )}
@@ -183,18 +202,18 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         )}
       </div>
 
-      <div className="grow p-4 bg-white dark:bg-neutral-950/20">
+      <div className="grow flex flex-col p-4 bg-white dark:bg-neutral-950/20 min-h-40 rounded-b-xl z-20">
         {tab === "edit" ? (
           <textarea
             ref={textareaRef}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full h-full bg-transparent border-none text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-0 resize-none text-sm leading-relaxed placeholder-neutral-400"
+            className="grow w-full bg-transparent border-none text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-0 resize-none text-sm leading-relaxed placeholder-neutral-400"
             placeholder={placeholder}
           />
         ) : (
           <div
-            className="prose dark:prose-invert text-sm leading-relaxed whitespace-pre-wrap text-neutral-900 dark:text-neutral-100"
+            className="grow overflow-y-auto prose dark:prose-invert text-sm leading-relaxed whitespace-pre-wrap text-neutral-900 dark:text-neutral-100"
             dangerouslySetInnerHTML={{
               __html: parseMarkdown(value) || "Nothing to preview",
             }}
