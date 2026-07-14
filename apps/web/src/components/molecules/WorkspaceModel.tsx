@@ -19,7 +19,7 @@ interface WorkspaceModelProps {
 }
 
 export function WorkspaceModel({ osState }: WorkspaceModelProps) {
-  const { scene } = useGLTF("/models/workspace.glb");
+  const { scene } = useGLTF("/models/workspace-transformed.glb");
   const mainGroupRef = React.useRef<THREE.Group>(null);
   const deskGroupRef = React.useRef<THREE.Group>(null);
   const [isShifted, setIsShifted] = React.useState(false);
@@ -27,6 +27,13 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
   const { size } = useThree();
   const isMobileSize = size.width < 768;
   const isTabletSize = size.width >= 768 && size.width < 1450;
+
+  React.useEffect(() => {
+    const handleScroll = () => setIsShifted(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useFrame((state) => {
     if (!mainGroupRef.current || !deskGroupRef.current) return;
@@ -87,9 +94,6 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
       targetDeskScale,
     );
     deskGroupRef.current.scale.lerp(scaleVec, 0.08);
-
-    const hasScroll = window.scrollY > 50;
-    setIsShifted(hasScroll);
   });
 
   return (
@@ -113,10 +117,10 @@ export function WorkspaceModel({ osState }: WorkspaceModelProps) {
 
       {osState < 4 && <CompanionBot osState={osState} />}
 
-      <FloatingKeys osState={osState} />
-      <FloatingMobileApp osState={osState} />
+      {osState >= 3 && <FloatingKeys osState={osState} />}
+      {osState >= 4 && <FloatingMobileApp osState={osState} />}
     </group>
   );
 }
 
-useGLTF.preload("/models/workspace.glb");
+useGLTF.preload("/models/workspace-transformed.glb");

@@ -4,6 +4,7 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { useApp } from "@/context/AppContext";
 import { BentoCard } from "@/components/atoms/BentoCard";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface FeaturesGridProps {
   osState: 0 | 1 | 2 | 3 | 4 | 5;
@@ -14,6 +15,7 @@ export function FeaturesGrid({ osState }: FeaturesGridProps) {
   const isRtl = locale === "fa";
   const isDark = theme === "dark";
   const [activeClient, setActiveClient] = React.useState(true);
+  const isMobile = useIsMobile();
 
   const active = osState === 2;
 
@@ -26,13 +28,24 @@ export function FeaturesGrid({ osState }: FeaturesGridProps) {
   } as const;
 
   const cardVariants = {
-    hidden: { opacity: 0, y: 120, filter: "blur(8px)", scale: 0.95 },
+    hidden: {
+      opacity: 0,
+      y: 120,
+      scale: 0.95,
+      filter: isMobile ? "none" : "blur(8px)",
+    },
+
     visible: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
       scale: 1,
-      transition: { type: "spring", stiffness: 80, damping: 15 },
+      filter: isMobile ? "none" : "blur(0px)",
+
+      transition: {
+        type: "spring",
+        stiffness: 80,
+        damping: 15,
+      },
     },
   } as const;
 
@@ -222,7 +235,7 @@ export function FeaturesGrid({ osState }: FeaturesGridProps) {
               >
                 &gt;{" "}
                 {t.notesDocContent ||
-                  "FreelanceOS enables integrated clients workflows, auto backup, and structured rich-text notes inside a unified console."}
+                  "FreeOS enables integrated clients workflows, auto backup, and structured rich-text notes inside a unified console."}
               </p>
             </div>
           </div>

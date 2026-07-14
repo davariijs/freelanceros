@@ -4,6 +4,7 @@ import * as React from "react";
 import { Html } from "@react-three/drei";
 import { motion, AnimatePresence } from "framer-motion";
 import { useApp } from "@/context/AppContext";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface RightScreenProps {
   active: boolean;
@@ -11,8 +12,9 @@ interface RightScreenProps {
 
 export function RightScreen({ active }: RightScreenProps) {
   const { t } = useApp();
+  const isMobile = useIsMobile();
 
-  const text = active ? "Start Today!" : "FreelanceOS";
+  const text = active ? "Start Today!" : "FreeOS";
   const letters = Array.from(text);
 
   const handleRedirect = () => {
@@ -38,21 +40,31 @@ export function RightScreen({ active }: RightScreenProps) {
     hidden: {
       opacity: 0,
       y: 12,
-      filter: "blur(6px)",
       scale: 0.85,
+      filter: isMobile ? "none" : "blur(6px)",
     },
+
     visible: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
       scale: 1,
-      transition: { type: "spring" as const, stiffness: 140, damping: 11 },
+      filter: isMobile ? "none" : "blur(0px)",
+
+      transition: {
+        type: "spring" as const,
+        stiffness: 140,
+        damping: 11,
+      },
     },
+
     exit: {
       opacity: 0,
       y: -12,
-      filter: "blur(6px)",
-      transition: { duration: 0.15 },
+      filter: isMobile ? "none" : "blur(6px)",
+
+      transition: {
+        duration: 0.15,
+      },
     },
   } as const;
 

@@ -51,8 +51,15 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             }`}
           >
             <div className="flex items-center justify-between mb-8">
-              <div className="font-bold text-lg text-neutral-900 dark:text-neutral-100">
-                FreelanceOS
+              <div className="flex items-center gap-2.5">
+                <img
+                  src="/svg/logo.svg"
+                  alt="FreeOS"
+                  className="h-10 w-10 shrink-0"
+                />
+                <span className="font-extrabold text-lg text-neutral-900 dark:text-neutral-100">
+                  FreeOS
+                </span>
               </div>
               <Button
                 variant="ghost"
@@ -104,14 +111,28 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
         <div
           className={cn(
-            "font-bold mb-8 text-neutral-900 dark:text-neutral-100 transition-all text-center xl:text-left",
-            isCollapsed ? "text-lg" : "text-lg xl:text-xl",
+            "mb-8 flex items-center justify-center transition-all",
+            isCollapsed ? "w-full" : "xl:justify-start gap-2.5",
           )}
         >
-          <span className="xl:hidden">FOS</span>
-          <span className="hidden xl:inline">
-            {isCollapsed ? "FOS" : "FreelanceOS"}
-          </span>
+          {isCollapsed ? (
+            <img
+              src="/svg/logo.svg"
+              alt="FreeOS"
+              className="h-10 w-10 shrink-0"
+            />
+          ) : (
+            <div className="flex items-center gap-2.5">
+              <img
+                src="/svg/logo.svg"
+                alt="FreeOS"
+                className="h-10 w-10 shrink-0"
+              />
+              <span className="font-extrabold text-base text-neutral-900 dark:text-neutral-100 hidden xl:inline">
+                FreeOS
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="flex-1 w-full">{sidebar(isCollapsed)}</div>

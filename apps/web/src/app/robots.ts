@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://freelanceos.ai/sitemap.xml",
+    sitemap: "https://FreeOS.ai/sitemap.xml",
   };
 }

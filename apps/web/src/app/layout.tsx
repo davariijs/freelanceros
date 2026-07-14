@@ -10,11 +10,14 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const vazirmatn = Vazirmatn({ subsets: ["arabic"], variable: "--font-fa" });
 
 export const metadata: Metadata = {
-  title: "FreelanceOS - Workspace",
+  title: "FreeOS - Workspace",
   description: "A keyboard-first production-grade freelance operations system.",
   robots: "index, follow",
   alternates: {
-    canonical: "https://freelanceos.ai",
+    canonical: "https://FreeOS.ai",
+  },
+  icons: {
+    icon: "/svg/logo.svg",
   },
 };
 

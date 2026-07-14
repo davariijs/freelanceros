@@ -11,10 +11,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = locale === "fa" ? fa : en;
 
   return {
-    title: t.loginTitle || "FreelanceOS - Sign In",
+    title: t.loginTitle || "FreeOS - Sign In",
     description:
       t.loginDescription ||
-      "Secure authentication console for FreelanceOS workspace dashboard.",
+      "Secure authentication console for FreeOS workspace dashboard.",
   };
 }
 

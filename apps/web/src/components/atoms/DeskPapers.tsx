@@ -249,7 +249,7 @@ export function DeskPapers({ osState }: DeskPapersProps) {
                     </div>
                   </div>
                   <p className="text-[8px] text-neutral-600 mt-1 leading-relaxed truncate">
-                    &gt; FreelanceOS enables integrated clients workflows, auto
+                    &gt; FreeOS enables integrated clients workflows, auto
                     backup...
                   </p>
                 </div>

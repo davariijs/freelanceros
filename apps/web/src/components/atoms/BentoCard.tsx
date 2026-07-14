@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
+import { motion, useMotionValue } from "framer-motion";
 import { useApp } from "@/context/AppContext";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface BentoCardProps {
   children: React.ReactNode;
@@ -21,16 +22,9 @@ export function BentoCard({
   const y = useMotionValue(0);
   const { theme } = useApp();
   const isDark = theme === "dark";
+  const isMobile = useIsMobile();
 
   const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
-  const [hovered, setHovered] = React.useState(false);
-
-  const rotateX = useTransform(y, [-0.5, 0.5], [10, -10]);
-  const rotateY = useTransform(x, [-0.5, 0.5], [-10, 10]);
-
-  const springConfig = { damping: 16, stiffness: 450 };
-  const xSpring = useSpring(rotateX, springConfig);
-  const ySpring = useSpring(rotateY, springConfig);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -41,7 +35,6 @@ export function BentoCard({
     const mouseY = e.clientY - rect.top;
 
     setMousePos({ x: mouseX, y: mouseY });
-    setHovered(true);
 
     const rX = mouseY / height - 0.5;
     const rY = mouseX / width - 0.5;
@@ -52,7 +45,6 @@ export function BentoCard({
   const handleMouseLeave = () => {
     x.set(0);
     y.set(0);
-    setHovered(false);
   };
 
   const getBorderGlow = () => {
@@ -64,14 +56,11 @@ export function BentoCard({
 
   return (
     <motion.div
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        rotateX: xSpring,
-        rotateY: ySpring,
-        transformStyle: "preserve-3d",
-      }}
-      className={`p-6 md:p-2 lg:p-6 h-full w-full rounded-[28px] border backdrop-blur-2xl flex flex-col justify-between relative overflow-hidden transition-all duration-700 cursor-default ${
+      onMouseMove={isMobile ? undefined : handleMouseMove}
+      onMouseLeave={isMobile ? undefined : handleMouseLeave}
+      className={`p-6 md:p-2 lg:p-6 h-full w-full rounded-[28px] border ${
+        !isMobile ? "backdrop-blur-2xl" : ""
+      } flex flex-col justify-between relative overflow-hidden transition-all duration-700 cursor-default ${
         isDark
           ? "bg-[#09090e]/85 text-neutral-50"
           : "bg-white/92 text-neutral-900"
@@ -92,7 +81,13 @@ export function BentoCard({
       />
 
       <div
-        style={{ transform: "translateZ(30px)" }}
+        style={
+          isMobile
+            ? undefined
+            : {
+                transform: "translateZ(30px)",
+              }
+        }
         className="h-full flex flex-col justify-between relative z-10 transition-transform duration-500 ease-out group-hover:scale-[1.025]"
       >
         {children}

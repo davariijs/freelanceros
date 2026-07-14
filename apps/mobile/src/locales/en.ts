@@ -1,5 +1,5 @@
 export const en = {
-  welcomeTitle: "FreelanceOS",
+  welcomeTitle: "FreeOS",
   loginDescription: "Log in to access your administrative workspace.",
   signupDescription: "Create a secure account to manage your operations.",
   emailLabel: "Email Address",

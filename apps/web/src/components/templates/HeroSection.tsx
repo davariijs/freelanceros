@@ -36,29 +36,35 @@ export function HeroSection() {
   }, []);
 
   React.useEffect(() => {
-    const handleScroll = () => {
-      const viewportHeight = window.innerHeight;
-      let activeIndex = 0;
-      let minDistance = Infinity;
-
-      sectionsRef.current.forEach((el, index) => {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const distance = Math.abs(
-          rect.top + rect.height / 2 - viewportHeight / 2,
-        );
-        if (distance < minDistance) {
-          minDistance = distance;
-          activeIndex = index;
-        }
-      });
-
-      setOsState(activeIndex as 0 | 1 | 2 | 3 | 4 | 5);
+    const observerOptions = {
+      root: null,
+      rootMargin: "-25% 0px -25% 0px",
+      threshold: 0.05,
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const index = sectionsRef.current.indexOf(
+            entry.target as HTMLDivElement,
+          );
+          if (index !== -1) {
+            setOsState(index as 0 | 1 | 2 | 3 | 4 | 5);
+          }
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      observerCallback,
+      observerOptions,
+    );
+
+    sectionsRef.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   React.useEffect(() => {
@@ -152,7 +158,7 @@ export function HeroSection() {
             <HeroContent
               active={osState === 1}
               exit={false}
-              title="FreelanceOs"
+              title="FreeOS"
               subtitle={t.heroSubtitle}
               ctaPrimary={t.accessDashboard}
               ctaSecondary={t.learnMore}
@@ -210,8 +216,18 @@ export function HeroSection() {
           <motion.div
             animate={
               osState === 4
-                ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }
-                : { opacity: 0, y: 45, scale: 0.95, filter: "blur(8px)" }
+                ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    filter: isMobile ? "none" : "blur(0px)",
+                  }
+                : {
+                    opacity: 0,
+                    y: 45,
+                    scale: 0.95,
+                    filter: isMobile ? "none" : "blur(8px)",
+                  }
             }
             transition={{ type: "spring", stiffness: 70, damping: 15 }}
             className="max-w-4xl text-center mb-12 px-8 pointer-events-none"
@@ -242,8 +258,18 @@ export function HeroSection() {
               <motion.div
                 animate={
                   osState === 5
-                    ? { opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }
-                    : { opacity: 0, y: 35, filter: "blur(6px)", scale: 0.95 }
+                    ? {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        filter: isMobile ? "none" : "blur(0px)",
+                      }
+                    : {
+                        opacity: 0,
+                        y: 35,
+                        scale: 0.95,
+                        filter: isMobile ? "none" : "blur(6px)",
+                      }
                 }
                 transition={{
                   type: "spring",
@@ -306,14 +332,14 @@ export function HeroSection() {
                     y: 0,
                     scale: 1,
                     rotateX: 0,
-                    filter: "blur(0px)",
+                    filter: isMobile ? "none" : "blur(0px)",
                   }
                 : {
                     opacity: 0,
                     y: 60,
                     scale: 0.9,
                     rotateX: 15,
-                    filter: "blur(8px)",
+                    filter: isMobile ? "none" : "blur(8px)",
                   }
             }
             transition={{
