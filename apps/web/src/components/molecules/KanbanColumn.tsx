@@ -23,7 +23,7 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
   onTaskClick,
   onDropTask,
 }) => {
-  const { t, activeTaskId, setActiveTaskId } = useApp();
+  const { t, setActiveTaskId } = useApp();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -44,7 +44,7 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       className={cn(
-        "rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 min-h-125 flex flex-col gap-4 transition-colors",
+        "rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 min-h-125 max-h-150 md:max-h-150 h-full flex flex-col gap-4 transition-colors",
         color,
       )}
     >
@@ -57,14 +57,13 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
         </span>
       </div>
 
-      <div className="flex-1 flex flex-col gap-3 overflow-y-auto">
+      <div className="flex-1 flex flex-col gap-3 overflow-y-auto pr-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-neutral-200 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-800 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-neutral-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-neutral-700">
         {columnTasks.length === 0 ? (
           <div className="grow flex items-center justify-center p-8 border border-dashed border-neutral-300 dark:border-neutral-800 rounded-xl">
             <p className="text-xs text-neutral-400">{t.noTasks}</p>
           </div>
         ) : (
           columnTasks.map((task) => {
-            const isActive = task.id === activeTaskId;
             return (
               <div
                 key={task.id}
@@ -72,11 +71,7 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
                   setActiveTaskId(task.id);
                   onTaskClick(task);
                 }}
-                className={cn(
-                  "transition-all duration-200 rounded-xl",
-                  isActive &&
-                    "ring-3 ring-neutral-950 dark:ring-white scale-[1.03] shadow-lg focused-task-card z-10",
-                )}
+                className={cn("transition-all duration-200 rounded-xl")}
               >
                 <TaskCard task={task} />
               </div>

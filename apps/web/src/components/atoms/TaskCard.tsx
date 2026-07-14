@@ -26,6 +26,15 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     setIsDragging(false);
   };
 
+  const stripMarkdown = (text: string) => {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, "$1")
+      .replace(/\*(.*?)\*/g, "$1")
+      .replace(/`(.*?)`/g, "$1")
+      .replace(/^#\s+(.*$)/gim, "$1")
+      .replace(/\n/g, " ");
+  };
+
   const priorityColor = {
     LOW: "bg-green-500/10 text-green-500 border-green-500/20",
     MEDIUM: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
@@ -77,7 +86,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                 : "text-neutral-400 dark:text-neutral-500",
             )}
           >
-            {task.description}
+            {stripMarkdown(task.description)}
           </p>
         )}
       </div>
