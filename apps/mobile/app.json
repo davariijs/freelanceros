@@ -23,6 +23,13 @@
       "expo-router",
       "./plugins/withWidgets",
       [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#ffffff"
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "backgroundColor": "#000000",
