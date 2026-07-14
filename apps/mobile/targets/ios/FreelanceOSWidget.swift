@@ -32,7 +32,7 @@ struct Provider: TimelineProvider {
     }
 
     private func fetchTasksFromSharedStorage() -> [SharedTask] {
-        guard let sharedDefaults = UserDefaults(suiteName: "group.com.freelanceos.mobile"),
+        guard let sharedDefaults = UserDefaults(suiteName: "group.com.freeos.mobile"),
             let rawJson = sharedDefaults.string(forKey: "today_tasks_json") else {
             return []
         }

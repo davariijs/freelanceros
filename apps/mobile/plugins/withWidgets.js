@@ -33,7 +33,7 @@ const withWidgets = (config) => {
     "android",
     async (config) => {
       const projectRoot = config.modRequest.projectRoot;
-      const packageName = config.android?.package || "com.freelanceos.mobile";
+      const packageName = config.android?.package || "com.freeos.mobile";
       const packagePath = packageName.replace(/\./g, "/");
 
       const resDir = path.join(projectRoot, "android/app/src/main/res");
@@ -109,7 +109,7 @@ class FreelanceOSWidget : AppWidgetProvider() {
             val views = RemoteViews(context.packageName, R.layout.widget_layout)
 
             try {
-                val sharedPref = context.getSharedPreferences("group.com.freelanceos.mobile", Context.MODE_PRIVATE)
+                val sharedPref = context.getSharedPreferences("group.com.freeos.mobile", Context.MODE_PRIVATE)
                 val rawJson = sharedPref.getString("today_tasks_json", "[]")
                 val tasksArray = JSONArray(rawJson)
                 if (tasksArray.length() > 0) {
