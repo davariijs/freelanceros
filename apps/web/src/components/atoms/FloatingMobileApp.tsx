@@ -311,6 +311,20 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
           </RoundedBox>
 
           <RoundedBox
+            args={[0.1, 0.026, 0.006]}
+            radius={0.013}
+            smoothness={8}
+            position={[0, 0.305, 0.006]}
+          >
+            <meshStandardMaterial
+              color="#050505"
+              roughness={0.35}
+              metalness={0.5}
+              side={THREE.DoubleSide}
+            />
+          </RoundedBox>
+
+          <RoundedBox
             args={[0.18, 0.18, 0.001]}
             radius={0.03}
             smoothness={4}
