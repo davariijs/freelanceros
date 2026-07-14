@@ -265,4 +265,11 @@ export const fa = {
   notesDocTitle: "Workspace Brief.txt",
   notesDocContent:
     "فریلنس‌آس به شما اجازه می‌دهد تا مشتریان را هماهنگ کرده و یادداشت‌ها را در کنسول یکپارچه سازماندهی کنید.",
+  phone: "شماره تماس",
+  website: "وب‌سایت / آدرس",
+  socialAccounts: "حساب‌های اجتماعی",
+  addSocial: "افزودن شناسه",
+  platformPlaceholder: "مثلاً تلگرام",
+  idPlaceholder: "آی‌دی یا شماره",
+  copiedSuccess: "در حافظه کپی شد!",
 };

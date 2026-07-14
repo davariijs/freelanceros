@@ -265,4 +265,11 @@ export const en = {
   notifyAdded: "New Project 'Figma App' Added",
   notifyProgress: "Project Progress is 40% Complete",
   notifyTask: "Task 'Launch Website' Created",
+  phone: "Phone Number",
+  website: "Website / URL",
+  socialAccounts: "Social Accounts",
+  addSocial: "Add Handle",
+  platformPlaceholder: "e.g., Telegram",
+  idPlaceholder: "Username or ID",
+  copiedSuccess: "Copied to clipboard!",
 };

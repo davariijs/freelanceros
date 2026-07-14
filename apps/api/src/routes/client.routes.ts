@@ -7,13 +7,16 @@ const router: Router = Router();
 router.use(authenticate);
 
 router.post('/', async (req: AuthenticatedRequest, res) => {
-  const { name, email, status } = req.body;
+  const { name, email, status, phone, website, socials } = req.body;
 
   const result = await prisma.$transaction(async (tx) => {
     const client = await tx.client.create({
       data: {
         name,
-        email,
+        email: email || null,
+        phone: phone || null,
+        website: website || null,
+        socials: socials || null,
         status: (status as ClientStatus) || 'ACTIVE',
         userId: req.userId!,
       },
@@ -42,12 +45,19 @@ router.get('/', async (req: AuthenticatedRequest, res) => {
 
 router.patch('/:id', async (req: AuthenticatedRequest, res) => {
   const { id } = req.params;
-  const { name, email, status } = req.body;
+  const { name, email, status, phone, website, socials } = req.body;
 
   const result = await prisma.$transaction(async (tx) => {
     const client = await tx.client.update({
       where: { id, userId: req.userId! },
-      data: { name, email, status: (status as ClientStatus) || undefined },
+      data: {
+        name,
+        email: email || null,
+        phone: phone || null,
+        website: website || null,
+        socials: socials || null,
+        status: (status as ClientStatus) || undefined,
+      },
     });
 
     if (status === 'INACTIVE') {
