@@ -249,7 +249,7 @@ export const fa = {
   notifyAdded: "پروژه جدید فریلنس‌آس اضافه شد",
   notifyProgress: "پروژه ۴۰٪ پیشرفت داشته است",
   notifyTask: "تسک لانچ وب‌سایت ایجاد شد",
-  heroTitle: "FreelanceOS",
+  heroTitle: "FreeOS",
   scrollToExplore: "برای کاوش اسکرول کنید",
   crmClientActive: "فعال",
   crmClientInactive: "غیرفعال",

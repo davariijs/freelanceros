@@ -1,5 +1,5 @@
 export const en = {
-  welcome: "Welcome to FreelanceOS",
+  welcome: "Welcome to FreeOS",
   description:
     "A keyboard-first freelance operations system in enterprise class.",
   exploreKanban: "Explore Kanban",
@@ -178,7 +178,7 @@ export const en = {
   activityProjectDeadlineToday:
     "Today is the last day to deliver project: {title}!",
   heroVersionBadge: "v1.0.0 is live",
-  heroTitle: "FreelanceOS",
+  heroTitle: "FreeOS",
   heroSubtitle:
     "The ultimate operations system designed for modern freelancers. Seamlessly manage client relationships, track project timelines, organize tasks on a dynamic Kanban board, and write connected notes in one unified workspace.",
   learnMore: "Learn More",
@@ -195,7 +195,7 @@ export const en = {
   leftScreenSystemCore: "SYSTEM CORE",
   leftScreenOsStatus: "OS_STATUS: ONLINE",
   leftScreenActiveText: "Start Today!",
-  leftScreenInactiveText: "FreelanceOS",
+  leftScreenInactiveText: "FreeOS",
 
   rightScreenTitle: "WORKSPACE CONSOLE",
   rightScreenEfficiency: "WEEKLY EFFICIENCY",
@@ -203,7 +203,7 @@ export const en = {
   rightScreenLog2: "> database synced (postgres)",
   rightScreenLog3: 'task "Acme Mobile" completed',
   rightScreenAction: "CLICK TO LOGIN",
-  bentoSectionTitle: "Outstanding Features of FreelanceOS",
+  bentoSectionTitle: "Outstanding Features of FreeOS",
   bentoSectionSubtitle: "Integrated tools to centralize your workflow",
   bentoCrmTitle: "Active CRM Engine",
   bentoCrmDesc:
@@ -228,7 +228,7 @@ export const en = {
   notesAutoSaving: "Saving in background...",
   notesDocTitle: "Workspace Brief.txt",
   notesDocContent:
-    "FreelanceOS allows you to sync CRM clients, manage active boards, and structure notes under a unified operations console.",
+    "FreeOS allows you to sync CRM clients, manage active boards, and structure notes under a unified operations console.",
   pipelineSectionTitle: "Automated Workflows",
   pipelineSectionSubtitle: "SaaS Project Conduits & Deadline Monitoring",
   pipelineClientLabel: "CLIENT CONTROL",
@@ -257,7 +257,7 @@ export const en = {
   cmdGoTitle: "> go [Project]",
   cmdGoSubtitle: "Instantly jump to a specific project page",
   mobileSectionTitle: "Mobile Access",
-  mobileSectionSubtitle: "FreelanceOS on the Go",
+  mobileSectionSubtitle: "FreeOS on the Go",
   downloadTodayTitle: "Download Today",
   downloadTodayDesc:
     "Manage your clients, track active project timelines, and capture notes instantly from your pocket. Native, fast, and fully synced.",

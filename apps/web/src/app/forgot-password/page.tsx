@@ -3,7 +3,7 @@ import { AuthHeader } from "@/components/organisms/AuthHeader";
 import { ForgotPasswordForm } from "@/components/organisms/ForgotPasswordForm";
 
 export const metadata: Metadata = {
-  title: "FreelanceOS - Forgot Password",
+  title: "FreeOS - Forgot Password",
   description: "Reset your administrative console credentials securely.",
 };
 

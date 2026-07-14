@@ -14,7 +14,7 @@ export function RightScreen({ active }: RightScreenProps) {
   const { t } = useApp();
   const isMobile = useIsMobile();
 
-  const text = active ? "Start Today!" : "FreelanceOS";
+  const text = active ? "Start Today!" : "FreeOS";
   const letters = Array.from(text);
 
   const handleRedirect = () => {
@@ -41,7 +41,7 @@ export function RightScreen({ active }: RightScreenProps) {
       opacity: 0,
       y: 12,
       scale: 0.85,
-       filter: isMobile ? "none" : "blur(6px)",
+      filter: isMobile ? "none" : "blur(6px)",
     },
 
     visible: {

@@ -158,7 +158,7 @@ export function HeroSection() {
             <HeroContent
               active={osState === 1}
               exit={false}
-              title="FreelanceOs"
+              title="FreeOS"
               subtitle={t.heroSubtitle}
               ctaPrimary={t.accessDashboard}
               ctaSecondary={t.learnMore}

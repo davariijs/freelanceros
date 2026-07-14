@@ -62,7 +62,7 @@ export function FloatingFooter() {
           className="flex items-center gap-2"
         >
           <span className="font-black text-sm tracking-tight text-neutral-900 dark:text-neutral-100">
-            FreelanceOS
+            FreeOS
           </span>
           <span className="text-[10px] text-neutral-400">
             © {new Date().getFullYear()}

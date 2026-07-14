@@ -3,12 +3,13 @@
 import * as React from "react";
 import { useApp } from "@/context/AppContext";
 import { MetricCard } from "@/components/molecules/MetricCard";
+import { ProjectProgressChart } from "@/components/organisms/ProjectProgressChart";
 import { ActivityFeed } from "@/components/organisms/ActivityFeed";
 import { useTasksQuery } from "@/hooks/useTasks";
 import { useProjectsQuery } from "@/hooks/useProjects";
 import { useClientsQuery } from "@/hooks/useClients";
 import { useActivityLogsQuery } from "@/hooks/useActivityLogs";
-import { ClipboardList, TrendingUp, Users, CheckCircle } from "lucide-react";
+import { ClipboardList, TrendingUp, Users } from "lucide-react";
 
 export default function DashboardPage() {
   const { t } = useApp();
@@ -32,10 +33,6 @@ export default function DashboardPage() {
     const completedProjectsCount = projects.filter(
       (p) => p.status === "COMPLETED",
     ).length;
-    const projectProgressPercent =
-      projects.length > 0
-        ? Math.round((completedProjectsCount / projects.length) * 100)
-        : 0;
 
     const pendingTasksCount = tasks.filter(
       (task) => task.status !== "DONE",
@@ -47,7 +44,8 @@ export default function DashboardPage() {
 
     return {
       todaysTasksCount,
-      projectProgressPercent: `${projectProgressPercent}%`,
+      completedProjectsCount,
+      totalProjectsCount: projects.length,
       pendingTasksCount,
       activeClientsCount,
     };
@@ -70,18 +68,12 @@ export default function DashboardPage() {
         </div>
       ) : (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <MetricCard
               title={t.todaysTasks}
               value={stats.todaysTasksCount}
               description={t.descCreatedToday}
               icon={<ClipboardList className="h-5 w-5" />}
-            />
-            <MetricCard
-              title={t.projectProgress}
-              value={stats.projectProgressPercent}
-              description={t.descCompletedVsTotal}
-              icon={<CheckCircle className="h-5 w-5" />}
             />
             <MetricCard
               title={t.pendingTasks || "Pending Tasks"}
@@ -97,9 +89,16 @@ export default function DashboardPage() {
             />
           </div>
 
-          <div className="grid gap-4 md:grid-cols-6">
-            <div className="md:col-span-3">
+          <div className="grid gap-6 md:grid-cols-6 items-stretch">
+            <div className="md:col-span-3 h-90">
               <ActivityFeed activities={activityLogs} />
+            </div>
+            <div className="md:col-span-3 h-90">
+              <ProjectProgressChart
+                completed={stats.completedProjectsCount}
+                total={stats.totalProjectsCount}
+                className="h-full"
+              />
             </div>
           </div>
         </>

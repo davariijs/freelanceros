@@ -235,7 +235,7 @@ export function FeaturesGrid({ osState }: FeaturesGridProps) {
               >
                 &gt;{" "}
                 {t.notesDocContent ||
-                  "FreelanceOS enables integrated clients workflows, auto backup, and structured rich-text notes inside a unified console."}
+                  "FreeOS enables integrated clients workflows, auto backup, and structured rich-text notes inside a unified console."}
               </p>
             </div>
           </div>

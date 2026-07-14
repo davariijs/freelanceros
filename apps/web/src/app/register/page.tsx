@@ -3,8 +3,8 @@ import { RegisterForm } from "@/components/organisms/RegisterForm";
 import { AuthHeader } from "@/components/organisms/AuthHeader";
 
 export const metadata: Metadata = {
-  title: "FreelanceOS - Sign Up",
-  description: "Create a secure FreelanceOS workspace account.",
+  title: "FreeOS - Sign Up",
+  description: "Create a secure FreeOS workspace account.",
 };
 
 export default function RegisterPage() {
