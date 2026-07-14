@@ -3,12 +3,13 @@
 import * as React from "react";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { useApp } from "@/context/AppContext";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export function FloatingFooter() {
   const { locale, theme } = useApp();
   const isDark = theme === "dark";
   const isRtl = locale === "fa";
-
+  const isMobile = useIsMobile();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -48,7 +49,9 @@ export function FloatingFooter() {
           transformStyle: "preserve-3d",
           perspective: 1000,
         }}
-        className={`w-full max-w-5xl rounded-3xl p-5 md:py-3.5 md:px-8 border backdrop-blur-2xl transition-all duration-500 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl ${
+        className={`w-full max-w-5xl rounded-3xl p-5 md:py-3.5 md:px-8 border ${
+          !isMobile ? "backdrop-blur-2xl" : ""
+        } transition-all duration-500 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl ${
           isDark
             ? "bg-[#09090e]/75 border-emerald-500/30 text-neutral-400"
             : "bg-white/80 border-white/20 text-neutral-600"

@@ -4,6 +4,7 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { useApp } from "@/context/AppContext";
 import { Mail, ShieldAlert } from "lucide-react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface WorkflowPipelineProps {
   osState: number;
@@ -14,6 +15,7 @@ export function WorkflowPipeline({ osState }: WorkflowPipelineProps) {
   const isRtl = locale === "fa";
   const isDark = theme === "dark";
   const active = osState === 3;
+  const isMobile = useIsMobile();
 
   const [clientActive, setClientActive] = React.useState(true);
 
@@ -27,12 +29,22 @@ export function WorkflowPipeline({ osState }: WorkflowPipelineProps) {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 100, filter: "blur(8px)" },
+    hidden: {
+      opacity: 0,
+      y: 100,
+      filter: isMobile ? "none" : "blur(8px)",
+    },
+
     visible: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
-      transition: { type: "spring", stiffness: 60, damping: 14 },
+      filter: isMobile ? "none" : "blur(0px)",
+
+      transition: {
+        type: "spring",
+        stiffness: 60,
+        damping: 14,
+      },
     },
   } as const;
 
@@ -45,7 +57,9 @@ export function WorkflowPipeline({ osState }: WorkflowPipelineProps) {
     >
       <motion.div
         variants={itemVariants}
-        className={`p-6 rounded-3xl border backdrop-blur-2xl flex flex-col justify-between h-72 ${
+        className={`p-6 rounded-3xl border ${
+          !isMobile ? "backdrop-blur-2xl" : ""
+        } flex flex-col justify-between h-72 ${
           isDark
             ? "bg-[#09090e]/85 border-emerald-500/30 shadow-2xl text-white"
             : "bg-white/92 border-neutral-200/60 shadow-xl text-neutral-900"
@@ -90,7 +104,9 @@ export function WorkflowPipeline({ osState }: WorkflowPipelineProps) {
 
       <motion.div
         variants={itemVariants}
-        className={`md:col-span-2 p-6 rounded-3xl border backdrop-blur-2xl flex flex-col justify-between h-72 ${
+        className={`md:col-span-2 p-6 rounded-3xl border ${
+          !isMobile ? "backdrop-blur-2xl" : ""
+        } flex flex-col justify-between h-72 ${
           isDark
             ? "bg-[#09090e]/85 border-emerald-500/30 shadow-2xl text-white"
             : "bg-white/92 border-neutral-200/60 shadow-xl text-neutral-900"

@@ -11,7 +11,6 @@ import { WorkflowPipeline } from "@/components/organisms/WorkflowPipeline";
 import { CommandPaletteMockLanding } from "@/components/molecules/CommandPaletteMockLading";
 import { FloatingActions } from "@/components/molecules/FloatingActions";
 import { FloatingFooter } from "@/components/organisms/FloatingFooter";
-import { createPortal } from "react-dom";
 
 const HeroCanvas = dynamic(() => import("@/components/organisms/HeroCanvas"), {
   ssr: false,
@@ -23,7 +22,6 @@ export function HeroSection() {
   const [osState, setOsState] = React.useState<0 | 1 | 2 | 3 | 4 | 5>(0);
   const [isMobile, setIsMobile] = React.useState(false);
   const [windowWidth, setWindowWidth] = React.useState(0);
-  const [mounted, setMounted] = React.useState(false);
 
   const sectionsRef = React.useRef<(HTMLDivElement | null)[]>([]);
 
@@ -35,10 +33,6 @@ export function HeroSection() {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  React.useEffect(() => {
-    setMounted(true);
   }, []);
 
   React.useEffect(() => {
@@ -106,77 +100,72 @@ export function HeroSection() {
     t.scrollToExplore ||
     (locale === "fa" ? "برای کاوش اسکرول کنید" : "Scroll to Explore");
 
-  const fixedLayer = (
-    <div className="fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-40 pointer-events-none">
-      <SystemWidget
-        active={osState > 0}
-        activeColor="bg-emerald-500"
-        inactiveColor="bg-amber-500"
-        activeTitle={t.widgetActiveTitleLeft}
-        inactiveTitle={t.widgetInactiveTitleLeft}
-        activeValue={t.widgetActiveValueLeft}
-        inactiveValue={t.widgetInactiveValueLeft}
-        className="top-12 left-6 lg:left-12 pointer-events-auto"
-      />
-
-      <SystemWidget
-        active={osState > 0}
-        activeColor="bg-sky-500"
-        inactiveColor="bg-neutral-400"
-        activeTitle={t.widgetActiveTitleRight}
-        inactiveTitle={t.widgetInactiveTitleRight}
-        activeValue={t.widgetActiveValueRight}
-        inactiveValue={t.widgetInactiveValueRight}
-        className="top-12 right-6 lg:right-12 pointer-events-auto"
-      />
-
-      <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-auto">
-        <motion.div
-          animate={getDeskAnimation()}
-          transition={{ type: "spring", stiffness: 60, damping: 16 }}
-          className="w-full h-full flex items-center justify-center"
-        >
-          <HeroCanvas osState={osState} />
-        </motion.div>
-      </div>
-
-      <div className="absolute bottom-12 left-0 right-0 mx-auto w-fit z-10 text-center pointer-events-none">
-        <motion.p
-          animate={
-            osState === 0
-              ? { opacity: 1, y: [0, -14, 0] }
-              : { opacity: 0, y: 15 }
-          }
-          transition={
-            osState === 0
-              ? { repeat: Infinity, duration: 1.4, ease: "easeInOut" }
-              : { duration: 0.3 }
-          }
-          className="text-xs font-bold tracking-widest uppercase text-neutral-400"
-        >
-          {scrollText}
-        </motion.p>
-      </div>
-
-      {osState < 2 && (
-        <div className="flex items-center pointer-events-auto w-full justify-center md:justify-start">
-          <HeroContent
-            active={osState === 1}
-            exit={false}
-            title="FreelanceOs"
-            subtitle={t.heroSubtitle}
-            ctaPrimary={t.accessDashboard}
-            ctaSecondary={t.learnMore}
-          />
-        </div>
-      )}
-    </div>
-  );
-
   return (
     <div className="relative w-full">
+      <div className="fixed inset-0 w-full h-screen overflow-hidden flex items-center justify-center z-40 pointer-events-none">
+        <SystemWidget
+          active={osState > 0}
+          activeColor="bg-emerald-500"
+          inactiveColor="bg-amber-500"
+          activeTitle={t.widgetActiveTitleLeft}
+          inactiveTitle={t.widgetInactiveTitleLeft}
+          activeValue={t.widgetActiveValueLeft}
+          inactiveValue={t.widgetInactiveValueLeft}
+          className="top-12 left-6 lg:left-12 pointer-events-auto"
+        />
 
-      {mounted && createPortal(fixedLayer, document.body)}
+        <SystemWidget
+          active={osState > 0}
+          activeColor="bg-sky-500"
+          inactiveColor="bg-neutral-400"
+          activeTitle={t.widgetActiveTitleRight}
+          inactiveTitle={t.widgetInactiveTitleRight}
+          activeValue={t.widgetActiveValueRight}
+          inactiveValue={t.widgetInactiveValueRight}
+          className="top-12 right-6 lg:right-12 pointer-events-auto"
+        />
+
+        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-auto">
+          <motion.div
+            animate={getDeskAnimation()}
+            transition={{ type: "spring", stiffness: 60, damping: 16 }}
+            className="w-full h-full flex items-center justify-center"
+          >
+            <HeroCanvas osState={osState} />
+          </motion.div>
+        </div>
+
+        <div className="absolute bottom-12 left-0 right-0 mx-auto w-fit z-10 text-center pointer-events-none">
+          <motion.p
+            animate={
+              osState === 0
+                ? { opacity: 1, y: [0, -14, 0] }
+                : { opacity: 0, y: 15 }
+            }
+            transition={
+              osState === 0
+                ? { repeat: Infinity, duration: 1.4, ease: "easeInOut" }
+                : { duration: 0.3 }
+            }
+            className="text-xs font-bold tracking-widest uppercase text-neutral-400"
+          >
+            {scrollText}
+          </motion.p>
+        </div>
+
+        {osState < 2 && (
+          <div className="flex items-center pointer-events-auto w-full justify-center md:justify-start">
+            <HeroContent
+              active={osState === 1}
+              exit={false}
+              title="FreelanceOs"
+              subtitle={t.heroSubtitle}
+              ctaPrimary={t.accessDashboard}
+              ctaSecondary={t.learnMore}
+            />
+          </div>
+        )}
+      </div>
 
       <div className="relative z-50 w-full flex flex-col items-center pointer-events-none">
         <div
@@ -227,8 +216,18 @@ export function HeroSection() {
           <motion.div
             animate={
               osState === 4
-                ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }
-                : { opacity: 0, y: 45, scale: 0.95, filter: "blur(8px)" }
+                ? {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    filter: isMobile ? "none" : "blur(0px)",
+                  }
+                : {
+                    opacity: 0,
+                    y: 45,
+                    scale: 0.95,
+                    filter: isMobile ? "none" : "blur(8px)",
+                  }
             }
             transition={{ type: "spring", stiffness: 70, damping: 15 }}
             className="max-w-4xl text-center mb-12 px-8 pointer-events-none"
@@ -259,8 +258,18 @@ export function HeroSection() {
               <motion.div
                 animate={
                   osState === 5
-                    ? { opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }
-                    : { opacity: 0, y: 35, filter: "blur(6px)", scale: 0.95 }
+                    ? {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        filter: isMobile ? "none" : "blur(0px)",
+                      }
+                    : {
+                        opacity: 0,
+                        y: 35,
+                        scale: 0.95,
+                        filter: isMobile ? "none" : "blur(6px)",
+                      }
                 }
                 transition={{
                   type: "spring",
@@ -323,14 +332,14 @@ export function HeroSection() {
                     y: 0,
                     scale: 1,
                     rotateX: 0,
-                    filter: "blur(0px)",
+                    filter: isMobile ? "none" : "blur(0px)",
                   }
                 : {
                     opacity: 0,
                     y: 60,
                     scale: 0.9,
                     rotateX: 15,
-                    filter: "blur(8px)",
+                    filter: isMobile ? "none" : "blur(8px)",
                   }
             }
             transition={{
