@@ -39,7 +39,11 @@ export default async function RootLayout({
   const dir = locale === "fa" ? "rtl" : "ltr";
 
   return (
-    <html lang={locale} dir={dir} className={theme === "dark" ? "dark" : ""}>
+    <html
+      lang={locale}
+      dir={dir}
+      className={`${theme === "dark" ? "dark" : ""} ${inter.variable} ${vazirmatn.variable}`}
+    >
       <body className="bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 antialiased">
         <QueryProvider>
           <GoogleOAuthProvider
