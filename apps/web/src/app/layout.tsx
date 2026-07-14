@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://FreeOS.ai",
   },
+  icons: {
+    icon: "/svg/logo.svg",
+  },
 };
 
 export const viewport: Viewport = {
