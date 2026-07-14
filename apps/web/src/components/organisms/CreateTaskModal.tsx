@@ -102,10 +102,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
 
   return (
     <Dialog isOpen={isOpen} onClose={onClose} title={t.createTask}>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4 max-h-[75vh] overflow-y-auto px-1"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 relative">
         <FormField
           label={t.title}
           placeholder={t.placeholderTaskTitle}
@@ -114,7 +111,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
           {...register("title")}
         />
 
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1.5 relative z-20">
           <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
             {t.descriptionTask || "Description"}
           </label>
@@ -125,8 +122,8 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1.5">
+        <div className="grid grid-cols-2 gap-4 relative z-40">
+          <div className="flex flex-col gap-1.5 relative z-40">
             <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
               {t.priority}
             </label>
@@ -136,7 +133,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
               options={priorityOptions}
             />
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1.5 relative z-40">
             <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
               {t.projects}
             </label>
@@ -144,6 +141,7 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
               value={projectField.value}
               onChange={handleProjectSelect}
               options={projectOptions}
+              dropdownHeightClass="max-h-44"
             />
           </div>
         </div>
