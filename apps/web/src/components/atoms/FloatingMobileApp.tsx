@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { RoundedBox, Text } from "@react-three/drei";
+import { RoundedBox, Text, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import { useApp } from "@/context/AppContext";
 import { ThreeEvent } from "@react-three/fiber";
@@ -149,6 +149,8 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
 
   const phoneRef = React.useRef<THREE.Group>(null);
   const scrollProgressRef = React.useRef(0);
+
+  const logoTexture = useTexture("/svg/logo.svg");
 
   const positionsRef = React.useMemo(() => {
     return {
@@ -309,46 +311,32 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
           </RoundedBox>
 
           <RoundedBox
-            args={[0.35, 0.71, 0.006]}
-            radius={0.02}
-            smoothness={4}
-            position={[0, 0, 0.004]}
+            args={[0.1, 0.026, 0.006]}
+            radius={0.013}
+            smoothness={8}
+            position={[0, 0.305, 0.006]}
           >
             <meshStandardMaterial
-              color="#ffffff"
-              transparent
-              opacity={0.15}
-              roughness={0.3}
-            />
-          </RoundedBox>
-        </group>
-
-        <group position={[0, 0.12, 0.024]} scale={1.25}>
-          <RoundedBox
-            args={[0.09, 0.09, 0.03]}
-            radius={0.015}
-            smoothness={4}
-            castShadow
-          >
-            <meshStandardMaterial
-              color="#fbbf24"
+              color="#050505"
+              roughness={0.35}
               metalness={0.5}
-              roughness={0.2}
+              side={THREE.DoubleSide}
             />
           </RoundedBox>
+
           <RoundedBox
-            args={[0.07, 0.07, 0.04]}
-            radius={0.012}
+            args={[0.18, 0.18, 0.001]}
+            radius={0.03}
             smoothness={4}
-            position={[0, 0, -0.005]}
+            position={[0, 0, 0.03]}
           >
-            <meshStandardMaterial
-              color="#ffffff"
-              emissive="#ffffff"
-              emissiveIntensity={0.5}
-              roughness={0.1}
-            />
+            <meshStandardMaterial color="#09090e" roughness={0} metalness={0} />
           </RoundedBox>
+
+          <mesh position={[0, 0, 0.1]} rotation={[0, -0.12, 0]}>
+            <planeGeometry args={[0.15, 0.15]} />
+            <meshBasicMaterial map={logoTexture} transparent />
+          </mesh>
         </group>
       </group>
 
@@ -392,3 +380,5 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
     </group>
   );
 }
+
+useTexture.preload("/svg/logo.svg");

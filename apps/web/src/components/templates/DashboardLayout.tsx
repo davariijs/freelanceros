@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useApp } from "@/context/AppContext";
 import {
   X,
@@ -51,7 +52,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             }`}
           >
             <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-2.5">
+              <Link
+                href="/"
+                className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
+              >
                 <img
                   src="/svg/logo.svg"
                   alt="FreeOS"
@@ -60,7 +64,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 <span className="font-extrabold text-lg text-neutral-900 dark:text-neutral-100">
                   FreeOS
                 </span>
-              </div>
+              </Link>
               <Button
                 variant="ghost"
                 size="sm"
@@ -109,7 +113,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           )}
         </Button>
 
-        <div
+        <Link
+          href="/"
           className={cn(
             "mb-8 flex items-center justify-center transition-all",
             isCollapsed ? "w-full" : "xl:justify-start gap-2.5",
@@ -133,7 +138,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               </span>
             </div>
           )}
-        </div>
+        </Link>
 
         <div className="flex-1 w-full">{sidebar(isCollapsed)}</div>
       </aside>

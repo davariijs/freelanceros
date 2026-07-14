@@ -86,7 +86,10 @@ export const HeroContent = React.memo(
         }}
         className="absolute bottom-16 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-12 lg:left-32 md:bottom-auto md:top-[52%] lg:top-1/3 z-20 w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl text-center md:text-left rtl:md:text-right flex flex-col items-center md:items-start gap-6 pointer-events-auto px-6 md:px-0"
       >
-        <div dir="ltr" className="text-center md:text-left w-full">
+        <div
+          dir="ltr"
+          className="text-center md:text-left rtl:md:text-right w-full flex justify-center md:justify-start rtl:md:justify-end"
+        >
           <LetterReveal text={title} active={active && !exit} />
         </div>
 

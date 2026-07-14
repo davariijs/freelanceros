@@ -1,4 +1,4 @@
-package com.freelanceos.mobile
+package com.freeos.mobile
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
