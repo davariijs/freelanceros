@@ -13,4 +13,6 @@ export interface Project {
   client?: { id: string; name: string } | null;
   tasks?: Task[];
   createdAt: string;
+  shareToken?: string | null;
+  isShared: boolean;
 }

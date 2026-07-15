@@ -13,7 +13,8 @@ import { z } from "zod";
 import { Project, ProjectStatus } from "@/schemas/project";
 import { TaskPriority } from "@/schemas/task";
 import { useRouter } from "next/navigation";
-import { Trash2 } from "lucide-react";
+import { Trash2, Share2, Copy, ToggleLeft, ToggleRight } from "lucide-react";
+import { apiClient } from "@/lib/apiClient";
 
 const editProjectSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -51,9 +52,11 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
   onUpdateProject,
   onDeleteProject,
 }) => {
-  const { t } = useApp();
+  const { t, showToast } = useApp();
   const router = useRouter();
   const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
+  const [isShared, setIsShared] = React.useState(false);
+  const [shareToken, setShareToken] = React.useState<string | null>(null);
 
   const {
     control,
@@ -108,10 +111,38 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
         status: project.status,
         clientId: project.clientId || "NONE",
       });
+      setIsShared(project.isShared);
+      setShareToken(project.shareToken ?? null);
     }
   }, [project, reset, isOpen]);
 
   if (!project) return null;
+
+  const handleToggleShare = async () => {
+    try {
+      if (isShared) {
+        await apiClient.post(`/projects/${project.id}/unshare`);
+        setIsShared(false);
+        setShareToken(null);
+        showToast(t.shareDisabled || "Client portal link disabled", "success");
+      } else {
+        const res = await apiClient.post(`/projects/${project.id}/share`);
+        setIsShared(true);
+        setShareToken(res.data.shareToken);
+        showToast(t.shareEnabled || "Client portal link generated", "success");
+      }
+    } catch (error) {
+      showToast("Failed to update share settings", "error");
+    }
+  };
+
+  const handleCopyLink = () => {
+    if (shareToken) {
+      const fullUrl = `${window.location.origin}/shared/${shareToken}`;
+      navigator.clipboard.writeText(fullUrl);
+      showToast(t.copiedSuccess || "Copied to clipboard!", "success");
+    }
+  };
 
   const onSubmit = (data: EditProjectInput) => {
     onUpdateProject(project.id, {
@@ -126,7 +157,10 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
 
   return (
     <Dialog isOpen={isOpen} onClose={onClose} title={t.editProject}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-4 max-h-[75vh] overflow-y-auto px-1 pb-4"
+      >
         <FormField
           label={t.title}
           required
@@ -180,6 +214,46 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
             onChange={handleClientSelect}
             options={clientOptions}
           />
+        </div>
+
+        <div className="space-y-3 pt-4 border-t border-neutral-200 dark:border-neutral-800">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-bold text-neutral-500 dark:text-neutral-400 flex items-center gap-1.5">
+              <Share2 className="h-4 w-4 text-emerald-500" />
+              <span>{t.clientPortalTitle || "Client Share Portal"}</span>
+            </label>
+            <button
+              type="button"
+              onClick={handleToggleShare}
+              className="text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+            >
+              {isShared ? (
+                <ToggleRight className="h-7 w-7 text-emerald-500" />
+              ) : (
+                <ToggleLeft className="h-7 w-7 text-neutral-400" />
+              )}
+            </button>
+          </div>
+
+          {isShared && shareToken && (
+            <div className="flex items-center gap-2 animate-in slide-in-from-top-2 duration-200">
+              <input
+                type="text"
+                readOnly
+                value={`${window.location.origin}/shared/${shareToken}`}
+                className="grow h-10 px-3 rounded-lg border bg-neutral-50/50 dark:bg-neutral-950/20 text-xs border-neutral-300 dark:border-neutral-800 focus:outline-none text-neutral-500 dark:text-neutral-400 select-all"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleCopyLink}
+                className="h-10 w-10 p-0 border border-neutral-200 dark:border-neutral-800 rounded-lg flex items-center justify-center"
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
         </div>
 
         <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 mt-6">

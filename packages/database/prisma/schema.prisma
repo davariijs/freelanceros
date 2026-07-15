@@ -47,6 +47,8 @@ model Project {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   tasks       Task[]
   createdAt   DateTime @default(now())
+  shareToken  String?  @unique
+  isShared    Boolean  @default(false)
 }
 
 model Task {
