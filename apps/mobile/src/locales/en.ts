@@ -78,4 +78,6 @@ export const en = {
   sendCodeButton: "Send Security Code",
   confirmEmailTitle: "Confirm Email",
   confirmEmailDesc: "We sent a 6-digit verification code to {email}",
+  write: "Write",
+  preview: "Preview",
 };

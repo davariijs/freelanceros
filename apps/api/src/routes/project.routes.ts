@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { prisma, ProjectStatus, TaskPriority } from '@freelanceos/database';
 import { authenticate, AuthenticatedRequest } from '@/middleware/auth';
 import { emailService } from '@/services/emailService';
+import { randomUUID } from 'crypto';
 
 const router: Router = Router();
 
@@ -191,6 +192,42 @@ router.delete('/:id', async (req: AuthenticatedRequest, res) => {
     where: { id, userId: req.userId! },
   });
   return res.status(204).send();
+});
+
+router.post('/:id/share', async (req: AuthenticatedRequest, res) => {
+  const { id } = req.params;
+  const shareToken = randomUUID();
+
+  try {
+    const project = await prisma.project.update({
+      where: { id, userId: req.userId! },
+      data: {
+        isShared: true,
+        shareToken,
+      },
+    });
+
+    return res.status(200).json({ shareToken: project.shareToken });
+  } catch (error) {
+    return res.status(500).json({ message: 'Failed to generate share link' });
+  }
+});
+
+router.post('/:id/unshare', async (req: AuthenticatedRequest, res) => {
+  const { id } = req.params;
+
+  try {
+    await prisma.project.update({
+      where: { id, userId: req.userId! },
+      data: {
+        isShared: false,
+      },
+    });
+
+    return res.status(204).send();
+  } catch (error) {
+    return res.status(500).json({ message: 'Failed to disable sharing' });
+  }
 });
 
 export { router as projectRouter };

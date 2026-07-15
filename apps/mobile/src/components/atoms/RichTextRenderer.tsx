@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import {
   Text,
@@ -28,47 +26,60 @@ export const RichTextRenderer: React.FC<RichTextRendererProps> = ({
   }
 
   const parseMarkdown = (rawText: string) => {
-    const parts = rawText.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`)/g);
+    const lines = rawText.split("\n");
 
-    return parts.map((part: string, index: number) => {
-      if (part.startsWith("**") && part.endsWith("**")) {
-        return (
+    return lines.map((line: string, lineIndex: number) => {
+      const isHeading = line.startsWith("# ");
+      const cleanLine = isHeading ? line.slice(2) : line;
+
+      const parts = cleanLine.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`)/g);
+
+      const renderedLine = parts.map((part: string, index: number) => {
+        if (part.startsWith("**") && part.endsWith("**")) {
+          return (
+            <Text
+              key={index}
+              className={`font-black ${isDark ? "text-white" : "text-black"}`}
+            >
+              {part.slice(2, -2)}
+            </Text>
+          );
+        }
+        if (part.startsWith("*") && part.endsWith("*")) {
+          return (
+            <Text key={index} className="italic text-neutral-400">
+              {part.slice(1, -1)}
+            </Text>
+          );
+        }
+        if (part.startsWith("`") && part.endsWith("`")) {
+          return (
+            <Text
+              key={index}
+              className="font-mono bg-neutral-900 px-1 py-0.5 rounded text-xs text-red-500"
+            >
+              {part.slice(1, -1)}
+            </Text>
+          );
+        }
+        return <Text key={index}>{part}</Text>;
+      });
+
+      return (
+        <View key={lineIndex} className={isHeading ? "mt-3 mb-1" : "mt-1"}>
           <Text
-            key={index}
-            className={`font-black ${isDark ? "text-white" : "text-black"}`}
+            className={`leading-relaxed ${
+              isHeading
+                ? `text-lg font-bold ${isDark ? "text-white" : "text-black"}`
+                : `text-sm ${isDark ? "text-neutral-300" : "text-neutral-700"}`
+            }`}
           >
-            {part.slice(2, -2)}
+            {renderedLine}
           </Text>
-        );
-      }
-      if (part.startsWith("*") && part.endsWith("*")) {
-        return (
-          <Text key={index} className="italic text-neutral-400">
-            {part.slice(1, -1)}
-          </Text>
-        );
-      }
-      if (part.startsWith("`") && part.endsWith("`")) {
-        return (
-          <Text
-            key={index}
-            className="font-mono bg-neutral-900 px-1 py-0.5 rounded text-xs text-red-500"
-          >
-            {part.slice(1, -1)}
-          </Text>
-        );
-      }
-      return <Text key={index}>{part}</Text>;
+        </View>
+      );
     });
   };
 
-  return (
-    <View className="flex-row flex-wrap">
-      <Text
-        className={`text-sm leading-relaxed ${isDark ? "text-neutral-300" : "text-neutral-700"}`}
-      >
-        {parseMarkdown(text)}
-      </Text>
-    </View>
-  );
+  return <View className="flex-col">{parseMarkdown(text)}</View>;
 };

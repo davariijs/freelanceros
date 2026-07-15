@@ -272,4 +272,17 @@ export const en = {
   platformPlaceholder: "e.g., Telegram",
   idPlaceholder: "Username or ID",
   copiedSuccess: "Copied to clipboard!",
+  clientPortalTitle: "Client Share Portal",
+  shareDisabled: "Client portal link disabled",
+  shareEnabled: "Client portal link generated",
+  sharedLoadingPortal: "Loading Portal...",
+  sharedLinkExpiredTitle: "Link Expired or Disabled",
+  sharedLinkExpiredDesc: "The workspace share link you are trying to access has been deactivated by the administrator or doesn't exist anymore.",
+  sharedNoTasksColumn: "No tasks in this column",
+  sharedTaskInspection: "Task Inspection",
+  sharedStatus: "Status",
+  sharedTaskTitle: "Task Title",
+  sharedTaskDesc: "Task Description",
+  sharedNoDesc: "No description provided for this task.",
+  sharedCloseInspection: "Close Inspection"
 };

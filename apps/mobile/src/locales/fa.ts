@@ -81,4 +81,7 @@ export const fa = {
   sendCodeButton: "ارسال کد امنیتی بازیابی",
   confirmEmailTitle: "تایید آدرس ایمیل",
   confirmEmailDesc: "ما یک کد تایید ۶ رقمی به آدرس {email} ارسال کردیم.",
+  clientTableDate: "تاریخ ثبت",
+  write: "نوشتن",
+  preview: "پیش‌نمایش",
 };

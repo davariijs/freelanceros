@@ -272,4 +272,18 @@ export const fa = {
   platformPlaceholder: "مثلاً تلگرام",
   idPlaceholder: "آی‌دی یا شماره",
   copiedSuccess: "در حافظه کپی شد!",
+  clientPortalTitle: "پورتال اشتراک‌گذاری کارفرما",
+  shareDisabled: "لینک پورتال کارفرما غیرفعال شد",
+  shareEnabled: "لینک پورتال کارفرما ایجاد شد",
+  sharedLoadingPortal: "در حال بارگذاری پورتال...",
+  sharedLinkExpiredTitle: "لینک منقضی یا غیرفعال شده است",
+  sharedLinkExpiredDesc:
+    "لینک اشتراک‌گذاری که می‌خواهید به آن دسترسی پیدا کنید توسط مدیر غیرفعال شده است یا دیگر وجود ندارد.",
+  sharedNoTasksColumn: "هیچ تسکی در این ستون وجود ندارد",
+  sharedTaskInspection: "مشاهده جزئیات تسک",
+  sharedStatus: "وضعیت",
+  sharedTaskTitle: "عنوان تسک",
+  sharedTaskDesc: "توضیحات تسک",
+  sharedNoDesc: "توضیحی برای این تسک ثبت نشده است.",
+  sharedCloseInspection: "بستن جزئیات",
 };

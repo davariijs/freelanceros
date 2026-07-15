@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   useColorScheme as useSystemColorScheme,
-  TextInput,
 } from "react-native";
 import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { useTasksQuery, useUpdateTaskMutation, Task } from "@/hooks/useTasks";
@@ -17,7 +16,7 @@ import { ArrowLeft } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useApp } from "@/context/AppContext";
-import { RichTextRenderer } from "@/components/atoms/RichTextRenderer";
+import { RichTextEditor } from "@/components/atoms/RichTextEditor";
 
 export default function TaskDetailScreen() {
   const { taskId } = useLocalSearchParams<{ taskId: string }>();
@@ -37,7 +36,6 @@ export default function TaskDetailScreen() {
   }, [tasks, taskId]);
 
   const [description, setDescription] = React.useState("");
-  const [isEditingDesc, setIsEditingDesc] = React.useState(false);
 
   React.useEffect(() => {
     if (task) {
@@ -156,41 +154,11 @@ export default function TaskDetailScreen() {
           <Text className="text-[10px] font-black uppercase text-neutral-500 tracking-wider mb-3">
             {t.descriptionLabel}
           </Text>
-          <View
-            className={`p-4 border rounded-xl min-h-32 ${isDark ? "border-neutral-800 bg-neutral-900/30" : "border-neutral-200 bg-white"}`}
-          >
-            {isEditingDesc ? (
-              <TextInput
-                style={{
-                  color: isDark ? "#f5f5f5" : "#171717",
-                  fontSize: 13,
-                  minHeight: 80,
-                  textAlignVertical: "top",
-                }}
-                value={description}
-                onChangeText={setDescription}
-                placeholder={t.noDescription}
-                placeholderTextColor="#737373"
-                multiline
-                autoFocus
-                onBlur={() => {
-                  handleUpdateDescription(description);
-                  setIsEditingDesc(false);
-                }}
-              />
-            ) : (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => setIsEditingDesc(true)}
-                className="flex-1 min-h-20"
-              >
-                <RichTextRenderer
-                  text={description}
-                  placeholder={t.noDescription}
-                />
-              </TouchableOpacity>
-            )}
-          </View>
+          <RichTextEditor
+            value={description}
+            onChange={setDescription}
+            placeholder={t.noDescription || "..."}
+          />
         </View>
 
         <View className="space-y-4">
