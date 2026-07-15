@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import { useApp } from "@/context/AppContext";
 import { RichTextRenderer } from "./RichTextRenderer";
+import { Smile } from "lucide-react-native";
+import EmojiPicker from "rn-emoji-keyboard";
 
 interface RichTextEditorProps {
   value: string;
@@ -26,6 +28,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const [tab, setTab] = React.useState<"edit" | "preview">("edit");
   const [selection, setSelection] = React.useState({ start: 0, end: 0 });
+  const [isEmojiOpen, setIsEmojiOpen] = React.useState(false);
   const inputRef = React.useRef<TextInput>(null);
 
   const injectText = (before: string, after: string = "") => {
@@ -44,6 +47,10 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     setTimeout(() => {
       inputRef.current?.focus();
     }, 50);
+  };
+
+  const handleEmojiSelect = (emojiObject: any) => {
+    injectText(emojiObject.emoji);
   };
 
   return (
@@ -118,6 +125,12 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                 {"< >"}
               </Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setIsEmojiOpen(true)}
+              className="h-8 w-8 items-center justify-center rounded-lg"
+            >
+              <Smile size={15} color={isDark ? "#ffffff" : "#171717"} />
+            </TouchableOpacity>
           </View>
         )}
       </View>
@@ -139,6 +152,17 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <RichTextRenderer text={value} placeholder={placeholder} />
         )}
       </View>
+
+      <EmojiPicker
+        open={isEmojiOpen}
+        onClose={() => setIsEmojiOpen(false)}
+        onEmojiSelected={handleEmojiSelect}
+        theme={{
+          container: isDark ? "#09090e" : "#ffffff",
+          header: isDark ? "#ffffff" : "#09090e",
+          backdrop: "rgba(0,0,0,0.4)",
+        }}
+      />
     </View>
   );
 };
