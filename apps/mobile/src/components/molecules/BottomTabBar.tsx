@@ -17,7 +17,7 @@ export function BottomTabBar() {
     if (isSettings) {
       settingsModalTrigger.open();
     } else {
-      router.push(route as any);
+      router.replace(route as any);
     }
   };
 
