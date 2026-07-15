@@ -80,4 +80,12 @@ export const en = {
   confirmEmailDesc: "We sent a 6-digit verification code to {email}",
   write: "Write",
   preview: "Preview",
+  notifications: "Notifications",
+  noDeadlineNotifications: "No upcoming project deadlines.",
+  activityProjectDeadlineTomorrow: "Tomorrow is the deadline for: {title}",
+  activityProjectDeadlineToday: "Today is the deadline for: {title}!",
+  notificationDeadlineTodayBody:
+    "Today is the final day to complete and deliver this project contract!",
+  notificationDeadlineTomorrowBody:
+    "Tomorrow is the contract deadline. Wrap up remaining tasks!",
 };

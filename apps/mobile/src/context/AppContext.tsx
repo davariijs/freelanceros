@@ -3,6 +3,7 @@ import { View } from "react-native";
 import { en } from "@/locales/en";
 import { fa } from "@/locales/fa";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SettingsModal } from "@/components/organisms/SettingsModal";
 
 type Theme = "light" | "dark" | "system";
 type Locale = "en" | "fa";
@@ -25,9 +26,16 @@ interface AppContextType {
   setIsCommandOpen: (open: boolean) => void;
   toast: ToastState | null;
   showToast: (message: string, type?: "success" | "error") => void;
+  isSettingsOpen: boolean;
+  setIsSettingsOpen: (open: boolean) => void;
 }
 
 const AppContext = React.createContext<AppContextType | undefined>(undefined);
+
+export const settingsModalTrigger = {
+  open: () => {},
+  close: () => {},
+};
 
 interface AppProviderProps {
   children: React.ReactNode;
@@ -45,6 +53,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({
   const [activeTaskId, setActiveTaskId] = React.useState<string | null>(null);
   const [isCommandOpen, setIsCommandOpen] = React.useState<boolean>(false);
   const [toast, setToast] = React.useState<ToastState | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = React.useState<boolean>(false);
 
   const t = locale === "en" ? en : fa;
   const dir = locale === "fa" ? "rtl" : "ltr";
@@ -113,11 +122,16 @@ export const AppProvider: React.FC<AppProviderProps> = ({
         setIsCommandOpen,
         toast,
         showToast,
+        isSettingsOpen,
+        setIsSettingsOpen,
       }}
     >
-      <View style={{ flex: 1 }}>
+      <View
+        style={{ flex: 1 }}
+      >
         {children}
       </View>
+      <SettingsModal />
     </AppContext.Provider>
   );
 };
