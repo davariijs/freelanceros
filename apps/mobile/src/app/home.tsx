@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, InteractionManager } from "react-native";
 import { SyncStatus } from "@/components/atoms/SyncStatus";
 import { CircularProgress } from "@/components/atoms/CircularProgress";
 import { TodayTasksList } from "@/components/organisms/TodayTasksList";
@@ -28,8 +28,7 @@ import { notificationService } from "@/services/notificationService";
 export default function HomeScreen() {
   const router = useRouter();
 
-  const { t, theme, isCommandOpen, setIsCommandOpen } =
-    useApp();
+  const { t, theme, isCommandOpen, setIsCommandOpen } = useApp();
   const isDark = theme === "dark";
 
   const { data: tasks = [], isLoading } = useTasksQuery();
@@ -44,7 +43,9 @@ export default function HomeScreen() {
 
   React.useEffect(() => {
     if (projects.length > 0) {
-      notificationService.scheduleProjectDeadlineNotifications(projects, t);
+      InteractionManager.runAfterInteractions(() => {
+        notificationService.scheduleProjectDeadlineNotifications(projects, t);
+      });
     }
   }, [projects, t]);
 

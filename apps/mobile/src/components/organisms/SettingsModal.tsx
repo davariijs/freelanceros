@@ -7,23 +7,25 @@ import {
   StyleSheet,
   useColorScheme,
 } from "react-native";
-import { useApp } from "@/context/AppContext";
+import { useApp, settingsModalTrigger } from "@/context/AppContext";
 import { Globe, Sun, Moon, Settings } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 
 export function SettingsModal() {
-  const {
-    theme,
-    setTheme,
-    toggleLocale,
-    locale,
-    t,
-    isSettingsOpen,
-    setIsSettingsOpen,
-  } = useApp();
+  const { theme, setTheme, toggleLocale, locale, t } = useApp();
+  const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
 
   const systemTheme = useColorScheme();
   const isDark = theme === "system" ? systemTheme === "dark" : theme === "dark";
+
+  React.useEffect(() => {
+    settingsModalTrigger.open = () => setIsSettingsOpen(true);
+    settingsModalTrigger.close = () => setIsSettingsOpen(false);
+    return () => {
+      settingsModalTrigger.open = () => {};
+      settingsModalTrigger.close = () => {};
+    };
+  }, []);
 
   const cycleTheme = () => {
     if (theme === "system") setTheme("light");

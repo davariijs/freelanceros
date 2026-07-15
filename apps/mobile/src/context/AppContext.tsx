@@ -32,6 +32,11 @@ interface AppContextType {
 
 const AppContext = React.createContext<AppContextType | undefined>(undefined);
 
+export const settingsModalTrigger = {
+  open: () => {},
+  close: () => {},
+};
+
 interface AppProviderProps {
   children: React.ReactNode;
   initialLocale: Locale;

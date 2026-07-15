@@ -1,21 +1,21 @@
 import * as React from "react";
-import { View, Text, TouchableOpacity, useColorScheme } from "react-native";
+import { View, TouchableOpacity, useColorScheme } from "react-native";
 import { useRouter, usePathname } from "expo-router";
-import { useApp } from "@/context/AppContext";
+import { useApp, settingsModalTrigger } from "@/context/AppContext";
 import { Home, Users, FileText, Bell, Settings } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 
 export function BottomTabBar() {
   const router = useRouter();
   const pathname = usePathname();
-  const { theme, t, setIsSettingsOpen } = useApp();
+  const { theme, t } = useApp();
   const systemTheme = useColorScheme();
   const isDark = theme === "system" ? systemTheme === "dark" : theme === "dark";
 
   const handleTabPress = (route: string, isSettings = false) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (isSettings) {
-      setIsSettingsOpen(true);
+      settingsModalTrigger.open();
     } else {
       router.push(route as any);
     }
