@@ -84,4 +84,12 @@ export const fa = {
   clientTableDate: "تاریخ ثبت",
   write: "نوشتن",
   preview: "پیش‌نمایش",
+  notifications: "اعلانات",
+  noDeadlineNotifications: "هیچ سررسید پروژه‌ای نزدیک نیست.",
+  activityProjectDeadlineTomorrow: "فردا آخرین مهلت پروژه است: {title}",
+  activityProjectDeadlineToday: "امروز آخرین مهلت پروژه است: {title}!",
+  notificationDeadlineTodayBody:
+    "امروز آخرین روز برای تکمیل قرارداد و تحویل این پروژه است! کارها را نهایی کنید.",
+  notificationDeadlineTomorrowBody:
+    "فردا ددلاین تحویل پروژه است. وظایف باقی‌مانده را هرچه سریع‌تر تکمیل کنید!",
 };
