@@ -56,6 +56,7 @@ export default function SharedProjectPortal() {
       const res = await apiClient.get(`/shared/projects/${shareToken}`);
       return res.data;
     },
+    refetchInterval: 5000,
     retry: false,
   });
 
