@@ -105,7 +105,7 @@ export default function NotificationsScreen() {
             </View>
           ) : (
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-              <View className="space-y-4 pb-8">
+              <View className="gap-y-4 pb-8">
                 {deadlineNotifications.map((item) => (
                   <View key={item.id} className={`p-4 rounded-2xl border flex-row items-start gap-4 ${cardBg}`}>
                     <View className="h-9 w-9 rounded-full bg-neutral-100 dark:bg-neutral-800 items-center justify-center shrink-0">

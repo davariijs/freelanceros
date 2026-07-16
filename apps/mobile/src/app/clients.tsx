@@ -10,13 +10,22 @@ import {
 import { useApp } from "@/context/AppContext";
 import { CreateClientSheet } from "@/components/organisms/CreateClientSheet";
 import { EditClientSheet } from "@/components/organisms/EditClientSheet";
+import { SearchBar } from "@/components/molecules/SearchBar";
 import {
   useClientsQuery,
   useCreateClientMutation,
   useUpdateClientMutation,
   useDeleteClientMutation,
 } from "@/hooks/useClients";
-import { Plus, Users, Pencil, Phone, Globe, Mail } from "lucide-react-native";
+import {
+  Plus,
+  Users,
+  Pencil,
+  Phone,
+  Globe,
+  Mail,
+  Search,
+} from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import BottomSheet from "@gorhom/bottom-sheet";
@@ -31,8 +40,9 @@ export default function ClientsScreen() {
   const editSheetRef = React.useRef<BottomSheet>(null);
 
   const [selectedClient, setSelectedClient] = React.useState<any | null>(null);
-  const [isCreateSheetOpen, setIsCreateSheetOpen] = React.useState(false);
-  const [isEditSheetOpen, setIsEditSheetOpen] = React.useState(false);
+
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
 
   const { data: clients = [], isLoading } = useClientsQuery();
   const createClientMutation = useCreateClientMutation();
@@ -43,7 +53,6 @@ export default function ClientsScreen() {
     createClientMutation.mutate(data, {
       onSuccess: () => {
         createSheetRef.current?.close();
-        setIsCreateSheetOpen(false);
       },
     });
   };
@@ -55,7 +64,6 @@ export default function ClientsScreen() {
         onSuccess: () => {
           editSheetRef.current?.close();
           setSelectedClient(null);
-          setIsEditSheetOpen(false);
         },
       },
     );
@@ -66,7 +74,6 @@ export default function ClientsScreen() {
       onSuccess: () => {
         editSheetRef.current?.close();
         setSelectedClient(null);
-        setIsEditSheetOpen(false);
       },
     });
   };
@@ -100,16 +107,29 @@ export default function ClientsScreen() {
   const handleOpenCreate = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     createSheetRef.current?.snapToIndex(0);
-    setIsCreateSheetOpen(true);
   };
 
   const handleOpenEdit = (client: any) => {
     setSelectedClient(client);
-    setIsEditSheetOpen(true);
     requestAnimationFrame(() => {
       editSheetRef.current?.snapToIndex(0);
     });
   };
+
+  const handleCloseSearch = () => {
+    setIsSearchOpen(false);
+    setSearchQuery("");
+  };
+
+  const filteredClients = React.useMemo(() => {
+    if (!searchQuery.trim()) return clients;
+    const q = searchQuery.toLowerCase();
+    return clients.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        (c.email && c.email.toLowerCase().includes(q)),
+    );
+  }, [clients, searchQuery]);
 
   const dynamicBg = isDark ? "#0a0a0a" : "#f5f5f5";
 
@@ -122,16 +142,47 @@ export default function ClientsScreen() {
       }}
     >
       <View style={{ flex: 1, paddingHorizontal: 20, position: "relative" }}>
-        <View className="mb-6 shrink-0">
+        <View className="flex-row items-center justify-between mb-6 shrink-0">
+          <TouchableOpacity
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setIsSearchOpen(true);
+            }}
+            style={{
+              backgroundColor: isDark ? "#171717" : "#ffffff",
+              borderColor: isDark ? "#262626" : "#e5e5e5",
+            }}
+            className="h-10 w-10 border rounded-full items-center justify-center active:bg-neutral-800"
+          >
+            <Search size={18} color="#a3a3a3" />
+          </TouchableOpacity>
+
           <Text
-            className={`text-2xl font-black ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
+            className={`text-xl font-bold ${isDark ? "text-white" : "text-neutral-900"}`}
           >
             {t.clients}
           </Text>
-          <Text className="text-xs text-neutral-500 mt-1">
-            {t.clientsDescription}
-          </Text>
+
+          <TouchableOpacity
+            onPress={handleOpenCreate}
+            style={{
+              backgroundColor: isDark ? "#171717" : "#ffffff",
+              borderColor: isDark ? "#262626" : "#e5e5e5",
+            }}
+            className="h-10 w-10 border rounded-full items-center justify-center active:bg-neutral-800"
+          >
+            <Plus size={18} color="#a3a3a3" />
+          </TouchableOpacity>
         </View>
+
+        <SearchBar
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder={t.placeholderSearchClients || "Search clients..."}
+          isOpen={isSearchOpen}
+          onClose={handleCloseSearch}
+          isDark={isDark}
+        />
 
         {isLoading ? (
           <View className="flex-1 justify-center items-center">
@@ -139,14 +190,14 @@ export default function ClientsScreen() {
               {t.sharedLoadingPortal || "Loading Clients..."}
             </Text>
           </View>
-        ) : clients.length === 0 ? (
+        ) : filteredClients.length === 0 ? (
           <View className="flex-1 justify-center items-center text-center">
             <Users size={32} color="#737373" className="mb-2" />
             <Text className="text-sm text-neutral-500">{t.noClients}</Text>
           </View>
         ) : (
           <FlatList
-            data={clients}
+            data={filteredClients}
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ paddingBottom: 100 }}
             showsVerticalScrollIndicator={false}
@@ -244,22 +295,10 @@ export default function ClientsScreen() {
           />
         )}
 
-        {!isCreateSheetOpen && !isEditSheetOpen && (
-          <TouchableOpacity
-            onPress={handleOpenCreate}
-            className={`absolute bottom-6 right-6 h-14 w-14 rounded-full justify-center items-center shadow-lg z-40 ${
-              isDark ? "bg-neutral-100" : "bg-neutral-950"
-            }`}
-          >
-            <Plus size={24} color={isDark ? "#0a0a0a" : "#ffffff"} />
-          </TouchableOpacity>
-        )}
-
         <CreateClientSheet
           ref={createSheetRef}
           onSuccess={() => {
             createSheetRef.current?.close();
-            setIsCreateSheetOpen(false);
           }}
           onSubmitClient={handleCreateClient}
         />
@@ -269,7 +308,6 @@ export default function ClientsScreen() {
           onSuccess={() => {
             editSheetRef.current?.close();
             setSelectedClient(null);
-            setIsEditSheetOpen(false);
           }}
           client={selectedClient}
           onUpdateClient={handleUpdateClient}

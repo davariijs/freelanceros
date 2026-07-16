@@ -1,15 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "@/lib/apiClient";
-
-export interface Project {
-  id: string;
-  title: string;
-  description?: string | null;
-  status: string;
-  priority: string;
-  dueDate?: string | null;
-  clientId?: string | null;
-}
+import {
+  Project,
+  ProjectStatus,
+} from "@/schema/project.schema";
+import { TaskPriority } from "@/schema/task.schema";
 
 export const useProjectsQuery = () => {
   return useQuery<Project[]>({
@@ -17,6 +12,60 @@ export const useProjectsQuery = () => {
     queryFn: async () => {
       const res = await apiClient.get("/api/projects");
       return res.data;
+    },
+  });
+};
+
+export const useCreateProjectMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: {
+      title: string;
+      dueDate: string;
+      priority: TaskPriority;
+      status: ProjectStatus;
+      clientId?: string;
+    }) => {
+      const res = await apiClient.post("/api/projects", data);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
+  });
+};
+
+export const useUpdateProjectMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...data
+    }: {
+      id: string;
+      title: string;
+      dueDate: string;
+      priority: TaskPriority;
+      status: ProjectStatus;
+      clientId?: string;
+    }) => {
+      const res = await apiClient.patch(`/api/projects/${id}`, data);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
+  });
+};
+
+export const useDeleteProjectMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await apiClient.delete(`/api/projects/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
 };

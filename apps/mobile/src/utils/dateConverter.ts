@@ -112,3 +112,23 @@ export function formatDateStrict(isoDate: string, isJalali: boolean): string {
   }
   return `${month}/${day}/${year}`;
 }
+
+export function formatDateTimeStrict(
+  isoDate: string,
+  isJalali: boolean,
+): string {
+  if (!isoDate) return "";
+  try {
+    const date = new Date(isoDate);
+    const datePart = formatDateStrict(isoDate, isJalali);
+
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const timePart = `${hours}:${minutes}`;
+
+    const finalTime = isJalali ? toPersianDigits(timePart) : timePart;
+    return `${datePart} - ${finalTime}`;
+  } catch {
+    return isoDate;
+  }
+}
