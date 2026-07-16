@@ -101,23 +101,49 @@ export default function ProjectsScreen() {
     return sorted.filter((p) => p.title.toLowerCase().includes(q));
   }, [projects, searchQuery]);
 
-  const priorityColor = {
-    LOW: "bg-green-500/10 text-green-500 border-green-500/20",
-    MEDIUM: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
-    HIGH: "bg-red-500/10 text-red-500 border-red-500/20",
-  };
-
   const getProgressWidthClass = (status: string) => {
     switch (status) {
       case "COMPLETED":
-        return "w-full bg-green-500";
+        return "w-full bg-emerald-500";
+
       case "ACTIVE":
-        return "w-2/3 bg-neutral-900 dark:bg-neutral-100";
+        return isDark ? "w-2/3 bg-violet-400" : "w-2/3 bg-violet-600";
+
       case "PLANNING":
-        return "w-1/4 bg-blue-500";
+        return "w-1/4 bg-sky-500";
+
+      case "PAUSED":
+        return "w-1/2 bg-amber-500";
+
       default:
-        return "w-1/2 bg-neutral-500";
+        return isDark ? "w-1/2 bg-neutral-400" : "w-1/2 bg-neutral-500";
     }
+  };
+
+  const getPriorityStyles = (priority: TaskPriority) => {
+    switch (priority) {
+      case "LOW":
+        return {
+          text: "text-emerald-500",
+          bgBorder: "bg-emerald-500/10 border-emerald-500/20",
+        };
+      case "HIGH":
+        return {
+          text: "text-red-500",
+          bgBorder: "bg-red-500/10 border-red-500/20",
+        };
+      default:
+        return {
+          text: "text-amber-500",
+          bgBorder: "bg-amber-500/10 border-amber-500/20",
+        };
+    }
+  };
+
+  const priorityLabels = {
+    LOW: t.priorityLow || "Low",
+    MEDIUM: t.priorityMedium || "Medium",
+    HIGH: t.priorityHigh || "High",
   };
 
   const getFormattedDueDate = (dueDate?: string | null) => {
@@ -196,6 +222,7 @@ export default function ProjectsScreen() {
             contentContainerStyle={{ paddingBottom: 100 }}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => {
+              const priorityColor = getPriorityStyles(item.priority);
               return (
                 <View
                   className={`p-4 rounded-2xl border mb-3 flex-col gap-3.5 ${
@@ -212,10 +239,19 @@ export default function ProjectsScreen() {
                         {item.title}
                       </Text>
                       <View
-                        className={`px-2 py-0.5 rounded-full border ${priorityColor[item.priority]}`}
+                        className={cn(
+                          "px-2.5 py-1 rounded-full border shrink-0",
+                          isDark ? "bg-neutral-950" : "bg-neutral-50",
+                          priorityColor.bgBorder,
+                        )}
                       >
-                        <Text className="text-[8px] font-extrabold uppercase">
-                          {item.priority}
+                        <Text
+                          className={cn(
+                            "text-[9px] font-black uppercase",
+                            priorityColor.text,
+                          )}
+                        >
+                          {priorityLabels[item.priority]}
                         </Text>
                       </View>
                     </View>

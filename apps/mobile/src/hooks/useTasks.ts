@@ -166,3 +166,15 @@ export const useUpdateTaskMutation = () => {
     },
   });
 };
+
+export const useDeleteTaskMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await apiClient.delete(`/api/tasks/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+};

@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import {
   View,
@@ -9,12 +7,17 @@ import {
   useColorScheme as useSystemColorScheme,
 } from "react-native";
 import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
-import { useTasksQuery, useUpdateTaskMutation, Task } from "@/hooks/useTasks";
+import {
+  useTasksQuery,
+  useUpdateTaskMutation,
+  useDeleteTaskMutation,
+  Task,
+} from "@/hooks/useTasks";
 import { useProjectsQuery } from "@/hooks/useProjects";
 import { Badge } from "@/components/atoms/Badge";
 import { EditableTextField } from "@/components/molecules/EditableTextField";
 import { PriorityPicker } from "@/components/molecules/PriorityPicker";
-import { ArrowLeft } from "lucide-react-native";
+import { ArrowLeft, Trash2, Check, X } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useApp } from "@/context/AppContext";
@@ -34,6 +37,9 @@ export default function TaskDetailScreen() {
   const { data: tasks = [], isLoading } = useTasksQuery();
   const { data: projects = [] } = useProjectsQuery();
   const updateTaskMutation = useUpdateTaskMutation();
+
+  const deleteTaskMutation = useDeleteTaskMutation();
+  const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
 
   const task = React.useMemo(() => {
     return tasks.find((t: Task) => t.id === taskId);
@@ -72,6 +78,18 @@ export default function TaskDetailScreen() {
     });
     return unsubscribe;
   }, [navigation, description, task, updateTaskMutation]);
+
+  const handleDelete = () => {
+    deleteTaskMutation.mutate(taskId, {
+      onSuccess: () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        router.back();
+      },
+      onError: () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      },
+    });
+  };
 
   if (isLoading || !task) {
     return (
@@ -175,7 +193,7 @@ export default function TaskDetailScreen() {
           />
         </View>
 
-        <View className="space-y-4">
+        <View className="gap-4">
           <View className="flex-row items-center justify-between">
             <Text className={`text-xs font-bold ${labelColorClass}`}>
               {t.projectTag}
@@ -195,6 +213,54 @@ export default function TaskDetailScreen() {
               </Text>
             </View>
           ) : null}
+
+          <View
+            className={`flex-row justify-between items-center mt-8 pt-5 border-t ${
+              isDark ? "border-neutral-900" : "border-neutral-200"
+            }`}
+          >
+            {isConfirmingDelete ? (
+              <View className="flex-row gap-2">
+                <TouchableOpacity
+                  onPress={() => setIsConfirmingDelete(false)}
+                  className={`h-10 w-10 rounded-lg items-center justify-center ${
+                    isDark
+                      ? "bg-neutral-800 active:bg-neutral-700"
+                      : "bg-neutral-100 active:bg-neutral-200"
+                  }`}
+                >
+                  <X size={18} color={isDark ? "#e5e5e5" : "#525252"} />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={handleDelete}
+                  disabled={deleteTaskMutation.isPending}
+                  className={`h-10 w-10 rounded-lg items-center justify-center ${
+                    isDark
+                      ? "bg-red-500/15 active:bg-red-500/25"
+                      : "bg-red-50 active:bg-red-100"
+                  }`}
+                >
+                  {deleteTaskMutation.isPending ? (
+                    <ActivityIndicator size="small" color="#ef4444" />
+                  ) : (
+                    <Check size={18} color="#ef4444" />
+                  )}
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                onPress={() => setIsConfirmingDelete(true)}
+                className={`h-10 w-10 rounded-lg items-center justify-center ${
+                  isDark
+                    ? "bg-red-500/10 active:bg-red-500/20"
+                    : "bg-red-50 active:bg-red-100"
+                }`}
+              >
+                <Trash2 size={16} color="#ef4444" />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </View>
     </SafeAreaView>
