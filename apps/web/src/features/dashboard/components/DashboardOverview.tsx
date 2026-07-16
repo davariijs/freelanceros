@@ -86,11 +86,11 @@ export function DashboardOverview() {
             />
           </div>
 
-          <div className="grid gap-6 md:grid-cols-6 items-stretch">
-            <div className="md:col-span-3 h-90">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-6 items-stretch">
+            <div className="md:col-span-3 md:h-90">
               <ActivityFeed activities={activityLogs} />
             </div>
-            <div className="md:col-span-3 h-90">
+            <div className="md:col-span-3 md:h-90">
               <ProjectProgressChart
                 completed={stats.completedProjectsCount}
                 total={stats.totalProjectsCount}
