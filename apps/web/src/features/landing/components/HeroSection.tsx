@@ -2,8 +2,13 @@
 
 import * as React from "react";
 import dynamic from "next/dynamic";
-import { useApp } from "@/context/AppContext";
 import { motion } from "framer-motion";
+import { useApp } from "@/context/AppContext";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { cn } from "@/lib/utils";
+import { useHeroDimensions } from "@/features/landing/hooks/useHeroDimensions";
+import { useHeroScrollObserver } from "@/features/landing/hooks/useHeroScrollObserver";
+import { getDeskAnimationConfig } from "@/features/landing/utils/hero-animations";
 import { SystemWidget } from "@/features/landing/components/SystemWidget";
 import { HeroContent } from "@/features/landing/components/HeroContent";
 import { FeaturesGrid } from "@/features/landing/components/FeaturesGrid";
@@ -12,89 +17,23 @@ import { CommandPaletteMockLanding } from "@/features/landing/components/Command
 import { FloatingActions } from "@/features/landing/components/FloatingActions";
 import { FloatingFooter } from "@/features/landing/components/FloatingFooter";
 
-const HeroCanvas = dynamic(() => import("@/features/landing/components/HeroCanvas"), {
-  ssr: false,
-});
+const HeroCanvas = dynamic(
+  () => import("@/features/landing/components/HeroCanvas"),
+  {
+    ssr: false,
+  },
+);
 
 export function HeroSection() {
   const { t, locale, setIsCommandOpen, isCommandOpen } = useApp();
   const isRtl = locale === "fa";
-  const [osState, setOsState] = React.useState<0 | 1 | 2 | 3 | 4 | 5>(0);
-  const [isMobile, setIsMobile] = React.useState(false);
-  const [windowWidth, setWindowWidth] = React.useState(0);
 
-  const sectionsRef = React.useRef<(HTMLDivElement | null)[]>([]);
+  const { width: windowWidth, isMobile } = useHeroDimensions();
+  const { osState, setSectionRef } = useHeroScrollObserver();
 
-  React.useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  React.useEffect(() => {
-    const observerOptions = {
-      root: null,
-      rootMargin: "-25% 0px -25% 0px",
-      threshold: 0.05,
-    };
-
-    const observerCallback = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const index = sectionsRef.current.indexOf(
-            entry.target as HTMLDivElement,
-          );
-          if (index !== -1) {
-            setOsState(index as 0 | 1 | 2 | 3 | 4 | 5);
-          }
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(
-      observerCallback,
-      observerOptions,
-    );
-
-    sectionsRef.current.forEach((el) => {
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.code === "KeyK") {
-        e.preventDefault();
-        setIsCommandOpen(!isCommandOpen);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isCommandOpen, setIsCommandOpen]);
-
-  const getDeskAnimation = () => {
-    if (osState >= 2)
-      return { x: "0%", y: isMobile ? "-100px" : "-180px", opacity: 1 };
-    if (osState === 1) {
-      if (isMobile) {
-        return { x: "0%", y: "-140px", opacity: 1 };
-      }
-      let xShift = "22%";
-      if (windowWidth >= 1450 && windowWidth <= 1669) {
-        xShift = "27%";
-      } else if (windowWidth >= 768 && windowWidth < 1450) {
-        xShift = "19%";
-      }
-      return { x: xShift, y: "0px", opacity: 1 };
-    }
-    return { x: "0%", y: "0px", opacity: 1 };
-  };
+  useKeyboardShortcuts({
+    onCtrlK: () => setIsCommandOpen(!isCommandOpen),
+  });
 
   const scrollText =
     t.scrollToExplore ||
@@ -127,7 +66,7 @@ export function HeroSection() {
 
         <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-auto">
           <motion.div
-            animate={getDeskAnimation()}
+            animate={getDeskAnimationConfig(osState, isMobile, windowWidth)}
             transition={{ type: "spring", stiffness: 60, damping: 16 }}
             className="w-full h-full flex items-center justify-center"
           >
@@ -169,31 +108,23 @@ export function HeroSection() {
 
       <div className="relative z-50 w-full flex flex-col items-center pointer-events-none">
         <div
-          ref={(el) => {
-            sectionsRef.current[0] = el;
-          }}
+          ref={setSectionRef(0)}
           className="h-screen w-full pointer-events-none snap-start snap-always"
         />
         <div
-          ref={(el) => {
-            sectionsRef.current[1] = el;
-          }}
+          ref={setSectionRef(1)}
           className="h-screen w-full pointer-events-none snap-start snap-always"
         />
 
         <div
-          ref={(el) => {
-            sectionsRef.current[2] = el;
-          }}
+          ref={setSectionRef(2)}
           className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden px-6"
         >
           <FeaturesGrid osState={osState} />
         </div>
 
         <div
-          ref={(el) => {
-            sectionsRef.current[3] = el;
-          }}
+          ref={setSectionRef(3)}
           className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-auto snap-start snap-always overflow-hidden px-6"
         >
           <div className="max-w-4xl text-center mb-12 px-6">
@@ -208,9 +139,7 @@ export function HeroSection() {
         </div>
 
         <div
-          ref={(el) => {
-            sectionsRef.current[4] = el;
-          }}
+          ref={setSectionRef(4)}
           className="min-h-screen w-full flex flex-col items-center justify-center py-24 relative bg-transparent pointer-events-none snap-start snap-always overflow-hidden px-6"
         >
           <motion.div
@@ -245,10 +174,8 @@ export function HeroSection() {
 
         <div
           id="mobile-download-section"
-          ref={(el) => {
-            sectionsRef.current[5] = el;
-          }}
-          className={`min-h-screen w-full snap-start snap-always flex flex-col items-center justify-between py-16 md:py-24 relative bg-transparent pointer-events-none`}
+          ref={setSectionRef(5)}
+          className="min-h-screen w-full snap-start snap-always flex flex-col items-center justify-between py-16 md:py-24 relative bg-transparent pointer-events-none"
         >
           <div className="grow flex items-center justify-center w-full">
             <div
@@ -271,39 +198,44 @@ export function HeroSection() {
                         filter: isMobile ? "none" : "blur(6px)",
                       }
                 }
-                transition={{
-                  type: "spring",
-                  stiffness: 80,
-                  damping: 15,
-                }}
-                className={`flex flex-col items-center md:items-start gap-6 text-center md:text-left pointer-events-none md:pointer-events-auto pt-[28vh] md:pt-0 ${isRtl ? "md:text-right md:items-end mr-auto" : ""}`}
+                transition={{ type: "spring", stiffness: 80, damping: 15 }}
+                className={cn(
+                  "flex flex-col items-center md:items-start gap-6 text-center md:text-left pointer-events-none md:pointer-events-auto pt-[28vh] md:pt-0",
+                  isRtl && "md:text-right md:items-end mr-auto",
+                )}
               >
                 <span
-                  className={`text-[10px] font-extrabold uppercase tracking-widest text-emerald-500 ${
-                    isRtl ? "md:self-end md:text-right" : ""
-                  }`}
+                  className={cn(
+                    "text-[10px] font-extrabold uppercase tracking-widest text-emerald-500",
+                    isRtl && "md:self-end md:text-right",
+                  )}
                 >
                   {t.mobileSectionTitle || "Mobile Access"}
                 </span>
 
                 <h2
-                  className={`text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 dark:text-neutral-50 leading-tight ${
-                    isRtl ? "md:self-end md:text-right" : ""
-                  }`}
+                  className={cn(
+                    "text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 dark:text-neutral-50 leading-tight",
+                    isRtl && "md:self-end md:text-right",
+                  )}
                 >
                   {t.downloadTodayTitle || "Download Today"}
                 </h2>
 
                 <p
-                  className={`text-sm md:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm text-center ${
-                    isRtl ? "md:self-end md:text-right" : "md:text-left"
-                  }`}
+                  className={cn(
+                    "text-sm md:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm text-center",
+                    isRtl ? "md:self-end md:text-right" : "md:text-left",
+                  )}
                 >
                   {t.downloadTodayDesc}
                 </p>
 
                 <div
-                  className={`flex gap-4 mt-4 pointer-events-auto ${isRtl ? "md:self-end" : ""}`}
+                  className={cn(
+                    "flex gap-4 mt-4 pointer-events-auto",
+                    isRtl && "md:self-end",
+                  )}
                 >
                   <motion.button
                     whileHover={{
