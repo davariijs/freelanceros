@@ -24,7 +24,7 @@ const HeroCanvas = dynamic(
   },
 );
 
-export function HeroSection() {
+export function HomeView() {
   const { t, locale, setIsCommandOpen, isCommandOpen } = useApp();
   const isRtl = locale === "fa";
 
