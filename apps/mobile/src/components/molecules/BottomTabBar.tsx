@@ -2,7 +2,7 @@ import * as React from "react";
 import { View, TouchableOpacity, useColorScheme } from "react-native";
 import { useRouter, usePathname } from "expo-router";
 import { useApp, settingsModalTrigger } from "@/context/AppContext";
-import { Home, Users, FileText, Bell, Settings } from "lucide-react-native";
+import { Home, Users, FolderGit2, Bell, Settings } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 
 export function BottomTabBar() {
@@ -28,7 +28,11 @@ export function BottomTabBar() {
 
   return (
     <View
-      className={`h-16 flex-row border-t items-center justify-around px-2 pb-1 shrink-0 ${isDark ? "bg-neutral-950 border-neutral-900" : "bg-white border-neutral-200"}`}
+      className={`h-16 flex-row border-t items-center justify-around px-2 pb-1 shrink-0 ${
+        isDark
+          ? "bg-neutral-950 border-neutral-900"
+          : "bg-white border-neutral-200"
+      }`}
     >
       <TouchableOpacity
         onPress={() => handleTabPress("/clients")}
@@ -41,12 +45,12 @@ export function BottomTabBar() {
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={() => handleTabPress("/notes")}
+        onPress={() => handleTabPress("/projects")}
         className="items-center justify-center flex-1 py-1"
       >
-        <FileText
+        <FolderGit2
           size={18}
-          color={isTabActive("/notes") ? activeColor : inactiveColor}
+          color={isTabActive("/projects") ? activeColor : inactiveColor}
         />
       </TouchableOpacity>
 

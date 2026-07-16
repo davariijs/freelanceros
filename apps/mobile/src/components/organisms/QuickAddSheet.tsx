@@ -125,7 +125,7 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
           backgroundColor: isDark ? "#262626" : "#e5e5e5",
         }}
       >
-        <BottomSheetView className="flex-1 px-6 pt-2 space-y-5">
+        <BottomSheetView className="flex-1 px-6 pt-2 gap-5">
           <Text
             className={`text-base font-black ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
           >

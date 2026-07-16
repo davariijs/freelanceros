@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import {
   View,
@@ -17,15 +19,17 @@ import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useApp } from "@/context/AppContext";
 import { RichTextEditor } from "@/components/atoms/RichTextEditor";
+import { formatDateTimeStrict } from "@/utils/dateConverter";
 
 export default function TaskDetailScreen() {
   const { taskId } = useLocalSearchParams<{ taskId: string }>();
   const router = useRouter();
   const navigation = useNavigation();
 
-  const { t, theme } = useApp();
+  const { t, theme, locale } = useApp();
   const systemTheme = useSystemColorScheme();
   const isDark = theme === "system" ? systemTheme === "dark" : theme === "dark";
+  const isJalali = locale === "fa";
 
   const { data: tasks = [], isLoading } = useTasksQuery();
   const { data: projects = [] } = useProjectsQuery();
@@ -43,35 +47,44 @@ export default function TaskDetailScreen() {
     }
   }, [task]);
 
-  const handleUpdateDescription = React.useCallback(
-    (targetDesc: string) => {
-      if (task && targetDesc !== (task.description || "")) {
-        updateTaskMutation.mutate(
-          { id: task.id, description: targetDesc } as any,
-          {
-            onSuccess: () =>
-              Haptics.notificationAsync(
-                Haptics.NotificationFeedbackType.Success,
-              ),
-          },
-        );
-      }
-    },
-    [task, updateTaskMutation],
-  );
+  const formattedCreationDate = React.useMemo(() => {
+    if (!task?.createdAt) return "";
+    return formatDateTimeStrict(task.createdAt, isJalali);
+  }, [task?.createdAt, isJalali]);
 
   React.useEffect(() => {
-    const unsubscribe = navigation.addListener("beforeRemove", () => {
-      handleUpdateDescription(description);
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      if (!task || description === (task.description || "")) {
+        return;
+      }
+
+      e.preventDefault();
+
+      updateTaskMutation.mutate({ id: task.id, description } as any, {
+        onSuccess: () => {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          navigation.dispatch(e.data.action);
+        },
+        onError: () => {
+          navigation.dispatch(e.data.action);
+        },
+      });
     });
     return unsubscribe;
-  }, [navigation, description, handleUpdateDescription]);
+  }, [navigation, description, task, updateTaskMutation]);
 
   if (isLoading || !task) {
     return (
-      <View className="flex-1 justify-center items-center bg-neutral-950">
-        <ActivityIndicator size="large" color="#ffffff" />
-      </View>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: isDark ? "#0a0a0a" : "#f5f5f5",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator size="large" color="#10b981" />
+      </SafeAreaView>
     );
   }
 
@@ -107,21 +120,22 @@ export default function TaskDetailScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: dynamicBg }}>
       <View style={{ flex: 1, paddingHorizontal: 20, paddingTop: 16 }}>
-        <View className="flex-row items-center justify-between mb-8 shrink-0">
+        <View className="flex-row justify-between items-center mb-8 shrink-0">
           <TouchableOpacity
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               router.back();
             }}
-            style={{ backgroundColor: "#171717", borderColor: "#262626" }}
+            style={{
+              backgroundColor: isDark ? "#171717" : "#e5e5e5",
+              borderColor: isDark ? "#262626" : "#d4d4d4",
+            }}
             className="h-10 w-10 border rounded-full items-center justify-center active:bg-neutral-800"
           >
-            <ArrowLeft size={18} color="#a3a3a3" />
+            <ArrowLeft size={18} color={isDark ? "#f5f5f5" : "#171717"} />
           </TouchableOpacity>
 
-          <Text
-            className={`text-md font-bold ${isDark ? "text-neutral-400" : "text-neutral-600"}`}
-          >
+          <Text className={`text-md font-bold ${labelColorClass}`}>
             {t.taskDetailsTitle}
           </Text>
           <View className="w-10" />
@@ -168,6 +182,19 @@ export default function TaskDetailScreen() {
             </Text>
             <Badge label={projectLabel} variant={projectVariant as any} />
           </View>
+
+          {formattedCreationDate ? (
+            <View className="flex-row items-center justify-between pt-1 border-t border-neutral-200/10 dark:border-neutral-800/10">
+              <Text className={`text-xs font-bold ${labelColorClass}`}>
+                {t.creationDate || "Created At"}
+              </Text>
+              <Text
+                className={`text-xs font-semibold ${isDark ? "text-neutral-300" : "text-neutral-700"}`}
+              >
+                {formattedCreationDate}
+              </Text>
+            </View>
+          ) : null}
         </View>
       </View>
     </SafeAreaView>

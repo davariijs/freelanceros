@@ -24,10 +24,12 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
   onUpdateStatus,
   onTaskPress,
 }) => {
-  const { t } = useApp();
+  const { t, theme } = useApp();
+  const isDark = theme === "dark";
 
   const listRef = React.useRef<any>(null);
   const prevFirstTaskId = React.useRef<string | null>(null);
+
   React.useEffect(() => {
     if (tasks.length > 0) {
       const firstTaskId = tasks[0].id;
@@ -83,11 +85,16 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
       <TaskSwipeableCard task={item} onUpdateStatus={onUpdateStatus}>
         <TouchableOpacity
           onPress={() => onTaskPress(item)}
+          activeOpacity={0.8}
           className={cn(
-            "p-4 border rounded-2xl my-1 flex-row items-center justify-between active:bg-neutral-800",
+            "p-4 border rounded-2xl my-1 flex-row items-center justify-between",
             isDone
-              ? "bg-neutral-800/20 border-neutral-800"
-              : "bg-neutral-900 border-neutral-800",
+              ? isDark
+                ? "bg-neutral-800/20 border-neutral-800"
+                : "bg-green-500/5 border-green-200/50"
+              : isDark
+                ? "bg-neutral-900 border-neutral-800"
+                : "bg-white border-neutral-200",
           )}
         >
           <View className="flex-row items-center flex-1 pr-4">
@@ -104,15 +111,20 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
                 style={{ marginRight: 10 }}
               />
             ) : (
-              <Circle size={18} color="#525252" style={{ marginRight: 10 }} />
+              <Circle size={18} color="#737373" style={{ marginRight: 10 }} />
             )}
 
             <View className="flex-1">
               <Text
-                style={{ textDecorationLine: isDone ? "line-through" : "none" }}
                 className={cn(
                   "text-sm font-bold mb-1",
-                  isDone ? "text-neutral-500" : "text-neutral-100",
+                  isDone
+                    ? isDark
+                      ? "text-neutral-600 line-through"
+                      : "text-neutral-400 line-through"
+                    : isDark
+                      ? "text-neutral-100"
+                      : "text-neutral-900",
                 )}
               >
                 {item.title}
@@ -121,7 +133,9 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
                 <Text
                   className={cn(
                     "text-xs",
-                    isDone ? "text-neutral-600" : "text-neutral-500",
+                    isDone
+                      ? "text-neutral-400/50 dark:text-neutral-600/50"
+                      : "text-neutral-500 dark:text-neutral-400",
                   )}
                   numberOfLines={1}
                 >
@@ -148,7 +162,8 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
           ) : (
             <View
               className={cn(
-                "px-2.5 py-1 rounded-full border bg-neutral-950 shrink-0",
+                "px-2.5 py-1 rounded-full border shrink-0",
+                isDark ? "bg-neutral-950" : "bg-neutral-50",
                 priorityColor.bgBorder,
               )}
             >
@@ -173,7 +188,7 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
         <View className="flex-1 justify-center items-center py-20">
           <ClipboardCheck
             size={36}
-            color="#525252"
+            color="#737373"
             style={{ marginBottom: 12 }}
           />
           <Text className="text-xs text-neutral-500 font-semibold text-center">

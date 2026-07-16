@@ -10,12 +10,13 @@ import {
   TaskStatus,
 } from "@/hooks/useTasks";
 import { useProjectsQuery } from "@/hooks/useProjects";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { QuickAddSheet } from "@/components/organisms/QuickAddSheet";
-import { Plus, LogOut } from "lucide-react-native";
+import { SearchBar } from "@/components/molecules/SearchBar";
+import { Plus, LogOut, Search } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useActiveAppRefetch } from "@/hooks/useActiveAppRefetch";
 import { SkeletonCard } from "@/components/atoms/SkeletonCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -29,12 +30,22 @@ export default function HomeScreen() {
   const router = useRouter();
   const { t, theme, isCommandOpen, setIsCommandOpen, user, setUser } = useApp();
   const isDark = theme === "dark";
+  const insets = useSafeAreaInsets();
 
-  const { data: tasks = [], isLoading } = useTasksQuery();
+  const { data: tasks = [], isLoading, refetch } = useTasksQuery();
   const { data: projects = [] } = useProjectsQuery();
   const updateTaskMutation = useUpdateTaskMutation();
 
   const quickAddSheetRef = React.useRef<BottomSheet>(null);
+
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
 
   React.useEffect(() => {
     notificationService.registerForPushNotificationsAsync();
@@ -62,6 +73,7 @@ export default function HomeScreen() {
   };
 
   const handleCloseQuickAdd = () => {
+    refetch();
     setIsCommandOpen(false);
   };
 
@@ -79,12 +91,22 @@ export default function HomeScreen() {
   };
 
   const todayTasks = React.useMemo(() => {
-    return [...tasks].sort((a: Task, b: Task) => {
+    const q = searchQuery.trim().toLowerCase();
+
+    const baseTasks = q
+      ? tasks.filter(
+          (t: Task) =>
+            t.title.toLowerCase().includes(q) ||
+            (t.description && t.description.toLowerCase().includes(q)),
+        )
+      : [...tasks];
+
+    return baseTasks.sort((a: Task, b: Task) => {
       if (a.status === "DONE" && b.status !== "DONE") return 1;
       if (a.status !== "DONE" && b.status === "DONE") return -1;
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
-  }, [tasks]);
+  }, [tasks, searchQuery]);
 
   const progressPercent = React.useMemo(() => {
     if (tasks.length === 0) return 0;
@@ -93,7 +115,14 @@ export default function HomeScreen() {
   }, [tasks]);
 
   const handleCompleteTask = (id: string, status: TaskStatus) => {
-    updateTaskMutation.mutate({ id, status });
+    updateTaskMutation.mutate(
+      { id, status },
+      {
+        onSuccess: () => {
+          refetch();
+        },
+      },
+    );
   };
 
   const handleTaskPress = (task: Task) => {
@@ -116,96 +145,125 @@ export default function HomeScreen() {
     }
   }, [tasks]);
 
+  const handleCloseSearch = () => {
+    setIsSearchOpen(false);
+    setSearchQuery("");
+  };
+
   const dynamicBg = isDark ? "#0a0a0a" : "#f5f5f5";
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: dynamicBg }}>
-      <View style={{ flex: 1, paddingTop: 16 }}>
-        <View style={{ flex: 1, paddingHorizontal: 20, position: "relative" }}>
-          <View className="flex-row justify-between items-center mb-6 shrink-0">
-            <View>
-              <Text className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
-                {todayDateString}
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: dynamicBg,
+        paddingTop: insets.top + 16,
+      }}
+    >
+      <View style={{ flex: 1, paddingHorizontal: 20, position: "relative" }}>
+        <View className="flex-row justify-between items-center mb-6 shrink-0">
+          <View>
+            <Text className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
+              {todayDateString}
+            </Text>
+            <Text
+              className={`text-2xl font-black ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
+            >
+              {t.todayTasksTitle}
+            </Text>
+            {user?.email && (
+              <Text className="text-xs text-neutral-400 dark:text-neutral-500 font-semibold mt-0.5">
+                {user.email}
               </Text>
-              <Text
-                className={`text-2xl font-black ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
-              >
-                {t.todayTasksTitle}
-              </Text>
-
-              {user?.email && (
-                <Text
-                  className="text-xs text-neutral-400 dark:text-neutral-500 font-semibold mt-0.5"
-                >
-                  {user.email}
-                </Text>
-              )}
-            </View>
-
-            <View className="flex-row items-center">
-              <SyncStatus />
-              <TouchableOpacity
-                onPress={handleLogout}
-                className="h-8 w-8 rounded-full border border-neutral-800 bg-neutral-900 justify-center items-center active:bg-neutral-800 ml-2"
-                aria-label="Log Out"
-              >
-                <LogOut size={14} color="#ef4444" />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View
-            className={`p-5 rounded-2xl flex-row justify-between items-center mb-6 border shrink-0 ${isDark ? "bg-neutral-900 border-neutral-800" : "bg-white border-neutral-200"}`}
-          >
-            <View>
-              <Text
-                className={`text-sm font-bold ${isDark ? "text-neutral-200" : "text-neutral-800"}`}
-              >
-                {t.dailyProgress}
-              </Text>
-              <Text className="text-xs text-neutral-500">{t.keepPushing}</Text>
-            </View>
-            <CircularProgress
-              progress={progressPercent}
-              size={60}
-              strokeWidth={6}
-              isDark={isDark}
-            />
-          </View>
-
-          <View className="flex-1 min-h-0">
-            {isLoading ? (
-              <View className="space-y-2">
-                <SkeletonCard />
-                <SkeletonCard />
-                <SkeletonCard />
-              </View>
-            ) : (
-              <TodayTasksList
-                tasks={todayTasks}
-                onUpdateStatus={handleCompleteTask}
-                onTaskPress={handleTaskPress}
-              />
             )}
           </View>
 
-          <TouchableOpacity
-            onPress={handleOpenQuickAdd}
-            className={`absolute bottom-6 right-6 h-14 w-14 rounded-full justify-center items-center shadow-lg z-50 ${
-              isDark ? "bg-neutral-100" : "bg-neutral-950"
-            }`}
-          >
-            <Plus size={24} color={isDark ? "#0a0a0a" : "#ffffff"} />
-          </TouchableOpacity>
+          <View className="flex-row items-center">
+            <TouchableOpacity
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setIsSearchOpen(true);
+              }}
+              style={{
+                backgroundColor: isDark ? "#171717" : "#ffffff",
+                borderColor: isDark ? "#262626" : "#e5e5e5",
+              }}
+              className="h-8 w-8 border rounded-full items-center justify-center active:bg-neutral-800 mr-2"
+              aria-label="Search"
+            >
+              <Search size={14} color="#a3a3a3" />
+            </TouchableOpacity>
+            <SyncStatus />
+            <TouchableOpacity
+              onPress={handleLogout}
+              className="h-8 w-8 rounded-full border border-neutral-800 bg-neutral-900 justify-center items-center active:bg-neutral-800 ml-2"
+              aria-label="Log Out"
+            >
+              <LogOut size={14} color="#ef4444" />
+            </TouchableOpacity>
+          </View>
+        </View>
 
-          <QuickAddSheet
-            ref={quickAddSheetRef}
-            onSuccess={handleCloseQuickAdd}
+        <SearchBar
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder={t.placeholderSearchTasks || "Search tasks..."}
+          isOpen={isSearchOpen}
+          onClose={handleCloseSearch}
+          isDark={isDark}
+        />
+
+        <View
+          className={`p-5 rounded-2xl flex-row justify-between items-center mb-6 border shrink-0 ${isDark ? "bg-neutral-900 border-neutral-800" : "bg-white border-neutral-200"}`}
+        >
+          <View>
+            <Text
+              className={`text-sm font-bold ${isDark ? "text-neutral-200" : "text-neutral-800"}`}
+            >
+              {t.dailyProgress}
+            </Text>
+            <Text className="text-xs text-neutral-500">{t.keepPushing}</Text>
+          </View>
+          <CircularProgress
+            progress={progressPercent}
+            size={60}
+            strokeWidth={6}
+            isDark={isDark}
           />
         </View>
 
-        <BottomTabBar />
+        <View className="flex-1 min-h-0">
+          {isLoading ? (
+            <View className="space-y-2">
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+            </View>
+          ) : (
+            <TodayTasksList
+              tasks={todayTasks}
+              onUpdateStatus={handleCompleteTask}
+              onTaskPress={handleTaskPress}
+            />
+          )}
+        </View>
+
+        {!isCommandOpen && (
+          <TouchableOpacity
+            onPress={handleOpenQuickAdd}
+            className="absolute bottom-6 right-6 h-14 w-14 rounded-full justify-center items-center shadow-lg z-30 bg-emerald-500 active:bg-emerald-600"
+          >
+            <Plus size={24} color="#ffffff" />
+          </TouchableOpacity>
+        )}
+
+        <QuickAddSheet
+          ref={quickAddSheetRef}
+          onSuccess={handleCloseQuickAdd}
+        />
       </View>
-    </SafeAreaView>
+
+      <BottomTabBar />
+    </View>
   );
 }
