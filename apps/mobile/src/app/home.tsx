@@ -248,14 +248,19 @@ export default function HomeScreen() {
           )}
         </View>
 
-        <TouchableOpacity
-          onPress={handleOpenQuickAdd}
-          className="absolute bottom-6 right-6 h-14 w-14 rounded-full justify-center items-center shadow-lg z-50 bg-emerald-500 active:bg-emerald-600"
-        >
-          <Plus size={24} color="#ffffff" />
-        </TouchableOpacity>
+        {!isCommandOpen && (
+          <TouchableOpacity
+            onPress={handleOpenQuickAdd}
+            className="absolute bottom-6 right-6 h-14 w-14 rounded-full justify-center items-center shadow-lg z-30 bg-emerald-500 active:bg-emerald-600"
+          >
+            <Plus size={24} color="#ffffff" />
+          </TouchableOpacity>
+        )}
 
-        <QuickAddSheet ref={quickAddSheetRef} onSuccess={handleCloseQuickAdd} />
+        <QuickAddSheet
+          ref={quickAddSheetRef}
+          onSuccess={handleCloseQuickAdd}
+        />
       </View>
 
       <BottomTabBar />
