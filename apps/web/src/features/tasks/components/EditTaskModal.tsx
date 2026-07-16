@@ -12,6 +12,7 @@ import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { z } from "zod";
 import { Task, TaskPriority } from "@/features/tasks/schemas/task.schema";
 import { useRouter } from "next/navigation";
+import { CalendarDays } from "lucide-react";
 
 const editTaskSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -47,7 +48,7 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
   onUpdateTask,
   onDeleteTask,
 }) => {
-  const { t } = useApp();
+  const { t, locale } = useApp();
   const router = useRouter();
   const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
 
@@ -67,6 +68,19 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
     name: "description",
     control,
   });
+
+  const formattedCreationDate = React.useMemo(() => {
+    const createdAt = (task as any)?.createdAt;
+    if (!createdAt) return "";
+    try {
+      return new Intl.DateTimeFormat(locale === "fa" ? "fa-IR" : "en-US", {
+        dateStyle: "long",
+        timeStyle: "short",
+      }).format(new Date(createdAt));
+    } catch {
+      return createdAt;
+    }
+  }, [task, locale]);
 
   const priorityOptions: SelectOption[] = [
     { label: t.priorityLow, value: "LOW" },
@@ -116,6 +130,25 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
   return (
     <Dialog isOpen={isOpen} onClose={onClose} title={t.editTask}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 relative">
+        {formattedCreationDate && (
+          <div className="flex items-center gap-3 p-3 mb-2 rounded-xl bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 select-none">
+            <div className="h-8 w-8 rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 flex items-center justify-center shrink-0">
+              <CalendarDays className="h-4 w-4 text-neutral-400" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
+                {t.creationDate || "Created At"}
+              </span>
+              <span
+                className="text-xs font-semibold text-neutral-700 dark:text-neutral-300"
+                dir="ltr"
+              >
+                {formattedCreationDate}
+              </span>
+            </div>
+          </div>
+        )}
+
         <FormField
           label={t.title}
           errorMessage={errors.title ? t.titleRequired : undefined}

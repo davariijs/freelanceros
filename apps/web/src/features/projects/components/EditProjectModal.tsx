@@ -16,7 +16,14 @@ import {
 } from "@/features/projects/schemas/project.schema";
 import { TaskPriority } from "@/features/tasks/schemas/task.schema";
 import { useRouter } from "next/navigation";
-import { Trash2, Share2, Copy, ToggleLeft, ToggleRight } from "lucide-react";
+import {
+  Trash2,
+  Share2,
+  Copy,
+  ToggleLeft,
+  ToggleRight,
+  CalendarDays,
+} from "lucide-react";
 import { apiClient } from "@/lib/apiClient";
 
 const editProjectSchema = z.object({
@@ -55,7 +62,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
   onUpdateProject,
   onDeleteProject,
 }) => {
-  const { t, showToast } = useApp();
+  const { t, showToast, locale } = useApp();
   const router = useRouter();
   const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
   const [isShared, setIsShared] = React.useState(false);
@@ -75,6 +82,18 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
   const { field: priorityField } = useController({ name: "priority", control });
   const { field: statusField } = useController({ name: "status", control });
   const { field: clientField } = useController({ name: "clientId", control });
+
+  const formattedCreationDate = React.useMemo(() => {
+    if (!project?.createdAt) return "";
+    try {
+      return new Intl.DateTimeFormat(locale === "fa" ? "fa-IR" : "en-US", {
+        dateStyle: "long",
+        timeStyle: "short",
+      }).format(new Date(project.createdAt));
+    } catch {
+      return project.createdAt;
+    }
+  }, [project?.createdAt, locale]);
 
   const priorityOptions: SelectOption[] = [
     { label: t.priorityLow, value: "LOW" },
@@ -164,6 +183,25 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-4 max-h-[75vh] overflow-y-auto px-1 pb-4"
       >
+        {formattedCreationDate && (
+          <div className="flex items-center gap-3 p-3 mb-2 rounded-xl bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 select-none">
+            <div className="h-8 w-8 rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 flex items-center justify-center shrink-0">
+              <CalendarDays className="h-4 w-4 text-neutral-400" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
+                {t.creationDate || "Created At"}
+              </span>
+              <span
+                className="text-xs font-semibold text-neutral-700 dark:text-neutral-300"
+                dir="ltr"
+              >
+                {formattedCreationDate}
+              </span>
+            </div>
+          </div>
+        )}
+
         <FormField
           label={t.title}
           required

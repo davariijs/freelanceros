@@ -277,12 +277,14 @@ export const en = {
   shareEnabled: "Client portal link generated",
   sharedLoadingPortal: "Loading Portal...",
   sharedLinkExpiredTitle: "Link Expired or Disabled",
-  sharedLinkExpiredDesc: "The workspace share link you are trying to access has been deactivated by the administrator or doesn't exist anymore.",
+  sharedLinkExpiredDesc:
+    "The workspace share link you are trying to access has been deactivated by the administrator or doesn't exist anymore.",
   sharedNoTasksColumn: "No tasks in this column",
   sharedTaskInspection: "Task Inspection",
   sharedStatus: "Status",
   sharedTaskTitle: "Task Title",
   sharedTaskDesc: "Task Description",
   sharedNoDesc: "No description provided for this task.",
-  sharedCloseInspection: "Close Inspection"
+  sharedCloseInspection: "Close Inspection",
+  creationDate: "Created At",
 };
