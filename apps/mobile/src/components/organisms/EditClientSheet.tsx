@@ -158,7 +158,7 @@ export const EditClientSheet = React.forwardRef<BottomSheet, EditClientSheetProp
         handleIndicatorStyle={{ backgroundColor: isDark ? "#262626" : "#e5e5e5" }}
       >
         <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 8, paddingBottom: 120 }}>
-          <View className="gap-5 px-5">
+          <View className="gap-5">
             <Text className={`text-base font-black ${isDark ? "text-neutral-100" : "text-neutral-900"}`}>
               {t.editClient || "Edit Client"}
             </Text>

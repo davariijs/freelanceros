@@ -27,8 +27,7 @@ import { notificationService } from "@/services/notificationService";
 
 export default function HomeScreen() {
   const router = useRouter();
-
-  const { t, theme, isCommandOpen, setIsCommandOpen } = useApp();
+  const { t, theme, isCommandOpen, setIsCommandOpen, user, setUser } = useApp();
   const isDark = theme === "dark";
 
   const { data: tasks = [], isLoading } = useTasksQuery();
@@ -73,7 +72,8 @@ export default function HomeScreen() {
     } catch (e) {
       console.log("Google SignOut info:", e);
     }
-
+    await AsyncStorage.removeItem("user");
+    setUser(null);
     await AsyncStorage.setItem("isAppLocked", "true");
     router.replace("/login");
   };
@@ -132,6 +132,14 @@ export default function HomeScreen() {
               >
                 {t.todayTasksTitle}
               </Text>
+
+              {user?.email && (
+                <Text
+                  className="text-xs text-neutral-400 dark:text-neutral-500 font-semibold mt-0.5"
+                >
+                  {user.email}
+                </Text>
+              )}
             </View>
 
             <View className="flex-row items-center">

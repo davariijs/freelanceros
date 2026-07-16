@@ -12,6 +12,11 @@ export interface ToastState {
   message: string;
   type: "success" | "error";
 }
+export interface UserProfile {
+  id: string;
+  email: string;
+  name: string | null;
+}
 
 interface AppContextType {
   theme: Theme;
@@ -28,6 +33,8 @@ interface AppContextType {
   showToast: (message: string, type?: "success" | "error") => void;
   isSettingsOpen: boolean;
   setIsSettingsOpen: (open: boolean) => void;
+  user: UserProfile | null;
+  setUser: (user: UserProfile | null) => void;
 }
 
 const AppContext = React.createContext<AppContextType | undefined>(undefined);
@@ -54,6 +61,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({
   const [isCommandOpen, setIsCommandOpen] = React.useState<boolean>(false);
   const [toast, setToast] = React.useState<ToastState | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = React.useState<boolean>(false);
+  const [user, setUser] = React.useState<UserProfile | null>(null);
 
   const t = locale === "en" ? en : fa;
   const dir = locale === "fa" ? "rtl" : "ltr";
@@ -63,8 +71,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({
       try {
         const savedTheme = await AsyncStorage.getItem("theme");
         const savedLocale = await AsyncStorage.getItem("locale");
+        const savedUser = await AsyncStorage.getItem("user");
+
         if (savedTheme) setThemeState(savedTheme as Theme);
         if (savedLocale) setLocale(savedLocale as Locale);
+        if (savedUser) setUser(JSON.parse(savedUser));
       } catch (error) {
         console.error("Failed to load settings:", error);
       }
@@ -124,13 +135,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({
         showToast,
         isSettingsOpen,
         setIsSettingsOpen,
+        user,
+        setUser,
       }}
     >
-      <View
-        style={{ flex: 1 }}
-      >
-        {children}
-      </View>
+      <View style={{ flex: 1 }}>{children}</View>
       <SettingsModal />
     </AppContext.Provider>
   );
