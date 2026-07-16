@@ -19,7 +19,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 export const LoginForm: React.FC = () => {
-  const { t } = useApp();
+  const { t, setUser } = useApp();
   const router = useRouter();
   const loginMutation = useLoginMutation();
 
@@ -51,6 +51,10 @@ export const LoginForm: React.FC = () => {
     onSuccess: (data) => {
       if (data.accessToken) {
         document.cookie = `token=${data.accessToken}; path=/; max-age=86400; SameSite=Strict; Secure`;
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+          setUser(data.user);
+        }
         router.push("/dashboard");
       }
     },

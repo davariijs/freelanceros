@@ -12,6 +12,7 @@ import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { z } from "zod";
 import { Task, TaskPriority } from "@/features/tasks/schemas/task.schema";
 import { useRouter } from "next/navigation";
+import { CalendarDays } from "lucide-react";
 
 const editTaskSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -27,15 +28,7 @@ interface EditTaskModalProps {
   onClose: () => void;
   task: Task | null;
   projects: { id: string; title: string }[];
-  onUpdateTask: (
-    id: string,
-    data: {
-      title: string;
-      description: string;
-      priority: TaskPriority;
-      projectId?: string;
-    },
-  ) => void;
+  onUpdateTask: (id: string, data: any) => void;
   onDeleteTask: (id: string) => void;
 }
 
@@ -47,7 +40,7 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
   onUpdateTask,
   onDeleteTask,
 }) => {
-  const { t } = useApp();
+  const { t, locale } = useApp();
   const router = useRouter();
   const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
 
@@ -67,6 +60,19 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
     name: "description",
     control,
   });
+
+  const formattedCreationDate = React.useMemo(() => {
+    const createdAt = (task as any)?.createdAt;
+    if (!createdAt) return "";
+    try {
+      return new Intl.DateTimeFormat(locale === "fa" ? "fa-IR" : "en-US", {
+        dateStyle: "long",
+        timeStyle: "short",
+      }).format(new Date(createdAt));
+    } catch {
+      return createdAt;
+    }
+  }, [task, locale]);
 
   const priorityOptions: SelectOption[] = [
     { label: t.priorityLow, value: "LOW" },
@@ -115,52 +121,76 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
 
   return (
     <Dialog isOpen={isOpen} onClose={onClose} title={t.editTask}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 relative">
-        <FormField
-          label={t.title}
-          errorMessage={errors.title ? t.titleRequired : undefined}
-          {...register("title")}
-        />
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col h-full overflow-hidden"
+      >
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
+          {formattedCreationDate && (
+            <div className="flex items-center gap-3 p-3 mb-2 rounded-xl bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 select-none">
+              <div className="h-8 w-8 rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 flex items-center justify-center shrink-0">
+                <CalendarDays className="h-4 w-4 text-neutral-400" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
+                  {t.creationDate || "Created At"}
+                </span>
+                <span
+                  className="text-xs font-semibold text-neutral-700 dark:text-neutral-300"
+                  dir="ltr"
+                >
+                  {formattedCreationDate}
+                </span>
+              </div>
+            </div>
+          )}
 
-        <div className="flex flex-col gap-1.5 relative z-20">
-          <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-            {t.descriptionTask || "Description"}
-          </label>
-          <RichTextEditor
-            value={descriptionField.value || ""}
-            onChange={descriptionField.onChange}
-            placeholder={t.placeholderTaskDesc}
+          <FormField
+            label={t.title}
+            errorMessage={errors.title ? t.titleRequired : undefined}
+            {...register("title")}
           />
-        </div>
 
-        <div className="grid grid-cols-2 gap-4 relative z-40">
-          <div className="flex flex-col gap-1.5 relative z-40">
+          <div className="grid grid-cols-2 gap-4 pb-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+                {t.priority}
+              </label>
+              <Select
+                value={priorityField.value}
+                onChange={priorityField.onChange}
+                options={priorityOptions}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+                {t.projects}
+              </label>
+              <Select
+                value={projectField.value}
+                onChange={handleProjectSelect}
+                options={projectOptions}
+                dropdownHeightClass="max-h-44"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-              {t.priority}
+              {t.descriptionTask || "Description"}
             </label>
-            <Select
-              value={priorityField.value}
-              onChange={priorityField.onChange}
-              options={priorityOptions}
+            <RichTextEditor
+              value={descriptionField.value || ""}
+              onChange={descriptionField.onChange}
+              placeholder={t.placeholderTaskDesc}
             />
           </div>
-          <div className="flex flex-col gap-1.5 relative z-40">
-            <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-              {t.projects}
-            </label>
-            <Select
-              value={projectField.value}
-              onChange={handleProjectSelect}
-              options={projectOptions}
-              dropdownHeightClass="max-h-44"
-            />
-          </div>
         </div>
 
-        <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 mt-6">
+        <div className="shrink-0 p-4 md:p-6 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 mt-auto">
           {isConfirmingDelete ? (
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-3 bg-red-50 dark:bg-red-950/30 rounded-xl border border-red-100 dark:border-red-900/50">
-              <span className="text-sm font-semibold text-red-600 dark:text-red-400">
+              <span className="text-sm font-semibold text-red-600 dark:text-red-400 text-center sm:text-left">
                 {t.confirmDelete}
               </span>
               <div className="flex gap-2 w-full sm:w-auto">
@@ -174,7 +204,7 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
                 </Button>
                 <Button
                   type="button"
-                  className="flex-1 sm:flex-none bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700 dark:text-white border-transparent"
+                  className="flex-1 sm:flex-none bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 border-transparent"
                   onClick={() => {
                     onDeleteTask(task.id);
                     onClose();
@@ -185,20 +215,27 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
               </div>
             </div>
           ) : (
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center w-full">
               <Button
                 type="button"
                 variant="ghost"
-                className="text-red-500 hover:bg-red-50 dark:hover:bg-red-950/50"
+                className="text-red-500 hover:bg-red-50 dark:hover:bg-red-950/50 max-md:px-2"
                 onClick={() => setIsConfirmingDelete(true)}
               >
                 {t.delete}
               </Button>
-              <div className="flex gap-3">
-                <Button type="button" variant="secondary" onClick={onClose}>
+              <div className="flex gap-2 w-full justify-end sm:w-auto">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={onClose}
+                  className="max-md:flex-1"
+                >
                   {t.cancel}
                 </Button>
-                <Button type="submit">{t.save}</Button>
+                <Button type="submit" className="max-md:flex-1">
+                  {t.save}
+                </Button>
               </div>
             </div>
           )}

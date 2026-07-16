@@ -286,4 +286,5 @@ export const fa = {
   sharedTaskDesc: "توضیحات تسک",
   sharedNoDesc: "توضیحی برای این تسک ثبت نشده است.",
   sharedCloseInspection: "بستن جزئیات",
+  creationDate: "Created At",
 };

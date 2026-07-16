@@ -21,7 +21,7 @@ export default function RegisterVerifyScreen() {
   const params = useLocalSearchParams();
   const email = (params?.email as string) || "";
 
-  const { t, theme } = useApp();
+  const { t, theme, setUser } = useApp();
   const systemTheme = useColorScheme();
   const isDark = theme === "system" ? systemTheme === "dark" : theme === "dark";
 
@@ -45,9 +45,13 @@ export default function RegisterVerifyScreen() {
         },
       );
 
-      const { accessToken, refreshToken } = response.data;
+      const { accessToken, refreshToken, user } = response.data;
       if (accessToken && refreshToken) {
         await secureStore.saveTokens(accessToken, refreshToken);
+        if (user) {
+          await AsyncStorage.setItem("user", JSON.stringify(user));
+          setUser(user);
+        }
         await AsyncStorage.removeItem("isAppLocked");
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         router.replace("/home");

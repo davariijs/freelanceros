@@ -23,7 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RegisterScreen() {
   const router = useRouter();
-  const { t, theme } = useApp();
+  const { t, theme, setUser } = useApp();
   const systemTheme = useColorScheme();
   const isDark = theme === "system" ? systemTheme === "dark" : theme === "dark";
 
@@ -105,14 +105,16 @@ export default function RegisterScreen() {
           { idToken },
         );
 
-        const { accessToken, refreshToken } = res.data;
+        const { accessToken, refreshToken, user } = res.data;
 
         if (accessToken && refreshToken) {
           await secureStore.saveTokens(accessToken, refreshToken);
+          if (user) {
+            await AsyncStorage.setItem("user", JSON.stringify(user));
+            setUser(user);
+          }
           await AsyncStorage.removeItem("isAppLocked");
-
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
           router.replace("/home");
         }
       }

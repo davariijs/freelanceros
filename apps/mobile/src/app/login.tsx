@@ -31,7 +31,7 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { t, theme } = useApp();
+  const { t, theme, setUser } = useApp();
   const systemTheme = useColorScheme();
   const isDark = theme === "system" ? systemTheme === "dark" : theme === "dark";
 
@@ -97,10 +97,14 @@ export default function LoginScreen() {
         `${process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000"}/api/auth/login`,
         data,
       );
-      const { accessToken, refreshToken } = response.data;
+      const { accessToken, refreshToken, user } = response.data;
 
       if (accessToken && refreshToken) {
         await secureStore.saveTokens(accessToken, refreshToken);
+        if (user) {
+          await AsyncStorage.setItem("user", JSON.stringify(user));
+          setUser(user);
+        }
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         await AsyncStorage.removeItem("isAppLocked");
         router.replace("/home");
@@ -155,9 +159,13 @@ export default function LoginScreen() {
           { idToken },
         );
 
-        const { accessToken, refreshToken } = res.data;
+        const { accessToken, refreshToken, user } = res.data;
         if (accessToken && refreshToken) {
           await secureStore.saveTokens(accessToken, refreshToken);
+          if (user) {
+            await AsyncStorage.setItem("user", JSON.stringify(user));
+            setUser(user);
+          }
           await AsyncStorage.removeItem("isAppLocked");
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           router.replace("/home");

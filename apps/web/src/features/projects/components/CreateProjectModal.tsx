@@ -109,67 +109,80 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
 
   return (
     <Dialog isOpen={isOpen} onClose={onClose} title={t.createProject}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          label={t.title}
-          required
-          errorMessage={errors.title ? t.titleRequired : undefined}
-          {...register("title")}
-        />
-
-        <div className="flex flex-col gap-1.5">
-          <DatePicker
-            value={dateField.value}
-            onChange={dateField.onChange}
-            placeholder={t.placeholderProjectDate}
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col h-full overflow-hidden"
+      >
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
+          <FormField
+            label={t.title}
             required
+            errorMessage={errors.title ? t.titleRequired : undefined}
+            {...register("title")}
           />
-          {errors.dueDate && (
-            <p role="alert" className="text-xs text-red-500 font-medium">
-              {errors.dueDate.message}
-            </p>
-          )}
-        </div>
 
-        <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
+            <DatePicker
+              value={dateField.value}
+              onChange={dateField.onChange}
+              placeholder={t.placeholderProjectDate}
+              required
+            />
+            {errors.dueDate && (
+              <p role="alert" className="text-xs text-red-500 font-medium">
+                {errors.dueDate.message}
+              </p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+                {t.priority}
+              </label>
+              <Select
+                value={priorityField.value}
+                onChange={priorityField.onChange}
+                options={priorityOptions}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
+                {t.status}
+              </label>
+              <Select
+                value={statusField.value}
+                onChange={statusField.onChange}
+                options={statusOptions}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5 pb-4">
             <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-              {t.priority}
+              {t.clients}
             </label>
             <Select
-              value={priorityField.value}
-              onChange={priorityField.onChange}
-              options={priorityOptions}
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-              {t.status}
-            </label>
-            <Select
-              value={statusField.value}
-              onChange={statusField.onChange}
-              options={statusOptions}
+              value={clientField.value}
+              onChange={handleClientSelect}
+              options={clientOptions}
+              dropdownHeightClass="max-h-44"
             />
           </div>
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
-            {t.clients}
-          </label>
-          <Select
-            value={clientField.value}
-            onChange={handleClientSelect}
-            options={clientOptions}
-          />
-        </div>
-
-        <div className="flex justify-end gap-3 pt-4 border-t border-neutral-200 dark:border-neutral-800">
-          <Button type="button" variant="secondary" onClick={onClose}>
+        <div className="shrink-0 p-4 md:p-6 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 flex justify-end gap-3 mt-auto">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={onClose}
+            className="max-md:flex-1"
+          >
             {t.cancel}
           </Button>
-          <Button type="submit">{t.createProject}</Button>
+          <Button type="submit" className="max-md:flex-1">
+            {t.createProject}
+          </Button>
         </div>
       </form>
     </Dialog>
