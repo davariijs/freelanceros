@@ -2,13 +2,13 @@
 
 import * as React from "react";
 import { useApp } from "@/context/AppContext";
-import { MetricCard } from "@/components/molecules/MetricCard";
-import { ProjectProgressChart } from "@/components/organisms/ProjectProgressChart";
-import { ActivityFeed } from "@/components/organisms/ActivityFeed";
-import { useTasksQuery } from "@/hooks/useTasks";
-import { useProjectsQuery } from "@/hooks/useProjects";
-import { useClientsQuery } from "@/hooks/useClients";
-import { useActivityLogsQuery } from "@/hooks/useActivityLogs";
+import { MetricCard } from "@/components/ui/MetricCard";
+import { ProjectProgressChart } from "@/features/projects/components/ProjectProgressChart";
+import { ActivityFeed } from "@/features/activity-logs/components/ActivityFeed";
+import { useTasksQuery } from "@/features/tasks/hooks/useTasks";
+import { useProjectsQuery } from "@/features/projects/hooks/useProjects";
+import { useClientsQuery } from "@/features/clients/hooks/useClients";
+import { useActivityLogsQuery } from "@/features/activity-logs/hooks/useActivityLogs";
 import { ClipboardList, TrendingUp, Users } from "lucide-react";
 
 export default function DashboardPage() {

@@ -1,20 +1,24 @@
 "use client";
 
 import * as React from "react";
-import { KanbanBoard } from "@/components/organisms/KanbanBoard";
+import { KanbanBoard } from "@/features/tasks/components/KanbanBoard";
 import {
   useTasksQuery,
   useCreateTaskMutation,
   useUpdateTaskMutation,
   useDeleteTaskMutation,
-} from "@/hooks/useTasks";
-import { useProjectsQuery } from "@/hooks/useProjects";
+} from "@/features/tasks/hooks/useTasks";
+import { useProjectsQuery } from "@/features/projects/hooks/useProjects";
 import { useApp } from "@/context/AppContext";
-import { Button } from "@/components/atoms/Button";
-import { CreateTaskModal } from "@/components/organisms/CreateTaskModal";
-import { EditTaskModal } from "@/components/organisms/EditTaskModal";
-import { Select } from "@/components/atoms/Select";
-import { Task, TaskPriority, TaskStatus } from "@/schemas/task";
+import { Button } from "@/components/ui/Button";
+import { CreateTaskModal } from "@/features/tasks/components/CreateTaskModal";
+import { EditTaskModal } from "@/features/tasks/components/EditTaskModal";
+import { Select } from "@/components/ui/Select";
+import {
+  Task,
+  TaskPriority,
+  TaskStatus,
+} from "@/features/tasks/schemas/task.schema";
 import { Plus } from "lucide-react";
 
 export default function TasksPage() {
