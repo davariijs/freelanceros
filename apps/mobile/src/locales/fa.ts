@@ -1,5 +1,5 @@
 export const fa = {
-  welcomeTitle: "فریلنس‌اواس",
+  welcomeTitle: "FreeOS",
   loginDescription: "برای ورود به کنسول مدیریت، مشخصات خود را وارد کنید.",
   signupDescription: "یک حساب کاربری امن برای مدیریت کارفرماها ایجاد کنید.",
   emailLabel: "آدرس ایمیل",
