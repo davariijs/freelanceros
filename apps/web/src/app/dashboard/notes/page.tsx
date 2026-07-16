@@ -2,17 +2,17 @@
 
 import * as React from "react";
 import { useApp } from "@/context/AppContext";
-import { Note } from "@/schemas/note";
-import { Button } from "@/components/atoms/Button";
-import { RichTextEditor } from "@/components/molecules/RichTextEditor";
-import { Select } from "@/components/atoms/Select";
+import { Note } from "@/features/notes/schemas/note.schema";
+import { Button } from "@/components/ui/Button";
+import { RichTextEditor } from "@/components/ui/RichTextEditor";
+import { Select } from "@/components/ui/Select";
 import {
   useNotesQuery,
   useCreateNoteMutation,
   useUpdateNoteMutation,
   useDeleteNoteMutation,
-} from "@/hooks/useNotes";
-import { useTasksQuery } from "@/hooks/useTasks";
+} from "@/features/notes/hooks/useNotes";
+import { useTasksQuery } from "@/features/tasks/hooks/useTasks";
 import { Plus, FileText, Trash2, Check, X, Save } from "lucide-react";
 import { cn } from "@/lib/utils";
 

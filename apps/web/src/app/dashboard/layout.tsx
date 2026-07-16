@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { DashboardLayout } from "@/components/templates/DashboardLayout";
-import { Button } from "@/components/atoms/Button";
+import { DashboardLayout } from "@/components/layouts/DashboardLayout";
+import { Button } from "@/components/ui/Button";
 import { useApp } from "@/context/AppContext";
 import {
   LayoutDashboard,
@@ -14,7 +14,7 @@ import {
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-import { CommandPalette } from "@/components/organisms/CommandPalette";
+import { CommandPalette } from "@/features/command-palette/components/CommandPalette";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { t, dir, isCommandOpen, setIsCommandOpen } = useApp();

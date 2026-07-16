@@ -2,21 +2,24 @@
 
 import * as React from "react";
 import { useApp } from "@/context/AppContext";
-import { FilterToolbar } from "@/components/molecules/FilterToolbar";
-import { Timeline } from "@/components/organisms/Timeline";
-import { CreateProjectModal } from "@/components/organisms/CreateProjectModal";
-import { EditProjectModal } from "@/components/organisms/EditProjectModal";
-import { useClientsQuery } from "@/hooks/useClients";
+import { FilterToolbar } from "@/components/ui/FilterToolbar";
+import { Timeline } from "@/features/projects/components/Timeline";
+import { CreateProjectModal } from "@/features/projects/components/CreateProjectModal";
+import { EditProjectModal } from "@/features/projects/components/EditProjectModal";
+import { useClientsQuery } from "@/features/clients/hooks/useClients";
 import {
   useProjectsQuery,
   useCreateProjectMutation,
   useUpdateProjectMutation,
   useDeleteProjectMutation,
-} from "@/hooks/useProjects";
-import { Project, ProjectStatus } from "@/schemas/project";
-import { Button } from "@/components/atoms/Button";
+} from "@/features/projects/hooks/useProjects";
+import {
+  Project,
+  ProjectStatus,
+} from "@/features/projects/schemas/project.schema";
+import { Button } from "@/components/ui/Button";
 import { Plus } from "lucide-react";
-import { TaskPriority } from "@/schemas/task";
+import { TaskPriority } from "@/features/tasks/schemas/task.schema";
 
 export default function ProjectsPage() {
   const { t } = useApp();

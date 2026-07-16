@@ -1,5 +1,5 @@
 import axios from "axios";
-import { WebLogger } from "@/utils/logger";
+import { WebLogger } from "@/lib/logger";
 
 export const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "/api",

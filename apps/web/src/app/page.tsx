@@ -1,5 +1,5 @@
 import * as React from "react";
-import { HeroSection } from "@/components/templates/HeroSection";
+import { HeroSection } from "@/features/landing/components/HeroSection";
 
 export default function HomePage() {
   return (

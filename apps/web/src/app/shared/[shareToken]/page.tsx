@@ -5,8 +5,8 @@ import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/apiClient";
 import { useApp } from "@/context/AppContext";
-import { Button } from "@/components/atoms/Button";
-import { Dialog } from "@/components/atoms/Dialog";
+import { Button } from "@/components/ui/Button";
+import { Dialog } from "@/components/ui/Dialog";
 import { cn } from "@/lib/utils";
 import {
   FolderGit2,

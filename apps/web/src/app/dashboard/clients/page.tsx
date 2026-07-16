@@ -2,16 +2,16 @@
 
 import * as React from "react";
 import { useApp } from "@/context/AppContext";
-import { Button } from "@/components/atoms/Button";
-import { CreateClientModal } from "@/components/organisms/CreateClientModal";
-import { EditClientModal } from "@/components/organisms/EditClientModal";
+import { Button } from "@/components/ui/Button";
+import { CreateClientModal } from "@/features/clients/components/CreateClientModal";
+import { EditClientModal } from "@/features/clients/components/EditClientModal";
 import {
   useClientsQuery,
   useCreateClientMutation,
   useUpdateClientMutation,
   useDeleteClientMutation,
-} from "@/hooks/useClients";
-import { Client } from "@/schemas/client";
+} from "@/features/clients/hooks/useClients";
+import { Client } from "@/features/clients/schemas/client.schema";
 import { Plus, Users, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 
