@@ -3,6 +3,7 @@ import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import { useApp } from "@/context/AppContext";
 import { CreateProjectSheet } from "@/components/organisms/CreateProjectSheet";
 import { EditProjectSheet } from "@/components/organisms/EditProjectSheet";
+import { SearchBar } from "@/components/molecules/SearchBar";
 import { useClientsQuery } from "@/hooks/useClients";
 import {
   useProjectsQuery,
@@ -10,7 +11,7 @@ import {
   useUpdateProjectMutation,
   useDeleteProjectMutation,
 } from "@/hooks/useProjects";
-import { Plus, FolderGit2, Clock, Pencil } from "lucide-react-native";
+import { Plus, FolderGit2, Clock, Pencil, Search } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { cn } from "@/lib/utils";
 import * as Haptics from "expo-haptics";
@@ -33,8 +34,9 @@ export default function ProjectsScreen() {
   const [selectedProject, setSelectedProject] = React.useState<any | null>(
     null,
   );
-  const [isCreateSheetOpen, setIsCreateSheetOpen] = React.useState(false);
-  const [isEditSheetOpen, setIsEditSheetOpen] = React.useState(false);
+
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
 
   const { data: projects = [], isLoading } = useProjectsQuery();
   const { data: clients = [] } = useClientsQuery();
@@ -47,7 +49,6 @@ export default function ProjectsScreen() {
     createProjectMutation.mutate(data, {
       onSuccess: () => {
         createSheetRef.current?.close();
-        setIsCreateSheetOpen(false);
       },
     });
   };
@@ -59,7 +60,6 @@ export default function ProjectsScreen() {
         onSuccess: () => {
           editSheetRef.current?.close();
           setSelectedProject(null);
-          setIsEditSheetOpen(false);
         },
       },
     );
@@ -70,7 +70,6 @@ export default function ProjectsScreen() {
       onSuccess: () => {
         editSheetRef.current?.close();
         setSelectedProject(null);
-        setIsEditSheetOpen(false);
       },
     });
   };
@@ -78,23 +77,29 @@ export default function ProjectsScreen() {
   const handleOpenCreate = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     createSheetRef.current?.snapToIndex(0);
-    setIsCreateSheetOpen(true);
   };
 
   const handleOpenEdit = (project: any) => {
     setSelectedProject(project);
-    setIsEditSheetOpen(true);
     requestAnimationFrame(() => {
       editSheetRef.current?.snapToIndex(0);
     });
   };
 
-  const sortedProjects = React.useMemo(() => {
-    return [...projects].sort(
+  const handleCloseSearch = () => {
+    setIsSearchOpen(false);
+    setSearchQuery("");
+  };
+
+  const filteredProjects = React.useMemo(() => {
+    const sorted = [...projects].sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
-  }, [projects]);
+    if (!searchQuery.trim()) return sorted;
+    const q = searchQuery.toLowerCase();
+    return sorted.filter((p) => p.title.toLowerCase().includes(q));
+  }, [projects, searchQuery]);
 
   const priorityColor = {
     LOW: "bg-green-500/10 text-green-500 border-green-500/20",
@@ -131,16 +136,47 @@ export default function ProjectsScreen() {
       }}
     >
       <View style={{ flex: 1, paddingHorizontal: 20, position: "relative" }}>
-        <View className="mb-6 shrink-0">
+        <View className="flex-row items-center justify-between mb-6 shrink-0">
+          <TouchableOpacity
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setIsSearchOpen(true);
+            }}
+            style={{
+              backgroundColor: isDark ? "#171717" : "#ffffff",
+              borderColor: isDark ? "#262626" : "#e5e5e5",
+            }}
+            className="h-10 w-10 border rounded-full items-center justify-center active:bg-neutral-800"
+          >
+            <Search size={18} color="#a3a3a3" />
+          </TouchableOpacity>
+
           <Text
-            className={`text-2xl font-black ${isDark ? "text-white" : "text-neutral-900"}`}
+            className={`text-xl font-bold ${isDark ? "text-white" : "text-neutral-900"}`}
           >
             {t.projects}
           </Text>
-          <Text className="text-xs text-neutral-500 mt-1">
-            {t.projectsDescription}
-          </Text>
+
+          <TouchableOpacity
+            onPress={handleOpenCreate}
+            style={{
+              backgroundColor: isDark ? "#171717" : "#ffffff",
+              borderColor: isDark ? "#262626" : "#e5e5e5",
+            }}
+            className="h-10 w-10 border rounded-full items-center justify-center active:bg-neutral-800"
+          >
+            <Plus size={18} color="#a3a3a3" />
+          </TouchableOpacity>
         </View>
+
+        <SearchBar
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder={t.placeholderSearchProjects || "Search projects..."}
+          isOpen={isSearchOpen}
+          onClose={handleCloseSearch}
+          isDark={isDark}
+        />
 
         {isLoading ? (
           <View className="flex-1 justify-center items-center">
@@ -148,14 +184,14 @@ export default function ProjectsScreen() {
               {t.mainloading || "Loading Projects..."}
             </Text>
           </View>
-        ) : sortedProjects.length === 0 ? (
+        ) : filteredProjects.length === 0 ? (
           <View className="flex-1 justify-center items-center text-center">
             <FolderGit2 size={32} color="#737373" className="mb-2" />
             <Text className="text-sm text-neutral-500">{t.noProjects}</Text>
           </View>
         ) : (
           <FlatList
-            data={sortedProjects}
+            data={filteredProjects}
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ paddingBottom: 100 }}
             showsVerticalScrollIndicator={false}
@@ -214,22 +250,10 @@ export default function ProjectsScreen() {
           />
         )}
 
-        {!isCreateSheetOpen && !isEditSheetOpen && (
-          <TouchableOpacity
-            onPress={handleOpenCreate}
-            className={`absolute bottom-6 right-6 h-14 w-14 rounded-full justify-center items-center shadow-lg z-40 ${
-              isDark ? "bg-neutral-100" : "bg-neutral-950"
-            }`}
-          >
-            <Plus size={24} color={isDark ? "#0a0a0a" : "#ffffff"} />
-          </TouchableOpacity>
-        )}
-
         <CreateProjectSheet
           ref={createSheetRef}
           onSuccess={() => {
             createSheetRef.current?.close();
-            setIsCreateSheetOpen(false);
           }}
           clients={clients}
           onSubmitProject={handleCreateProject}
@@ -240,7 +264,6 @@ export default function ProjectsScreen() {
           onSuccess={() => {
             editSheetRef.current?.close();
             setSelectedProject(null);
-            setIsEditSheetOpen(false);
           }}
           project={selectedProject}
           clients={clients}

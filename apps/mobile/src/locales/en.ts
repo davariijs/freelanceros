@@ -135,4 +135,6 @@ export const en = {
   shareEnabled: "Client portal link generated",
   mainloading: "Loading Projects...",
   placeholderSearchClients: "Search clients...",
+  placeholderSearchProjects: "Search projects...",
+  placeholderSearchTasks: "Search tasks...",
 };

@@ -138,4 +138,6 @@ export const fa = {
   shareEnabled: "لینک پورتال کارفرما ایجاد شد",
   mainloading: "در حال بارگذاری پروژه‌ها...",
   placeholderSearchClients: "جستجوی مشتریان...",
+  placeholderSearchProjects: "جستجوی پروژه‌ها...",
+  placeholderSearchTasks: "جستجوی تسک ها...",
 };

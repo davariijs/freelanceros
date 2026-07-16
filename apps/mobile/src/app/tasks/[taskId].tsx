@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import {
   View,
@@ -50,29 +52,26 @@ export default function TaskDetailScreen() {
     return formatDateTimeStrict(task.createdAt, isJalali);
   }, [task?.createdAt, isJalali]);
 
-  const handleUpdateDescription = React.useCallback(
-    (targetDesc: string) => {
-      if (task && targetDesc !== (task.description || "")) {
-        updateTaskMutation.mutate(
-          { id: task.id, description: targetDesc } as any,
-          {
-            onSuccess: () =>
-              Haptics.notificationAsync(
-                Haptics.NotificationFeedbackType.Success,
-              ),
-          },
-        );
-      }
-    },
-    [task, updateTaskMutation],
-  );
-
   React.useEffect(() => {
-    const unsubscribe = navigation.addListener("beforeRemove", () => {
-      handleUpdateDescription(description);
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      if (!task || description === (task.description || "")) {
+        return;
+      }
+
+      e.preventDefault();
+
+      updateTaskMutation.mutate({ id: task.id, description } as any, {
+        onSuccess: () => {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          navigation.dispatch(e.data.action);
+        },
+        onError: () => {
+          navigation.dispatch(e.data.action);
+        },
+      });
     });
     return unsubscribe;
-  }, [navigation, description, handleUpdateDescription]);
+  }, [navigation, description, task, updateTaskMutation]);
 
   if (isLoading || !task) {
     return (

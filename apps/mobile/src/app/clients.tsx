@@ -44,7 +44,7 @@ export default function ClientsScreen() {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isSearchOpen, setIsSearchOpen] = React.useState(false);
 
-  const { data: clients = [], isLoading } = useClientsQuery();
+  const { data: clients = [], isLoading, refetch } = useClientsQuery();
   const createClientMutation = useCreateClientMutation();
   const updateClientMutation = useUpdateClientMutation();
   const deleteClientMutation = useDeleteClientMutation();
@@ -52,6 +52,7 @@ export default function ClientsScreen() {
   const handleCreateClient = (data: any) => {
     createClientMutation.mutate(data, {
       onSuccess: () => {
+        refetch();
         createSheetRef.current?.close();
       },
     });
@@ -62,6 +63,7 @@ export default function ClientsScreen() {
       { id, ...data },
       {
         onSuccess: () => {
+          refetch();
           editSheetRef.current?.close();
           setSelectedClient(null);
         },
@@ -72,6 +74,7 @@ export default function ClientsScreen() {
   const handleDeleteClient = (id: string) => {
     deleteClientMutation.mutate(id, {
       onSuccess: () => {
+        refetch();
         editSheetRef.current?.close();
         setSelectedClient(null);
       },
@@ -122,12 +125,19 @@ export default function ClientsScreen() {
   };
 
   const filteredClients = React.useMemo(() => {
-    if (!searchQuery.trim()) return clients;
-    const q = searchQuery.toLowerCase();
-    return clients.filter(
-      (c) =>
-        c.name.toLowerCase().includes(q) ||
-        (c.email && c.email.toLowerCase().includes(q)),
+    const q = searchQuery.trim().toLowerCase();
+
+    const baseClients = q
+      ? clients.filter(
+          (c) =>
+            c.name.toLowerCase().includes(q) ||
+            (c.email && c.email.toLowerCase().includes(q)),
+        )
+      : [...clients];
+
+    return baseClients.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
   }, [clients, searchQuery]);
 
@@ -198,6 +208,7 @@ export default function ClientsScreen() {
         ) : (
           <FlatList
             data={filteredClients}
+            extraData={filteredClients}
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ paddingBottom: 100 }}
             showsVerticalScrollIndicator={false}
