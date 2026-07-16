@@ -2,9 +2,10 @@
 
 import * as React from "react";
 import { useApp } from "@/context/AppContext";
-import { Menu, Globe, Sun, Moon, LogOut, Search } from "lucide-react";
+import { useClickOutside } from "@/hooks/useClickOutside";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import { Menu, Globe, Sun, Moon, LogOut, Search, User } from "lucide-react";
 
 interface DashboardHeaderProps {
   onMenuToggle?: () => void;
@@ -13,11 +14,26 @@ interface DashboardHeaderProps {
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onMenuToggle,
 }) => {
-  const { toggleLocale, setTheme, theme, locale, t, dir, setIsCommandOpen } =
-    useApp();
+  const {
+    toggleLocale,
+    setTheme,
+    theme,
+    locale,
+    t,
+    dir,
+    setIsCommandOpen,
+    user,
+    setUser,
+  } = useApp();
+  const [isProfileOpen, setIsProfileOpen] = React.useState(false);
+  const [osSymbol, setOsSymbol] = React.useState("Ctrl");
+
+  const profileRef = React.useRef<HTMLDivElement>(null);
   const activeLanguageLabel = locale === "en" ? "English" : "فارسی";
 
-  const [osSymbol, setOsSymbol] = React.useState("Ctrl");
+  useClickOutside(profileRef, () => {
+    if (isProfileOpen) setIsProfileOpen(false);
+  });
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -29,11 +45,15 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   const handleLogout = () => {
     document.cookie =
       "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Strict; Secure";
+
+    localStorage.removeItem("user");
+    setUser(null);
+
     window.location.href = "/login";
   };
 
   return (
-    <header className="h-16 border-b border-neutral-200 dark:border-neutral-800 px-6 md:px-8 flex items-center justify-between bg-neutral-50 dark:bg-neutral-950 transition-colors duration-200">
+    <header className="relative z-40 h-16 border-b border-neutral-200 dark:border-neutral-800 px-6 md:px-8 flex items-center justify-between bg-neutral-50 dark:bg-neutral-950 transition-colors duration-200">
       <div className="flex items-center gap-4 grow">
         {onMenuToggle && (
           <Button
@@ -88,7 +108,9 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           <Globe className="h-3.5 w-3.5 text-neutral-500 dark:text-neutral-400" />
           <span className="text-xs font-semibold">{activeLanguageLabel}</span>
         </Button>
+
         <div className="w-px h-4 bg-neutral-200 dark:bg-neutral-800" />
+
         <Button
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           variant="ghost"
@@ -102,7 +124,50 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             <Sun className="h-3.5 w-3.5 text-yellow-500" />
           )}
         </Button>
+
         <div className="w-px h-4 bg-neutral-200 dark:bg-neutral-800" />
+
+        <div ref={profileRef} className="relative">
+          <Button
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0 rounded-full hover:bg-neutral-200 dark:hover:bg-neutral-800 flex items-center justify-center shrink-0"
+            aria-label="User Profile"
+          >
+            <User className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
+          </Button>
+
+          {isProfileOpen && (
+            <div
+              className={cn(
+                "absolute top-full mt-2 w-56 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 shadow-xl z-50 animate-in fade-in slide-in-from-top-2 duration-200",
+                dir === "rtl" ? "left-0" : "right-0",
+              )}
+            >
+              <div className="space-y-1 text-left" dir="ltr">
+                {user?.name && (
+                  <p className="text-sm font-bold text-neutral-900 dark:text-neutral-50 truncate">
+                    {user.name}
+                  </p>
+                )}
+                <p
+                  className={cn(
+                    "text-neutral-500 dark:text-neutral-400 truncate",
+                    user?.name
+                      ? "text-xs font-medium"
+                      : "text-sm font-semibold",
+                  )}
+                >
+                  {user?.email || "Loading..."}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="w-px h-4 bg-neutral-200 dark:bg-neutral-800" />
+
         <Button
           onClick={handleLogout}
           variant="ghost"

@@ -11,6 +11,11 @@ export interface ToastState {
   message: string;
   type: "success" | "error";
 }
+export interface UserProfile {
+  id: string;
+  email: string;
+  name: string | null;
+}
 
 interface AppContextType {
   theme: Theme;
@@ -25,6 +30,8 @@ interface AppContextType {
   setIsCommandOpen: (open: boolean) => void;
   toast: ToastState | null;
   showToast: (message: string, type?: "success" | "error") => void;
+  user: UserProfile | null;
+  setUser: (user: UserProfile | null) => void;
 }
 
 const AppContext = React.createContext<AppContextType | undefined>(undefined);
@@ -45,6 +52,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({
   const [activeTaskId, setActiveTaskId] = React.useState<string | null>(null);
   const [isCommandOpen, setIsCommandOpen] = React.useState<boolean>(false);
   const [toast, setToast] = React.useState<ToastState | null>(null);
+  const [user, setUser] = React.useState<UserProfile | null>(null);
 
   const t = locale === "en" ? en : fa;
   const dir = locale === "fa" ? "rtl" : "ltr";
@@ -54,8 +62,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({
       try {
         const savedTheme = localStorage.getItem("theme") as Theme;
         const savedLocale = localStorage.getItem("locale") as Locale;
+        const savedUser = localStorage.getItem("user");
         if (savedTheme) setThemeState(savedTheme);
         if (savedLocale) setLocale(savedLocale);
+        if (savedUser) setUser(JSON.parse(savedUser));
       } catch (e) {}
     }
   }, []);
@@ -125,6 +135,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({
         setIsCommandOpen,
         toast,
         showToast,
+        user,
+        setUser,
       }}
     >
       <div dir={dir} className={locale === "fa" ? "font-fa" : "font-sans"}>

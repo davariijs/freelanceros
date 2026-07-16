@@ -19,7 +19,7 @@ import { MailCheck, KeyRound } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const RegisterForm: React.FC = () => {
-  const { t } = useApp();
+  const { t, setUser } = useApp();
   const router = useRouter();
 
   const [step, setStep] = React.useState<"FILL_FORM" | "VERIFY_CODE">(
@@ -49,6 +49,10 @@ export const RegisterForm: React.FC = () => {
     onSuccess: (data) => {
       if (data.accessToken) {
         document.cookie = `token=${data.accessToken}; path=/; max-age=86400; SameSite=Strict; Secure`;
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+          setUser(data.user);
+        }
         router.push("/dashboard");
       }
     },
