@@ -68,14 +68,11 @@ const withWidgets = (config) => {
             "PackageList(this).packages.apply {\n            add(WidgetUpdatePackage())",
           );
           fs.writeFileSync(mainAppPath, content, "utf8");
-          console.log(
-            "[EAS Patch] Successfully registered WidgetUpdatePackage in MainApplication.kt",
-          );
         }
       }
 
       const widgetInfoXml = `<?xml version="1.0" encoding="utf-8"?>
-<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="110dp" android:minHeight="54dp" android:updatePeriodMillis="86400000" android:initialLayout="@layout/widget_layout" android:targetCellWidth="2" android:targetCellHeight="1" android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"></appwidget-provider>`;
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" android:minWidth="110dp" android:minHeight="110dp" android:updatePeriodMillis="86400000" android:initialLayout="@layout/widget_layout" android:targetCellWidth="2" android:targetCellHeight="2" android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"></appwidget-provider>`;
       fs.writeFileSync(path.join(xmlDir, "widget_info.xml"), widgetInfoXml);
 
       const widgetLayoutXml = `<?xml version="1.0" encoding="utf-8"?>
