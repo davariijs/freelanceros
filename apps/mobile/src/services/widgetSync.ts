@@ -1,5 +1,5 @@
 import DefaultPreference from "react-native-default-preference";
-import { Task } from "@/hooks/useTasks";
+import { Task } from "@/features/tasks/hooks/useTasks";
 import { Platform, NativeModules } from "react-native";
 
 const APP_GROUP_IDENTIFIER = "group.com.freeos.mobile";

@@ -1,29 +1,29 @@
 import * as React from "react";
 import { View, Text, TouchableOpacity, InteractionManager } from "react-native";
-import { SyncStatus } from "@/components/atoms/SyncStatus";
-import { CircularProgress } from "@/components/atoms/CircularProgress";
-import { TodayTasksList } from "@/components/organisms/TodayTasksList";
+import { SyncStatus } from "@/components/ui/SyncStatus";
+import { CircularProgress } from "@/components/ui/CircularProgress";
+import { TodayTasksList } from "@/features/tasks/components/TodayTasksList";
 import {
   useTasksQuery,
   useUpdateTaskMutation,
   Task,
   TaskStatus,
-} from "@/hooks/useTasks";
-import { useProjectsQuery } from "@/hooks/useProjects";
+} from "@/features/tasks/hooks/useTasks";
+import { useProjectsQuery } from "@/features/projects/hooks/useProjects";
 import { useRouter, useFocusEffect } from "expo-router";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { QuickAddSheet } from "@/components/organisms/QuickAddSheet";
-import { SearchBar } from "@/components/molecules/SearchBar";
+import { QuickAddSheet } from "@/features/tasks/components/QuickAddSheet";
+import { SearchBar } from "@/components/ui/SearchBar";
 import { Plus, LogOut, Search } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useActiveAppRefetch } from "@/hooks/useActiveAppRefetch";
-import { SkeletonCard } from "@/components/atoms/SkeletonCard";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useApp } from "@/context/AppContext";
 import { widgetSync } from "@/services/widgetSync";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import { BottomTabBar } from "@/components/molecules/BottomTabBar";
+import { BottomTabBar } from "@/components/layout/BottomTabBar";
 import { notificationService } from "@/services/notificationService";
 
 export default function HomeScreen() {
@@ -257,10 +257,7 @@ export default function HomeScreen() {
           </TouchableOpacity>
         )}
 
-        <QuickAddSheet
-          ref={quickAddSheetRef}
-          onSuccess={handleCloseQuickAdd}
-        />
+        <QuickAddSheet ref={quickAddSheetRef} onSuccess={handleCloseQuickAdd} />
       </View>
 
       <BottomTabBar />
