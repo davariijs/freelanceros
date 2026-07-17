@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import BottomSheet, {
   BottomSheetBackdrop,
-  BottomSheetView,
+  BottomSheetScrollView,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
 import { ProjectScrollerPicker } from "@/features/projects/components/ProjectScrollerPicker";
@@ -77,8 +77,18 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
             setSelectedProjectId(null);
             onSuccess();
           },
-          onError: () => {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+          onError: (err: unknown) => {
+            const error = err as Error;
+            if (error?.message === "OFFLINE_SAVED") {
+              Haptics.notificationAsync(
+                Haptics.NotificationFeedbackType.Success,
+              );
+              setTitle("");
+              setSelectedProjectId(null);
+              onSuccess();
+            } else {
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            }
           },
           onSettled: () => {
             setIsLoading(false);
@@ -125,63 +135,69 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
           backgroundColor: isDark ? "#262626" : "#e5e5e5",
         }}
       >
-        <BottomSheetView className="flex-1 px-6 pt-2 gap-5">
-          <Text
-            className={`text-base font-black ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
-          >
-            {t.quickAddTitle}
-          </Text>
+        <BottomSheetScrollView
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <View className="flex-1 px-6 pt-2 gap-5">
+            <Text
+              className={`text-base font-black ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
+            >
+              {t.quickAddTitle}
+            </Text>
 
-          <View
-            className={`flex-row items-center border rounded-xl px-3 mb-2 h-12 ${isDark ? "border-neutral-800 bg-neutral-900/50" : "border-neutral-300 bg-neutral-50"}`}
-          >
-            <BottomSheetTextInput
-              ref={inputRef}
-              className={`flex-1 text-sm h-full ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
-              value={title}
-              onChangeText={setTitle}
-              placeholder={t.placeholderQuickAddTask}
-              placeholderTextColor="#737373"
-            />
-          </View>
-
-          <ProjectScrollerPicker
-            projects={projects}
-            selectedId={selectedProjectId}
-            onSelect={setSelectedProjectId}
-          />
-
-          <TouchableOpacity
-            onPress={handleSave}
-            disabled={!title.trim() || isSaving}
-            style={{ opacity: !title.trim() ? 0.5 : 1 }}
-            className={`flex-row justify-center items-center h-12 rounded-xl mt-3 ${
-              isDark
-                ? "bg-neutral-100 active:bg-neutral-200"
-                : "bg-neutral-950 active:bg-neutral-800"
-            }`}
-          >
-            {isSaving ? (
-              <ActivityIndicator
-                size="small"
-                color={isDark ? "#0a0a0a" : "#ffffff"}
+            <View
+              className={`flex-row items-center border rounded-xl px-3 mb-2 h-12 ${isDark ? "border-neutral-800 bg-neutral-900/50" : "border-neutral-300 bg-white"}`}
+            >
+              <BottomSheetTextInput
+                ref={inputRef}
+                className={`flex-1 text-sm h-full ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
+                value={title}
+                onChangeText={setTitle}
+                placeholder={t.placeholderQuickAddTask}
+                placeholderTextColor="#737373"
               />
-            ) : (
-              <>
-                <Plus
-                  size={16}
+            </View>
+
+            <ProjectScrollerPicker
+              projects={projects}
+              selectedId={selectedProjectId}
+              onSelect={setSelectedProjectId}
+            />
+
+            <TouchableOpacity
+              onPress={handleSave}
+              disabled={!title.trim() || isSaving}
+              style={{ opacity: !title.trim() ? 0.5 : 1 }}
+              className={`flex-row justify-center items-center h-12 rounded-xl mt-3 ${
+                isDark
+                  ? "bg-neutral-100 active:bg-neutral-200"
+                  : "bg-neutral-950 active:bg-neutral-800"
+              }`}
+            >
+              {isSaving ? (
+                <ActivityIndicator
+                  size="small"
                   color={isDark ? "#0a0a0a" : "#ffffff"}
-                  style={{ marginRight: 6 }}
                 />
-                <Text
-                  className={`text-sm font-bold ${isDark ? "text-neutral-950" : "text-white"}`}
-                >
-                  {t.quickAddTitle}
-                </Text>
-              </>
-            )}
-          </TouchableOpacity>
-        </BottomSheetView>
+              ) : (
+                <>
+                  <Plus
+                    size={16}
+                    color={isDark ? "#0a0a0a" : "#ffffff"}
+                    style={{ marginRight: 6 }}
+                  />
+                  <Text
+                    className={`text-sm font-bold ${isDark ? "text-neutral-950" : "text-white"}`}
+                  >
+                    {t.quickAddTitle}
+                  </Text>
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
+        </BottomSheetScrollView>
       </BottomSheet>
     );
   },

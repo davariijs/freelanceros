@@ -1,5 +1,6 @@
 import * as React from "react";
-import { ScrollView, View, Text } from "react-native";
+import { View, Text } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { ProjectChip } from "@/features/projects/components/ProjectChip";
 import { useApp } from "@/context/AppContext";
 
@@ -31,7 +32,6 @@ export const ProjectScrollerPicker: React.FC<ProjectScrollerPickerProps> = ({
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingRight: 20 }}
-        className="flex-row"
       >
         <ProjectChip
           label={t.noProjectChip}

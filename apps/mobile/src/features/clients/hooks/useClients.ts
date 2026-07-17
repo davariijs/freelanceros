@@ -7,12 +7,7 @@ export const useClientsQuery = () => {
     queryKey: ["clients"],
     queryFn: async () => {
       try {
-        console.log("[useClientsQuery] Initiating fetch for clients...");
         const res = await apiClient.get("/api/clients");
-        console.log(
-          "[useClientsQuery] Fetch success, clients count:",
-          res.data?.length,
-        );
         return res.data;
       } catch (error: any) {
         console.error("[useClientsQuery] Error fetching clients:", {
@@ -38,15 +33,7 @@ export const useCreateClientMutation = () => {
       status: string;
     }) => {
       try {
-        console.log(
-          "[useCreateClientMutation] Submitting new client payload:",
-          JSON.stringify(data),
-        );
         const res = await apiClient.post("/api/clients", data);
-        console.log(
-          "[useCreateClientMutation] Client created successfully:",
-          JSON.stringify(res.data),
-        );
         return res.data;
       } catch (error: any) {
         console.error("[useCreateClientMutation] Error creating client:", {
@@ -79,15 +66,7 @@ export const useUpdateClientMutation = () => {
       status: string;
     }) => {
       try {
-        console.log(
-          `[useUpdateClientMutation] Updating client ID ${id} with payload:`,
-          JSON.stringify(data),
-        );
         const res = await apiClient.patch(`/api/clients/${id}`, data);
-        console.log(
-          `[useUpdateClientMutation] Client ID ${id} updated successfully:`,
-          JSON.stringify(res.data),
-        );
         return res.data;
       } catch (error: any) {
         console.error(
@@ -112,13 +91,7 @@ export const useDeleteClientMutation = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       try {
-        console.log(
-          `[useDeleteClientMutation] Initiating deletion of client ID: ${id}`,
-        );
         await apiClient.delete(`/api/clients/${id}`);
-        console.log(
-          `[useDeleteClientMutation] Client ID: ${id} deleted successfully from database`,
-        );
       } catch (error: any) {
         console.error(
           `[useDeleteClientMutation] Error deleting client ID ${id}:`,
