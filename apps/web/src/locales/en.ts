@@ -287,4 +287,5 @@ export const en = {
   sharedNoDesc: "No description provided for this task.",
   sharedCloseInspection: "Close Inspection",
   creationDate: "Created At",
+  errorPausedProject: "Cannot add tasks to a paused project.",
 };

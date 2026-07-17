@@ -8,15 +8,15 @@ import {
   Share,
 } from "react-native";
 import { useApp } from "@/context/AppContext";
-import { CreateClientSheet } from "@/components/organisms/CreateClientSheet";
-import { EditClientSheet } from "@/components/organisms/EditClientSheet";
-import { SearchBar } from "@/components/molecules/SearchBar";
+import { CreateClientSheet } from "@/features/clients/components/CreateClientSheet";
+import { EditClientSheet } from "@/features/clients/components/EditClientSheet";
+import { SearchBar } from "@/components/ui/SearchBar";
 import {
   useClientsQuery,
   useCreateClientMutation,
   useUpdateClientMutation,
   useDeleteClientMutation,
-} from "@/hooks/useClients";
+} from "@/features/clients/hooks/useClients";
 import {
   Plus,
   Users,
@@ -29,7 +29,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { BottomTabBar } from "@/components/molecules/BottomTabBar";
+import { BottomTabBar } from "@/components/layout/BottomTabBar";
 
 export default function ClientsScreen() {
   const { t, theme, showToast } = useApp();

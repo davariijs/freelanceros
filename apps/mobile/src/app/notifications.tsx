@@ -1,9 +1,15 @@
 import * as React from "react";
-import { View, Text, ScrollView, useColorScheme, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  useColorScheme,
+  ActivityIndicator,
+} from "react-native";
 import { useApp } from "@/context/AppContext";
-import { useProjectsQuery } from "@/hooks/useProjects";
-import { formatDateStrict, toPersianDigits } from "@/utils/dateConverter";
-import { BottomTabBar } from "@/components/molecules/BottomTabBar";
+import { useProjectsQuery } from "@/features/projects/hooks/useProjects";
+import { formatDateStrict, toPersianDigits } from "@/lib/dateConverter";
+import { BottomTabBar } from "@/components/layout/BottomTabBar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Bell, AlertTriangle, BellRing, Info } from "lucide-react-native";
 
@@ -79,14 +85,18 @@ export default function NotificationsScreen() {
   };
 
   const dynamicBg = isDark ? "#0a0a0a" : "#f5f5f5";
-  const cardBg = isDark ? "bg-neutral-900 border-neutral-800" : "bg-white border-neutral-200";
+  const cardBg = isDark
+    ? "bg-neutral-900 border-neutral-800"
+    : "bg-white border-neutral-200";
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: dynamicBg }}>
       <View style={{ flex: 1, paddingTop: 16 }}>
         <View className="px-5 mb-6 shrink-0 flex-row items-center gap-3">
           <Bell size={24} color={isDark ? "#ffffff" : "#000000"} />
-          <Text className={`text-2xl font-black ${isDark ? "text-neutral-100" : "text-neutral-900"}`}>
+          <Text
+            className={`text-2xl font-black ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
+          >
             {t.notifications || "Notifications"}
           </Text>
         </View>
@@ -107,12 +117,17 @@ export default function NotificationsScreen() {
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
               <View className="gap-y-4 pb-8">
                 {deadlineNotifications.map((item) => (
-                  <View key={item.id} className={`p-4 rounded-2xl border flex-row items-start gap-4 ${cardBg}`}>
+                  <View
+                    key={item.id}
+                    className={`p-4 rounded-2xl border flex-row items-start gap-4 ${cardBg}`}
+                  >
                     <View className="h-9 w-9 rounded-full bg-neutral-100 dark:bg-neutral-800 items-center justify-center shrink-0">
                       {getActionIcon(item.action)}
                     </View>
                     <View className="flex-1 min-w-0">
-                      <Text className={`text-sm font-bold leading-relaxed ${isDark ? "text-neutral-100" : "text-neutral-900"}`}>
+                      <Text
+                        className={`text-sm font-bold leading-relaxed ${isDark ? "text-neutral-100" : "text-neutral-900"}`}
+                      >
                         {getActionLabel(item.action, item.title)}
                       </Text>
                       <Text className="text-[10px] text-neutral-500 mt-1">

@@ -87,13 +87,29 @@ router.get('/', async (req: AuthenticatedRequest, res) => {
 });
 
 router.patch('/:id', async (req: AuthenticatedRequest, res) => {
-
   const { id } = req.params;
   const { status, order, title, priority, description, projectId } = req.body;
 
+  const resolvedProjectId =
+    projectId === 'NONE' ? null : projectId || undefined;
+
+  if (resolvedProjectId && resolvedProjectId !== null) {
+    const project = await prisma.project.findUnique({
+      where: { id: resolvedProjectId, userId: req.userId! },
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    if (project.status === 'PAUSED') {
+      return res
+        .status(400)
+        .json({ message: 'Cannot add tasks to a paused project.' });
+    }
+  }
+
   const result = await prisma.$transaction(async (tx) => {
-    const resolvedProjectId =
-      projectId === 'NONE' ? null : projectId || undefined;
     const task = await tx.task.update({
       where: { id, userId: req.userId! },
       data: {

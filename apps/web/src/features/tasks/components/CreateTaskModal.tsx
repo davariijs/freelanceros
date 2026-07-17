@@ -10,7 +10,7 @@ import { Select, SelectOption } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { z } from "zod";
-import { TaskStatus, TaskPriority } from "@/features/tasks/schemas/task.schema";
+import { useCreateTaskMutation } from "@/features/tasks/hooks/useTasks";
 import { useRouter } from "next/navigation";
 
 const createTaskSchema = z.object({
@@ -26,23 +26,17 @@ interface CreateTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   projects: { id: string; title: string }[];
-  onSubmitTask: (data: {
-    title: string;
-    description: string;
-    priority: TaskPriority;
-    status: TaskStatus;
-    projectId?: string;
-  }) => void;
 }
 
 export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   isOpen,
   onClose,
   projects,
-  onSubmitTask,
 }) => {
   const { t } = useApp();
   const router = useRouter();
+
+  const createTaskMutation = useCreateTaskMutation();
 
   const {
     control,
@@ -67,6 +61,18 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     control,
   });
 
+  const getErrorMessage = React.useCallback(() => {
+    const error = createTaskMutation.error as {
+      response?: { data?: { message?: string } };
+      message?: string;
+    } | null;
+    if (!error) return null;
+    const serverMessage = error.response?.data?.message || error.message || "";
+    return serverMessage === "Cannot add tasks to a paused project."
+      ? t.errorPausedProject || serverMessage
+      : serverMessage;
+  }, [createTaskMutation.error, t]);
+
   const priorityOptions: SelectOption[] = [
     { label: t.priorityLow, value: "LOW" },
     { label: t.priorityMedium, value: "MEDIUM" },
@@ -89,16 +95,24 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   };
 
   const onSubmit = (data: CreateTaskInput) => {
-    onSubmitTask({
-      title: data.title,
-      description: data.description || "",
-      priority: data.priority,
-      status: "TODO",
-      projectId: data.projectId === "NONE" ? undefined : data.projectId,
-    });
-    reset();
-    onClose();
+    createTaskMutation.mutate(
+      {
+        title: data.title,
+        description: data.description || "",
+        priority: data.priority,
+        status: "TODO",
+        projectId: data.projectId === "NONE" ? undefined : data.projectId,
+      },
+      {
+        onSuccess: () => {
+          reset();
+          onClose();
+        },
+      },
+    );
   };
+
+  const apiError = getErrorMessage();
 
   return (
     <Dialog isOpen={isOpen} onClose={onClose} title={t.createTask}>
@@ -151,6 +165,15 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
           </div>
         </div>
 
+        {apiError && (
+          <p
+            role="alert"
+            className="text-xs text-red-500 font-bold text-center mb-4 animate-pulse"
+          >
+            {apiError}
+          </p>
+        )}
+
         <div className="shrink-0 p-4 md:p-6 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 flex justify-end gap-3 mt-auto">
           <Button
             type="button"
@@ -160,8 +183,12 @@ export const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
           >
             {t.cancel}
           </Button>
-          <Button type="submit" className="max-md:flex-1">
-            {t.createTask}
+          <Button
+            type="submit"
+            className="max-md:flex-1"
+            disabled={createTaskMutation.isPending}
+          >
+            {createTaskMutation.isPending ? t.loading : t.createTask}
           </Button>
         </div>
       </form>

@@ -286,5 +286,6 @@ export const fa = {
   sharedTaskDesc: "توضیحات تسک",
   sharedNoDesc: "توضیحی برای این تسک ثبت نشده است.",
   sharedCloseInspection: "بستن جزئیات",
-  creationDate: "Created At",
+  creationDate: "ساخته  شده در:",
+  errorPausedProject: "امکان افزودن تسک به پروژه متوقف شده وجود ندارد.",
 };

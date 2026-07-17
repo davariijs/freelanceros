@@ -12,17 +12,17 @@ import {
   useUpdateTaskMutation,
   useDeleteTaskMutation,
   Task,
-} from "@/hooks/useTasks";
-import { useProjectsQuery } from "@/hooks/useProjects";
-import { Badge } from "@/components/atoms/Badge";
-import { EditableTextField } from "@/components/molecules/EditableTextField";
-import { PriorityPicker } from "@/components/molecules/PriorityPicker";
+} from "@/features/tasks/hooks/useTasks";
+import { useProjectsQuery } from "@/features/projects/hooks/useProjects";
+import { Badge } from "@/components/ui/Badge";
+import { EditableTextField } from "@/components/ui/EditableTextField";
+import { PriorityPicker } from "@/features/tasks/components/PriorityPicker";
 import { ArrowLeft, Trash2, Check, X } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useApp } from "@/context/AppContext";
-import { RichTextEditor } from "@/components/atoms/RichTextEditor";
-import { formatDateTimeStrict } from "@/utils/dateConverter";
+import { RichTextEditor } from "@/components/ui/RichTextEditor";
+import { formatDateTimeStrict } from "@/lib/dateConverter";
 
 export default function TaskDetailScreen() {
   const { taskId } = useLocalSearchParams<{ taskId: string }>();

@@ -1,23 +1,23 @@
 import * as React from "react";
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import { useApp } from "@/context/AppContext";
-import { CreateProjectSheet } from "@/components/organisms/CreateProjectSheet";
-import { EditProjectSheet } from "@/components/organisms/EditProjectSheet";
-import { SearchBar } from "@/components/molecules/SearchBar";
-import { useClientsQuery } from "@/hooks/useClients";
+import { CreateProjectSheet } from "@/features/projects/components/CreateProjectSheet";
+import { EditProjectSheet } from "@/features/projects/components/EditProjectSheet";
+import { SearchBar } from "@/components/ui/SearchBar";
+import { useClientsQuery } from "@/features/clients/hooks/useClients";
 import {
   useProjectsQuery,
   useCreateProjectMutation,
   useUpdateProjectMutation,
   useDeleteProjectMutation,
-} from "@/hooks/useProjects";
+} from "@/features/projects/hooks/useProjects";
 import { Plus, FolderGit2, Clock, Pencil, Search } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { cn } from "@/lib/utils";
 import * as Haptics from "expo-haptics";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { formatDateStrict } from "@/utils/dateConverter";
-import { BottomTabBar } from "@/components/molecules/BottomTabBar";
+import { formatDateStrict } from "@/lib/dateConverter";
+import { BottomTabBar } from "@/components/layout/BottomTabBar";
 
 export type ProjectStatus = "PLANNING" | "ACTIVE" | "COMPLETED" | "PAUSED";
 export type TaskPriority = "LOW" | "MEDIUM" | "HIGH";

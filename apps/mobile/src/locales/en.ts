@@ -137,4 +137,6 @@ export const en = {
   placeholderSearchClients: "Search clients...",
   placeholderSearchProjects: "Search projects...",
   placeholderSearchTasks: "Search tasks...",
+  errorPausedProject: "Cannot add tasks to a paused project.",
+  errorTitle: "Error",
 };

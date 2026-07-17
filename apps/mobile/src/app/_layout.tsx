@@ -5,7 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useNotifications } from "@/hooks/useNotifications";
 import { notificationService } from "@/services/notificationService";
-import { ErrorBoundary } from "@/components/organisms/ErrorBoundary";
+import { ErrorBoundary } from "@/components/layout/ErrorBoundary";
 import "../../global.css";
 import { AppProvider, useApp } from "@/context/AppContext";
 import { useColorScheme } from "react-native";

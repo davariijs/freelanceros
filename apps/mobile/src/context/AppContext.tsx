@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { en } from "@/locales/en";
 import { fa } from "@/locales/fa";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SettingsModal } from "@/components/organisms/SettingsModal";
+import { SettingsModal } from "@/features/settings/components/SettingsModal";
 
 type Theme = "light" | "dark" | "system";
 type Locale = "en" | "fa";

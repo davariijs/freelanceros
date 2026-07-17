@@ -43,10 +43,8 @@ export default function LoginScreen() {
 
   const { isCompatible, hasRecords, authenticateUser } = useBiometrics();
 
-  // ۱. پیکربندی بومی سرویس گوگل به محض لود شدن صفحه ورود
   React.useEffect(() => {
     GoogleSignin.configure({
-      // استفاده از شناسه کلاینت وب (Web Client ID) برای ارسال و تایید توکن در بک‌اند داکر
       webClientId:
         process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB ||
         "YOUR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com",

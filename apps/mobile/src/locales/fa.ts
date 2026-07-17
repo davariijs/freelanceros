@@ -140,4 +140,6 @@ export const fa = {
   placeholderSearchClients: "جستجوی مشتریان...",
   placeholderSearchProjects: "جستجوی پروژه‌ها...",
   placeholderSearchTasks: "جستجوی تسک ها...",
+  errorPausedProject: "امکان افزودن تسک به پروژه متوقف شده وجود ندارد.",
+  errorTitle: "خطا",
 };
