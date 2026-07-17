@@ -10,7 +10,11 @@ import { Select, SelectOption } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { z } from "zod";
-import { Task, TaskPriority } from "@/features/tasks/schemas/task.schema";
+import { Task } from "@/features/tasks/schemas/task.schema";
+import {
+  useUpdateTaskMutation,
+  useDeleteTaskMutation,
+} from "@/features/tasks/hooks/useTasks";
 import { useRouter } from "next/navigation";
 import { CalendarDays } from "lucide-react";
 
@@ -28,8 +32,6 @@ interface EditTaskModalProps {
   onClose: () => void;
   task: Task | null;
   projects: { id: string; title: string }[];
-  onUpdateTask: (id: string, data: any) => void;
-  onDeleteTask: (id: string) => void;
 }
 
 export const EditTaskModal: React.FC<EditTaskModalProps> = ({
@@ -37,12 +39,13 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
   onClose,
   task,
   projects,
-  onUpdateTask,
-  onDeleteTask,
 }) => {
   const { t, locale } = useApp();
   const router = useRouter();
   const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
+
+  const updateTaskMutation = useUpdateTaskMutation();
+  const deleteTaskMutation = useDeleteTaskMutation();
 
   const {
     control,
@@ -73,6 +76,18 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
       return createdAt;
     }
   }, [task, locale]);
+
+  const getErrorMessage = React.useCallback(() => {
+    const error = updateTaskMutation.error as {
+      response?: { data?: { message?: string } };
+      message?: string;
+    } | null;
+    if (!error) return null;
+    const serverMessage = error.response?.data?.message || error.message || "";
+    return serverMessage === "Cannot add tasks to a paused project."
+      ? t.errorPausedProject || serverMessage
+      : serverMessage;
+  }, [updateTaskMutation.error, t]);
 
   const priorityOptions: SelectOption[] = [
     { label: t.priorityLow, value: "LOW" },
@@ -110,14 +125,23 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
   if (!task) return null;
 
   const onSubmit = (data: EditTaskInput) => {
-    onUpdateTask(task.id, {
-      title: data.title,
-      description: data.description || "",
-      priority: data.priority,
-      projectId: data.projectId === "NONE" ? undefined : data.projectId,
-    });
-    onClose();
+    updateTaskMutation.mutate(
+      {
+        id: task.id,
+        title: data.title,
+        description: data.description || "",
+        priority: data.priority,
+        projectId: data.projectId === "NONE" ? undefined : data.projectId,
+      },
+      {
+        onSuccess: () => {
+          onClose();
+        },
+      },
+    );
   };
+
+  const apiError = getErrorMessage();
 
   return (
     <Dialog isOpen={isOpen} onClose={onClose} title={t.editTask}>
@@ -187,6 +211,15 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
           </div>
         </div>
 
+        {apiError && (
+          <p
+            role="alert"
+            className="text-xs text-red-500 font-bold text-center mb-4 animate-pulse"
+          >
+            {apiError}
+          </p>
+        )}
+
         <div className="shrink-0 p-4 md:p-6 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 mt-auto">
           {isConfirmingDelete ? (
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-3 bg-red-50 dark:bg-red-950/30 rounded-xl border border-red-100 dark:border-red-900/50">
@@ -204,13 +237,17 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
                 </Button>
                 <Button
                   type="button"
+                  disabled={deleteTaskMutation.isPending}
                   className="flex-1 sm:flex-none bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 border-transparent"
                   onClick={() => {
-                    onDeleteTask(task.id);
-                    onClose();
+                    deleteTaskMutation.mutate(task.id, {
+                      onSuccess: () => {
+                        onClose();
+                      },
+                    });
                   }}
                 >
-                  {t.delete}
+                  {deleteTaskMutation.isPending ? t.loading : t.delete}
                 </Button>
               </div>
             </div>
@@ -233,8 +270,12 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
                 >
                   {t.cancel}
                 </Button>
-                <Button type="submit" className="max-md:flex-1">
-                  {t.save}
+                <Button
+                  type="submit"
+                  className="max-md:flex-1"
+                  disabled={updateTaskMutation.isPending}
+                >
+                  {updateTaskMutation.isPending ? t.loading : t.save}
                 </Button>
               </div>
             </div>
