@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Keyboard,
   BackHandler,
+  Alert,
 } from "react-native";
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -78,8 +79,14 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
             onSuccess();
           },
           onError: (err: unknown) => {
-            const error = err as Error;
-            if (error?.message === "OFFLINE_SAVED") {
+            const error = err as {
+              response?: { data?: { message?: string } };
+              message?: string;
+            };
+            const serverMessage =
+              error.response?.data?.message || error.message;
+
+            if (serverMessage === "OFFLINE_SAVED") {
               Haptics.notificationAsync(
                 Haptics.NotificationFeedbackType.Success,
               );
@@ -88,6 +95,14 @@ export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
               onSuccess();
             } else {
               Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+              const localizedMessage =
+                serverMessage === "Cannot add tasks to a paused project."
+                  ? t.errorPausedProject || serverMessage
+                  : serverMessage;
+              Alert.alert(
+                t.errorTitle || "Error",
+                localizedMessage || "Failed to create task",
+              );
             }
           },
           onSettled: () => {
