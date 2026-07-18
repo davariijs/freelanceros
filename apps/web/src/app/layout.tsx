@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Vazirmatn } from "next/font/google";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { AppProvider } from "@/context/AppContext";
-import { GoogleOAuthProvider } from "@react-oauth/google";
+import { GoogleAuthProvider } from "@/providers/GoogleAuthProvider";
 import { cookies } from "next/headers";
 import "./globals.css";
 
@@ -46,14 +46,9 @@ export default async function RootLayout({
     >
       <body className="bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 antialiased">
         <QueryProvider>
-          <GoogleOAuthProvider
-            clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
-            locale={locale}
-          >
-            <AppProvider initialLocale={locale} initialTheme={theme}>
-              {children}
-            </AppProvider>
-          </GoogleOAuthProvider>
+          <AppProvider initialLocale={locale} initialTheme={theme}>
+            <GoogleAuthProvider>{children}</GoogleAuthProvider>
+          </AppProvider>
         </QueryProvider>
       </body>
     </html>
