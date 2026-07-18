@@ -77,6 +77,10 @@ export default function LoginScreen() {
 
         const success = await authenticateUser(t.biometricPrompt);
         if (success) {
+          const savedUser = await AsyncStorage.getItem("user");
+          if (savedUser) {
+            setUser(JSON.parse(savedUser));
+          }
           router.replace("/home");
         }
         setIsBiometricLoading(false);
@@ -134,6 +138,10 @@ export default function LoginScreen() {
 
     const success = await authenticateUser(t.biometricPrompt);
     if (success) {
+      const savedUser = await AsyncStorage.getItem("user");
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
       await AsyncStorage.removeItem("isAppLocked");
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.replace("/home");

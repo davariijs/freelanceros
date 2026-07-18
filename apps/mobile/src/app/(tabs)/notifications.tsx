@@ -9,7 +9,6 @@ import {
 import { useApp } from "@/context/AppContext";
 import { useProjectsQuery } from "@/features/projects/hooks/useProjects";
 import { formatDateStrict, toPersianDigits } from "@/lib/dateConverter";
-import { BottomTabBar } from "@/components/layout/BottomTabBar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Bell, AlertTriangle, BellRing, Info } from "lucide-react-native";
 
@@ -140,8 +139,6 @@ export default function NotificationsScreen() {
             </ScrollView>
           )}
         </View>
-
-        <BottomTabBar />
       </View>
     </SafeAreaView>
   );

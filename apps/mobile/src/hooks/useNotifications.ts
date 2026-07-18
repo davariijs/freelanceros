@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";

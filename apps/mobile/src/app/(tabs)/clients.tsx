@@ -29,7 +29,6 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { BottomTabBar } from "@/components/layout/BottomTabBar";
 
 export default function ClientsScreen() {
   const { t, theme, showToast } = useApp();
@@ -325,8 +324,6 @@ export default function ClientsScreen() {
           onDeleteClient={handleDeleteClient}
         />
       </View>
-
-      <BottomTabBar />
     </View>
   );
 }

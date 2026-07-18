@@ -23,8 +23,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useApp } from "@/context/AppContext";
 import { widgetSync } from "@/services/widgetSync";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import { BottomTabBar } from "@/components/layout/BottomTabBar";
 import { notificationService } from "@/services/notificationService";
+import { secureStore } from "@/services/secureStore";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -84,6 +84,7 @@ export default function HomeScreen() {
     } catch (e) {
       console.log("Google SignOut info:", e);
     }
+    await secureStore.clearTokens();
     await AsyncStorage.removeItem("user");
     setUser(null);
     await AsyncStorage.setItem("isAppLocked", "true");
@@ -259,8 +260,6 @@ export default function HomeScreen() {
 
         <QuickAddSheet ref={quickAddSheetRef} onSuccess={handleCloseQuickAdd} />
       </View>
-
-      <BottomTabBar />
     </View>
   );
 }
