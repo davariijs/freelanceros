@@ -17,7 +17,6 @@ import { cn } from "@/lib/utils";
 import * as Haptics from "expo-haptics";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { formatDateStrict } from "@/lib/dateConverter";
-import { BottomTabBar } from "@/components/layout/BottomTabBar";
 
 export type ProjectStatus = "PLANNING" | "ACTIVE" | "COMPLETED" | "PAUSED";
 export type TaskPriority = "LOW" | "MEDIUM" | "HIGH";
@@ -307,8 +306,6 @@ export default function ProjectsScreen() {
           onDeleteProject={handleDeleteProject}
         />
       </View>
-
-      <BottomTabBar />
     </View>
   );
 }

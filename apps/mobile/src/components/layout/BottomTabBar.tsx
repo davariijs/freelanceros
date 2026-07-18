@@ -1,14 +1,29 @@
 import * as React from "react";
 import { View, TouchableOpacity, useColorScheme } from "react-native";
-import { useRouter, usePathname } from "expo-router";
 import { useApp, settingsModalTrigger } from "@/context/AppContext";
 import { Home, Users, FolderGit2, Bell, Settings } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 
-export function BottomTabBar() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const { theme, t } = useApp();
+interface BottomTabRoute {
+  name: string;
+}
+
+interface BottomTabState {
+  index: number;
+  routes: BottomTabRoute[];
+}
+
+interface BottomTabNavigation {
+  navigate: (routeName: string) => void;
+}
+
+interface BottomTabBarProps {
+  state: BottomTabState;
+  navigation: BottomTabNavigation;
+}
+
+export function BottomTabBar({ state, navigation }: BottomTabBarProps) {
+  const { theme } = useApp();
   const systemTheme = useColorScheme();
   const isDark = theme === "system" ? systemTheme === "dark" : theme === "dark";
 
@@ -17,11 +32,14 @@ export function BottomTabBar() {
     if (isSettings) {
       settingsModalTrigger.open();
     } else {
-      router.replace(route as any);
+      navigation.navigate(route);
     }
   };
 
-  const isTabActive = (route: string) => pathname === route;
+  const isTabActive = (route: string) => {
+    const activeRoute = state.routes[state.index];
+    return activeRoute.name === route;
+  };
 
   const activeColor = "#10b981";
   const inactiveColor = "#737373";
@@ -35,42 +53,42 @@ export function BottomTabBar() {
       }`}
     >
       <TouchableOpacity
-        onPress={() => handleTabPress("/clients")}
+        onPress={() => handleTabPress("clients")}
         className="items-center justify-center flex-1 py-1"
       >
         <Users
           size={18}
-          color={isTabActive("/clients") ? activeColor : inactiveColor}
+          color={isTabActive("clients") ? activeColor : inactiveColor}
         />
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={() => handleTabPress("/projects")}
+        onPress={() => handleTabPress("projects")}
         className="items-center justify-center flex-1 py-1"
       >
         <FolderGit2
           size={18}
-          color={isTabActive("/projects") ? activeColor : inactiveColor}
+          color={isTabActive("projects") ? activeColor : inactiveColor}
         />
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={() => handleTabPress("/home")}
+        onPress={() => handleTabPress("home")}
         className="items-center justify-center flex-1 py-1"
       >
         <Home
           size={18}
-          color={isTabActive("/home") ? activeColor : inactiveColor}
+          color={isTabActive("home") ? activeColor : inactiveColor}
         />
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={() => handleTabPress("/notifications")}
+        onPress={() => handleTabPress("notifications")}
         className="items-center justify-center flex-1 py-1"
       >
         <Bell
           size={18}
-          color={isTabActive("/notifications") ? activeColor : inactiveColor}
+          color={isTabActive("notifications") ? activeColor : inactiveColor}
         />
       </TouchableOpacity>
 

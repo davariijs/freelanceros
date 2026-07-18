@@ -68,7 +68,7 @@ function AppContent() {
         <Stack.Screen name="register" />
         <Stack.Screen name="register-verify" />
         <Stack.Screen name="forgot-password" />
-        <Stack.Screen name="home" />
+        <Stack.Screen name="(tabs)" />
         <Stack.Screen name="tasks/[taskId]" />
         <Stack.Screen name="quick-add" />
       </Stack>

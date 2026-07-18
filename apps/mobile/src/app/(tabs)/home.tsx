@@ -23,7 +23,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useApp } from "@/context/AppContext";
 import { widgetSync } from "@/services/widgetSync";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import { BottomTabBar } from "@/components/layout/BottomTabBar";
 import { notificationService } from "@/services/notificationService";
 
 export default function HomeScreen() {
@@ -259,8 +258,6 @@ export default function HomeScreen() {
 
         <QuickAddSheet ref={quickAddSheetRef} onSuccess={handleCloseQuickAdd} />
       </View>
-
-      <BottomTabBar />
     </View>
   );
 }
