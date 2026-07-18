@@ -55,7 +55,7 @@ export function FloatingActions({ osState }: FloatingActionsProps) {
         size="sm"
         className="h-8 w-8 p-0 rounded-full hover:bg-neutral-200/30 dark:hover:bg-neutral-800/30 flex items-center justify-center transition-colors cursor-pointer text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 font-extrabold text-[9px]"
       >
-        {locale === "en" ? "FA" : "EN"}
+        {locale === "en" ? "EN" : "FA"}
       </Button>
 
       <div className="w-5 h-px bg-neutral-200/10 dark:bg-neutral-800/10 self-center" />

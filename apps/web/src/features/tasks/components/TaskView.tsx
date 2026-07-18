@@ -2,23 +2,14 @@
 
 import * as React from "react";
 import { KanbanBoard } from "@/features/tasks/components/KanbanBoard";
-import {
-  useTasksQuery,
-  useCreateTaskMutation,
-  useUpdateTaskMutation,
-  useDeleteTaskMutation,
-} from "@/features/tasks/hooks/useTasks";
+import { useTasksQuery } from "@/features/tasks/hooks/useTasks";
 import { useProjectsQuery } from "@/features/projects/hooks/useProjects";
 import { useApp } from "@/context/AppContext";
 import { Button } from "@/components/ui/Button";
 import { CreateTaskModal } from "@/features/tasks/components/CreateTaskModal";
 import { EditTaskModal } from "@/features/tasks/components/EditTaskModal";
 import { Select } from "@/components/ui/Select";
-import {
-  Task,
-  TaskPriority,
-  TaskStatus,
-} from "@/features/tasks/schemas/task.schema";
+import { Task } from "@/features/tasks/schemas/task.schema";
 import { Plus } from "lucide-react";
 
 export default function TaskView() {
@@ -26,39 +17,9 @@ export default function TaskView() {
   const { data: tasks = [], isLoading } = useTasksQuery();
   const { data: projects = [] } = useProjectsQuery();
 
-  const createTaskMutation = useCreateTaskMutation();
-  const updateTaskMutation = useUpdateTaskMutation();
-  const deleteTaskMutation = useDeleteTaskMutation();
-
   const [isCreateOpen, setIsCreateOpen] = React.useState(false);
   const [selectedTask, setSelectedTask] = React.useState<Task | null>(null);
   const [projectFilter, setProjectFilter] = React.useState("ALL");
-
-  const handleCreateTask = (data: {
-    title: string;
-    description: string;
-    priority: TaskPriority;
-    status: TaskStatus;
-    projectId?: string;
-  }) => {
-    createTaskMutation.mutate(data);
-  };
-
-  const handleUpdateTask = (
-    id: string,
-    data: {
-      title: string;
-      description: string;
-      priority: TaskPriority;
-      projectId?: string;
-    },
-  ) => {
-    updateTaskMutation.mutate({ id, ...data });
-  };
-
-  const handleDeleteTask = (id: string) => {
-    deleteTaskMutation.mutate(id);
-  };
 
   const filteredTasks = React.useMemo(() => {
     return tasks.filter((task) => {
@@ -118,7 +79,6 @@ export default function TaskView() {
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
         projects={projects}
-        onSubmitTask={handleCreateTask}
       />
 
       <EditTaskModal
@@ -126,8 +86,6 @@ export default function TaskView() {
         onClose={() => setSelectedTask(null)}
         task={selectedTask}
         projects={projects}
-        onUpdateTask={handleUpdateTask}
-        onDeleteTask={handleDeleteTask}
       />
     </div>
   );

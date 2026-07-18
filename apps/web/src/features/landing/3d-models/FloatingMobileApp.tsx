@@ -150,7 +150,7 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
   const phoneRef = React.useRef<THREE.Group>(null);
   const scrollProgressRef = React.useRef(0);
 
-  const logoTexture = useTexture("/svg/logo.svg");
+  const logoTexture = useTexture("/image/freeos-logo.png");
 
   const positionsRef = React.useMemo(() => {
     return {
@@ -381,4 +381,4 @@ export function FloatingMobileApp({ osState }: FloatingMobileAppProps) {
   );
 }
 
-useTexture.preload("/svg/logo.svg");
+useTexture.preload("/image/freeos-logo.png");
