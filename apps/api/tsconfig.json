@@ -2,7 +2,7 @@
   "extends": "@freelanceos/ts-config/node",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./",
     "module": "node16",
     "moduleResolution": "node16",
     "esModuleInterop": true,
@@ -17,9 +17,10 @@
     "types": ["node", "jest"],
     "ignoreDeprecations": "5.0",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@freelanceos/database": ["../../packages/database/src/index.ts"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../../packages/database/src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
