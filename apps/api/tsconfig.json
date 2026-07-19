@@ -18,7 +18,7 @@
     "ignoreDeprecations": "5.0",
     "paths": {
       "@/*": ["./src/*"],
-      "@freelanceos/database": ["../../packages/database/src/index.ts"]
+      "@freelanceos/database": ["../../packages/database/index.ts"]
     }
   },
   "include": ["src/**/*"],
