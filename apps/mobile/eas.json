@@ -20,6 +20,7 @@
       }
     },
     "production-apk": {
+      "environment": "production",
       "android": {
         "buildType": "apk"
       }

@@ -8,8 +8,21 @@ import { errorHandlerMiddleware } from './middleware/errorHandler';
 
 export const app: Application = express();
 
-app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-cron-key'],
+    credentials: true,
+  }),
+);
+
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  }),
+);
+
 app.use(pinoHttp());
 app.use(express.json());
 
