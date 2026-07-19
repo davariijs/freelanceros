@@ -5,7 +5,7 @@
   "main": "./dist/server.js",
   "scripts": {
     "dev": "ts-node -r tsconfig-paths/register src/server.ts",
-    "build": "npx esbuild src/server.ts --bundle --platform=node --target=node20 --outfile=dist/server.js --external:pg-native --external:@prisma/client",
+    "build": "npx esbuild src/server.ts --bundle --platform=node --target=node20 --outfile=dist/server.js --external:pg-native",
     "start": "node dist/server.js",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",

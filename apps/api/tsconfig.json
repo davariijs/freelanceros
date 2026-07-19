@@ -17,8 +17,7 @@
     "types": ["node", "jest"],
     "ignoreDeprecations": "5.0",
     "paths": {
-      "@/*": ["./src/*"],
-      "@freelanceos/database": ["../../packages/database/index.ts"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*"],
