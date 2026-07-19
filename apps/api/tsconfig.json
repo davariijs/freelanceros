@@ -2,7 +2,7 @@
   "extends": "@freelanceos/ts-config/node",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./",
+    "rootDir": "./src",
     "module": "node16",
     "moduleResolution": "node16",
     "esModuleInterop": true,
@@ -21,6 +21,6 @@
       "@freelanceos/database": ["../../packages/database/src/index.ts"]
     }
   },
-  "include": ["src/**/*", "../../packages/database/src/**/*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
