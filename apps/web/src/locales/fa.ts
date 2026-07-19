@@ -14,7 +14,7 @@ export const fa = {
   loginButton: "ورود به حساب",
   emailRequired: "آدرس ایمیل معتبر نیست",
   passwordRequired: "رمز عبور باید حداقل ۶ کاراکتر باشد",
-  loading: "در حال ورود...",
+  loading: "...",
   loginTitle: "ورود به کنسول مدیریت",
   loginDescription: "برای دسترسی به کنسول مدیریت وارد حساب خود شوید.",
   todaysTasks: "کارهای امروز",

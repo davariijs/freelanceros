@@ -28,8 +28,8 @@ import { secureStore } from "@/services/secureStore";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { t, theme, isCommandOpen, setIsCommandOpen, user, setUser } = useApp();
-  const isDark = theme === "dark";
+  const { t, isDark, isCommandOpen, setIsCommandOpen, user, setUser } =
+    useApp();
   const insets = useSafeAreaInsets();
 
   const { data: tasks = [], isLoading, refetch } = useTasksQuery();

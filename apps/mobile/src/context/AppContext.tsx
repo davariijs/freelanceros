@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View } from "react-native";
+import { View, useColorScheme } from "react-native";
 import { en } from "@/locales/en";
 import { fa } from "@/locales/fa";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -35,6 +35,7 @@ interface AppContextType {
   setIsSettingsOpen: (open: boolean) => void;
   user: UserProfile | null;
   setUser: (user: UserProfile | null) => void;
+  isDark: boolean;
 }
 
 const AppContext = React.createContext<AppContextType | undefined>(undefined);
@@ -62,6 +63,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({
   const [toast, setToast] = React.useState<ToastState | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = React.useState<boolean>(false);
   const [user, setUser] = React.useState<UserProfile | null>(null);
+
+  const systemTheme = useColorScheme();
+  const isDark = theme === "system" ? systemTheme === "dark" : theme === "dark";
 
   const t = locale === "en" ? en : fa;
   const dir = locale === "fa" ? "rtl" : "ltr";
@@ -137,6 +141,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({
         setIsSettingsOpen,
         user,
         setUser,
+        isDark,
       }}
     >
       <View style={{ flex: 1 }}>{children}</View>

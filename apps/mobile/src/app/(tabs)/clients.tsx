@@ -31,8 +31,7 @@ import * as Haptics from "expo-haptics";
 import BottomSheet from "@gorhom/bottom-sheet";
 
 export default function ClientsScreen() {
-  const { t, theme, showToast } = useApp();
-  const isDark = theme === "dark";
+  const { t, isDark, showToast } = useApp();
   const insets = useSafeAreaInsets();
 
   const createSheetRef = React.useRef<BottomSheet>(null);

@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  useColorScheme,
   ActivityIndicator,
 } from "react-native";
 import { useApp } from "@/context/AppContext";
@@ -13,9 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Bell, AlertTriangle, BellRing, Info } from "lucide-react-native";
 
 export default function NotificationsScreen() {
-  const { t, theme, locale } = useApp();
-  const systemTheme = useColorScheme();
-  const isDark = theme === "system" ? systemTheme === "dark" : theme === "dark";
+  const { t, isDark, locale } = useApp();
   const isJalali = locale === "fa";
 
   const { data: projects = [], isLoading } = useProjectsQuery();

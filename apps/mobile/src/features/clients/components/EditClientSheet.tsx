@@ -18,6 +18,7 @@ import BottomSheet, {
   BottomSheetScrollView,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
+import { cn } from "@/lib/utils";
 
 export type ClientStatus = "ACTIVE" | "INACTIVE";
 
@@ -322,7 +323,12 @@ export const EditClientSheet = React.forwardRef<
                   isDark={isDark}
                 >
                   <Plus size={12} color={isDark ? "white" : "#000000"} />
-                  <Text className="text-[10px] font-bold">
+                  <Text
+                    className={cn(
+                      "text-[10px] font-bold",
+                      isDark ? "text-neutral-300" : "text-neutral-700",
+                    )}
+                  >
                     {t.addSocial || "Add"}
                   </Text>
                 </Button>

@@ -14,7 +14,7 @@ export const en = {
   loginButton: "Sign In",
   emailRequired: "Invalid email address",
   passwordRequired: "Password must be at least 6 characters",
-  loading: "Signing in...",
+  loading: "...",
   loginTitle: "Sign in to Workspace",
   loginDescription: "Sign in to access your administrative console.",
   todaysTasks: "Today's Tasks",
