@@ -24,8 +24,7 @@ export const TodayTasksList: React.FC<TodayTasksListProps> = ({
   onUpdateStatus,
   onTaskPress,
 }) => {
-  const { t, theme } = useApp();
-  const isDark = theme === "dark";
+  const { t, isDark } = useApp();
 
   const listRef = React.useRef<any>(null);
   const prevFirstTaskId = React.useRef<string | null>(null);

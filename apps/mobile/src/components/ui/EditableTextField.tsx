@@ -1,10 +1,5 @@
 import * as React from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { Check, Edit2 } from "lucide-react-native";
 import { useApp } from "@/context/AppContext";
 
@@ -19,8 +14,7 @@ export const EditableTextField: React.FC<EditableTextFieldProps> = ({
   onSave,
   placeholder,
 }) => {
-  const { theme } = useApp();
-  const isDark = theme === "dark";
+  const { isDark } = useApp();
   const [isEditing, setIsEditing] = React.useState<boolean>(false);
   const [inputValue, setInputValue] = React.useState<string>(value);
 

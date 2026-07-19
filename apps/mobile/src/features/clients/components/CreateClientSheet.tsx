@@ -57,8 +57,7 @@ export const CreateClientSheet = React.forwardRef<
   BottomSheet,
   CreateClientSheetProps
 >(({ onSuccess, onSubmitClient }, ref) => {
-  const { t, theme } = useApp();
-  const isDark = theme === "dark";
+  const { t, isDark } = useApp();
   const [isOpen, setIsOpen] = React.useState(false);
 
   const createClientSchema = React.useMemo(() => getCreateClientSchema(t), [t]);
