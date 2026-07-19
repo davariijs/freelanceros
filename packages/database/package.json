@@ -29,7 +29,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "db:generate": "prisma generate",
+    "db:generate": "prisma generate && node scripts/patch-prisma-esm.js",
     "db:migrate": "prisma migrate dev --name ",
     "test": "jest",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx"
