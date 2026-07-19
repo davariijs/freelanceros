@@ -5,7 +5,11 @@
       "src": "src/server.ts",
       "use": "@vercel/node",
       "config": {
-        "bundle": true
+        "bundle": true,
+        "includeFiles": [
+          "../../node_modules/.prisma/client/**",
+          "../../packages/database/dist/**"
+        ]
       }
     }
   ],
