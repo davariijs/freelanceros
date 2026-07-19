@@ -52,8 +52,7 @@ export const EditClientSheet = React.forwardRef<
   BottomSheet,
   EditClientSheetProps
 >(({ onSuccess, client, onUpdateClient, onDeleteClient }, ref) => {
-  const { t, theme, showToast } = useApp();
-  const isDark = theme === "dark";
+  const { t, isDark, showToast } = useApp();
   const [isOpen, setIsOpen] = React.useState(false);
   const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
 

@@ -42,8 +42,7 @@ export const CreateProjectSheet = React.forwardRef<
   BottomSheet,
   CreateProjectSheetProps
 >(({ onSuccess, clients = [], onSubmitProject }, ref) => {
-  const { t, theme } = useApp();
-  const isDark = theme === "dark";
+  const { t, isDark } = useApp();
   const [isOpen, setIsOpen] = React.useState(false);
 
   const {

@@ -47,8 +47,7 @@ export const EditProjectSheet = React.forwardRef<
     { onSuccess, project, clients = [], onUpdateProject, onDeleteProject },
     ref,
   ) => {
-    const { t, theme, showToast, locale } = useApp();
-    const isDark = theme === "dark";
+    const { t, isDark, showToast, locale } = useApp();
     const isJalali = locale === "fa";
     const [isOpen, setIsOpen] = React.useState(false);
     const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);

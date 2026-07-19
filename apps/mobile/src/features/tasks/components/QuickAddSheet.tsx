@@ -26,8 +26,7 @@ interface QuickAddSheetProps {
 
 export const QuickAddSheet = React.forwardRef<BottomSheet, QuickAddSheetProps>(
   ({ onSuccess }, ref) => {
-    const { t, theme, isCommandOpen } = useApp();
-    const isDark = theme === "dark";
+    const { t, isDark, isCommandOpen } = useApp();
 
     const [title, setTitle] = React.useState("");
     const [selectedProjectId, setSelectedProjectId] = React.useState<

@@ -21,8 +21,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   placeholder = "Select date",
   required,
 }) => {
-  const { dir, locale, theme } = useApp();
-  const isDark = theme === "dark";
+  const { dir, locale, isDark } = useApp();
   const [isOpen, setIsOpen] = React.useState(false);
   const [viewYear, setViewYear] = React.useState(0);
   const [viewMonth, setViewMonth] = React.useState(0);
