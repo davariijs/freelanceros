@@ -6,6 +6,8 @@ import { taskRouter } from '../routes/task.routes';
 import { noteRouter } from '../routes/note.routes';
 import { activityRouter } from '../routes/activity.routes';
 import { sharedRouter } from '../routes/shared.routers';
+import { cronRoutes } from '../routes/cron.routes';
+
 
 const router: Router = Router();
 
@@ -38,5 +40,6 @@ router.use('/tasks', taskRouter);
 router.use('/notes', noteRouter);
 router.use('/activity-logs', activityRouter);
 router.use('/shared', sharedRouter);
+router.use('/cron', cronRoutes);
 
 export { router as apiRoutes };
