@@ -22,8 +22,7 @@ export type ProjectStatus = "PLANNING" | "ACTIVE" | "COMPLETED" | "PAUSED";
 export type TaskPriority = "LOW" | "MEDIUM" | "HIGH";
 
 export default function ProjectsScreen() {
-  const { t, theme, locale } = useApp();
-  const isDark = theme === "dark";
+  const { t, isDark, locale } = useApp();
   const isJalali = locale === "fa";
   const insets = useSafeAreaInsets();
 
