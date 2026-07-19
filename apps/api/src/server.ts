@@ -3,7 +3,7 @@ dotenv.config();
 
 import { app } from './app';
 import { logger } from './utils/logger';
-import { cronService } from '@/services/cronService';
+import { cronService } from './services/cronService';
 
 const PORT = process.env.PORT || 3000;
 

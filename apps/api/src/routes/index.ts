@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { authRouter } from '@/routes/auth.routes';
-import { clientRouter } from '@/routes/client.routes';
-import { projectRouter } from '@/routes/project.routes';
-import { taskRouter } from '@/routes/task.routes';
-import { noteRouter } from '@/routes/note.routes';
-import { activityRouter } from '@/routes/activity.routes';
-import { sharedRouter } from '@/routes/shared.routers';
+import { authRouter } from '../routes/auth.routes';
+import { clientRouter } from '../routes/client.routes';
+import { projectRouter } from '../routes/project.routes';
+import { taskRouter } from '../routes/task.routes';
+import { noteRouter } from '../routes/note.routes';
+import { activityRouter } from '../routes/activity.routes';
+import { sharedRouter } from '../routes/shared.routers';
 
 const router: Router = Router();
 

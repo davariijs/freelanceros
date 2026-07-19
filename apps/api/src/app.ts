@@ -1,12 +1,12 @@
-import express, { Express } from 'express';
+import express, { Application } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import pinoHttp from 'pino-http';
 import 'express-async-errors';
-import { apiRoutes } from '@/routes';
-import { errorHandlerMiddleware } from '@/middleware/errorHandler';
+import { apiRoutes } from './routes';
+import { errorHandlerMiddleware } from './middleware/errorHandler';
 
-export const app: Express = express();
+export const app: Application = express();
 
 app.use(helmet());
 app.use(cors());
