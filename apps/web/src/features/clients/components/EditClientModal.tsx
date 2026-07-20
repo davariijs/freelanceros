@@ -10,7 +10,7 @@ import { Select, SelectOption } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { Trash2, Copy, Plus, CalendarDays } from "lucide-react";
 import { z } from "zod";
-import { ClientStatus } from "@freelanceos/database";
+import { ClientStatus } from "@/features/clients/schemas/client.schema";
 
 const editClientSchema = (t: any) =>
   z.object({
