@@ -45,13 +45,11 @@
       <b>📱 Mobile Native App</b>
       <br/><br/>
       <img src="./assets/images/mobile.jpg" width="50%" alt="Mobile App Preview" />
-      <p><i>(Replace with your Mobile Native App Screenshot)</i></p>
     </td>
     <td width="50%" align="center" valign="top">
       <b>🔋 Home Screen Widget</b>
       <br/><br/>
       <img src="./assets/images/widget.jpg" width="50%" alt="Native Widget Preview" />
-      <p><i>(Replace with your Android/iOS Native Widget Screenshot)</i></p>
     </td>
   </tr>
 </table>
