@@ -99,7 +99,7 @@ export default function ProjectsView() {
         </div>
         <Button
           onClick={() => setIsCreateOpen(true)}
-          className="flex items-center gap-1.5 sm:self-start"
+          className="flex items-center gap-1.5 sm:self-start shrink-0 whitespace-nowrap"
         >
           <Plus className="h-4 w-4" />
           {t.createProject}
