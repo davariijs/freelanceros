@@ -153,7 +153,7 @@ export const EditProjectSheet = React.forwardRef<
     const handleCopyLink = async () => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       if (shareToken) {
-        const fullUrl = `https://freelanceos.com/shared/${shareToken}`;
+        const fullUrl = `https://freeos-web.vercel.app/shared/${shareToken}`;
         try {
           await Share.share({
             message: fullUrl,
