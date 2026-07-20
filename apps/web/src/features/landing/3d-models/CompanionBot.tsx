@@ -73,8 +73,8 @@ export function CompanionBot({ osState }: CompanionBotProps) {
 
     const curFactor = stateFactorRef.current;
 
-    let activePos = new THREE.Vector3();
-    let activeRot = new THREE.Euler();
+    const activePos = new THREE.Vector3();
+    const activeRot = new THREE.Euler();
 
     if (curFactor < 0.33) {
       const segmentT = curFactor / 0.33;

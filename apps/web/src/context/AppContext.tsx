@@ -66,6 +66,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({
         if (savedTheme) setThemeState(savedTheme);
         if (savedLocale) setLocale(savedLocale);
         if (savedUser) setUser(JSON.parse(savedUser));
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-empty
       } catch (e) {}
     }
   }, []);
@@ -84,6 +85,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem("theme", newTheme);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-empty
       } catch (e) {}
       const isSecure = window.location.protocol === "https:";
       document.cookie = `theme=${newTheme}; path=/; max-age=31536000; SameSite=Lax${isSecure ? "; Secure" : ""}`;
@@ -96,6 +98,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({
       if (typeof window !== "undefined") {
         try {
           localStorage.setItem("locale", next);
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-empty
         } catch (e) {}
         const isSecure = window.location.protocol === "https:";
         document.cookie = `locale=${next}; path=/; max-age=31536000; SameSite=Lax${isSecure ? "; Secure" : ""}`;

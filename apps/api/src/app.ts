@@ -8,7 +8,6 @@ import { errorHandlerMiddleware } from './middleware/errorHandler';
 
 export const app: Application = express();
 
-
 app.use(
   cors({
     origin: true,

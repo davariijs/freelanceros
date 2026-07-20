@@ -24,7 +24,7 @@ export const jwtService = {
   verifyAccessToken: (token: string): jwt.JwtPayload | string | null => {
     try {
       return jwt.verify(token, JWT_SECRET);
-    } catch (error) {
+    } catch {
       return null;
     }
   },
@@ -32,7 +32,7 @@ export const jwtService = {
   verifyRefreshToken: (token: string): jwt.JwtPayload | string | null => {
     try {
       return jwt.verify(token, REFRESH_SECRET);
-    } catch (error) {
+    } catch {
       return null;
     }
   },

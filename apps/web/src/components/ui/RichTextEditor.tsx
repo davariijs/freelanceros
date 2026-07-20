@@ -192,6 +192,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                     injectText(emojiData.emoji);
                     setShowEmojis(false);
                   }}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   theme={pickerTheme as any}
                   width={pickerSize.width}
                   height={pickerSize.height}

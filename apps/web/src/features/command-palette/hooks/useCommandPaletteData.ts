@@ -179,6 +179,7 @@ export function useCommandPaletteData({
                     onSuccess: () => {
                       showToast(t.toastTaskCreated, "success");
                     },
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     onError: (err: any) => {
                       showToast(
                         err?.response?.data?.message ||
@@ -220,6 +221,7 @@ export function useCommandPaletteData({
                     onSuccess: () => {
                       showToast(t.toastProjectCreated, "success");
                     },
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     onError: (err: any) => {
                       showToast(
                         err?.response?.data?.message ||

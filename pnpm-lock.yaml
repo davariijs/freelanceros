@@ -411,8 +411,8 @@ importers:
         specifier: ^10.5.0
         version: 10.5.2(postcss@8.5.16)
       eslint:
-        specifier: ^9.39.4
-        version: 9.39.4(jiti@2.7.0)
+        specifier: ^8.57.1
+        version: 8.57.1
       jest:
         specifier: ^30.4.2
         version: 30.4.2(@types/node@26.1.0)(ts-node@10.9.2(@types/node@26.1.0)(typescript@5.9.3))

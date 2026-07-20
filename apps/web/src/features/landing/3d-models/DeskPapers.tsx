@@ -4,15 +4,12 @@ import * as React from "react";
 import { useFrame } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import * as THREE from "three";
-import { useApp } from "@/context/AppContext";
 
 interface DeskPapersProps {
   osState: 0 | 1 | 2 | 3 | 4 | 5;
 }
 
 export function DeskPapers({ osState }: DeskPapersProps) {
-  const { t } = useApp();
-
   const card1Ref = React.useRef<THREE.Group>(null);
   const card2Ref = React.useRef<THREE.Group>(null);
   const card3Ref = React.useRef<THREE.Group>(null);

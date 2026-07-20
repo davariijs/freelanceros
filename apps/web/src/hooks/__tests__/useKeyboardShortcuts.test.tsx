@@ -1,7 +1,7 @@
 import React from "react";
 import { render, fireEvent } from "@/testing/test-utils";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const KeyboardTestComponent = ({ options }: { options: any }) => {
   useKeyboardShortcuts(options);
   return (
@@ -13,6 +13,7 @@ const KeyboardTestComponent = ({ options }: { options: any }) => {
 };
 
 describe("useKeyboardShortcuts Hook", () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockOptions: any;
 
   beforeEach(() => {

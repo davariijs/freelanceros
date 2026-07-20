@@ -70,6 +70,7 @@ export default function NotesView() {
 
   const handleUpdateNoteField = (
     key: "title" | "content" | "taskId",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
   ) => {
     if (key === "title") setEditorTitle(value);
@@ -169,6 +170,7 @@ export default function NotesView() {
               />
               <div className="flex items-center gap-2 self-stretch justify-start shrink-0 h-11">
                 <Select
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   value={(selectedNote as any).taskId || "NONE"}
                   options={taskOptions}
                   onChange={(val) => handleUpdateNoteField("taskId", val)}

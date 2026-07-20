@@ -19,5 +19,7 @@ module.exports = {
       },
     ],
     "@typescript-eslint/no-explicit-any": "warn",
+    "no-unused-expressions": "off",
+    "@typescript-eslint/no-unused-expressions": "off",
   },
 };

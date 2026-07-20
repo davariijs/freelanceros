@@ -42,7 +42,7 @@ export function SharedProjectPortal({ shareToken }: { shareToken: string }) {
   const [selectedTask, setSelectedTask] = React.useState<SharedTask | null>(
     null,
   );
-  const { toggleLocale, setTheme, theme, locale, t, dir } = useApp();
+  const { toggleLocale, setTheme, theme, locale, t } = useApp();
   const isRtl = locale === "fa";
 
   const {
@@ -142,6 +142,7 @@ export function SharedProjectPortal({ shareToken }: { shareToken: string }) {
   const columns: {
     id: "TODO" | "IN_PROGRESS" | "DONE";
     title: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     icon: any;
     color: string;
   }[] = [

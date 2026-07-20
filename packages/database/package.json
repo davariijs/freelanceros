@@ -31,6 +31,7 @@
     "build": "tsc",
     "db:generate": "prisma generate && node scripts/patch-prisma-esm.js",
     "db:migrate": "prisma migrate dev --name ",
+    "db:migrate:deploy": "prisma migrate deploy",
     "test": "jest",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx"
   }

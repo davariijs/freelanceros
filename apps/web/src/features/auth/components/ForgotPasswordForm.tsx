@@ -29,6 +29,7 @@ export const ForgotPasswordForm: React.FC = () => {
     onSuccess: () => {
       setStep("RESET");
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (err: any) => {
       const rawMsg = err.response?.data?.message || err.message || "";
       if (rawMsg === "No user registered with this email") {
@@ -40,6 +41,7 @@ export const ForgotPasswordForm: React.FC = () => {
   });
 
   const verifyMutation = useMutation({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutationFn: async (data: any) => {
       const res = await apiClient.post("/auth/reset-verify", data);
       return res.data;
@@ -47,6 +49,7 @@ export const ForgotPasswordForm: React.FC = () => {
     onSuccess: () => {
       setStep("SUCCESS");
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (err: any) => {
       setErrorMsg(err.response?.data?.message || "Reset failed");
     },

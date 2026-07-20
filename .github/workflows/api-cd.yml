@@ -1,0 +1,40 @@
+name: API CI/CD
+
+on:
+  push:
+    paths:
+      - "apps/api/**"
+      - "packages/database/**"
+    branches:
+      - main
+  pull_request:
+    paths:
+      - "apps/api/**"
+      - "packages/database/**"
+    branches:
+      - main
+
+jobs:
+  database-migrate-and-test:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm --filter @freelanceos/database db:generate
+
+      - run: pnpm --filter @freelanceos/database db:migrate:deploy
+
+      - run: pnpm --filter @freelanceos/api test

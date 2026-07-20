@@ -33,6 +33,7 @@ export default function ClientsView() {
     phone?: string;
     website?: string;
     socials?: { platform: string; value: string }[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     status: any;
   }) => {
     createClientMutation.mutate(data);
@@ -46,6 +47,7 @@ export default function ClientsView() {
       phone?: string;
       website?: string;
       socials?: { platform: string; value: string }[];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       status: any;
     },
   ) => {

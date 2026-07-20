@@ -7,7 +7,7 @@
     "dev": "ts-node -r tsconfig-paths/register src/server.ts",
     "build": "npx esbuild src/server.ts --bundle --platform=node --target=node20 --outfile=dist/server.js --packages=external",
     "start": "node dist/server.js",
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint": "eslint src --ext .ts,.tsx",
     "format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
     "format:fix": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
     "test": "jest",

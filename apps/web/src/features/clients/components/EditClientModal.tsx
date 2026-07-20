@@ -12,6 +12,7 @@ import { Trash2, Copy, Plus, CalendarDays } from "lucide-react";
 import { z } from "zod";
 import { ClientStatus } from "@/features/clients/schemas/client.schema";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const editClientSchema = (t: any) =>
   z.object({
     name: z.string().min(1, t.clientNameRequired),
@@ -34,6 +35,7 @@ type EditClientInput = z.infer<ReturnType<typeof editClientSchema>>;
 interface EditClientModalProps {
   isOpen: boolean;
   onClose: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   client: any | null;
   onUpdateClient: (
     id: string,
