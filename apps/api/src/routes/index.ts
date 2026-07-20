@@ -8,7 +8,6 @@ import { activityRouter } from '../routes/activity.routes';
 import { sharedRouter } from '../routes/shared.routers';
 import { cronRoutes } from '../routes/cron.routes';
 
-
 const router: Router = Router();
 
 router.get('/health', (_req, res) => {

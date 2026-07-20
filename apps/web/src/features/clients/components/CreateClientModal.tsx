@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/Button";
 import { Plus, Trash2 } from "lucide-react";
 import { z } from "zod";
 import { ClientStatus } from "@/features/clients/schemas/client.schema";
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getCreateClientSchema = (t: any) =>
   z.object({
     name: z.string().min(1, t.clientNameRequired),

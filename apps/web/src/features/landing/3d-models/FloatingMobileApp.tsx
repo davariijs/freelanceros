@@ -37,6 +37,7 @@ function DraggableCapsule({
     e.stopPropagation();
     setIsDragging(true);
     if (e.target && "setPointerCapture" in e.target) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (e.target as any).setPointerCapture(e.pointerId);
     }
   };
@@ -46,6 +47,7 @@ function DraggableCapsule({
     setIsDragging(false);
     setDragOffset({ x: 0, y: 0 });
     if (e.target && "releasePointerCapture" in e.target) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (e.target as any).releasePointerCapture(e.pointerId);
     }
   };

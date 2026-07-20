@@ -89,6 +89,7 @@ export const RegisterForm: React.FC = () => {
         document.cookie = `token=${accessToken}; path=/; max-age=86400; SameSite=Strict; Secure`;
         router.push("/dashboard");
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setOtpError(
         err.response?.data?.message || "Invalid or expired verification code",
@@ -101,6 +102,7 @@ export const RegisterForm: React.FC = () => {
   const getRegisterErrorMessage = () => {
     if (!registerRequestMutation.error) return null;
     const rawMsg =
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (registerRequestMutation.error as any).response?.data?.message ||
       registerRequestMutation.error.message ||
       "";

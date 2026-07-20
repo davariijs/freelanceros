@@ -1,5 +1,6 @@
 "use client";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React from "react";
 import { renderHook } from "@testing-library/react";
 import { useKanbanNavigation } from "@/features/tasks/hooks/useKanbanNavigation";

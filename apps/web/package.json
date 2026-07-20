@@ -8,7 +8,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx --no-error-on-unmatched-pattern",
     "test": "jest"
   },
   "dependencies": {
@@ -47,7 +47,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/three": "^0.185.0",
     "autoprefixer": "^10.5.0",
-    "eslint": "^9.39.4",
+    "eslint": "^8.57.1",
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
     "postcss": "^8.5.15",

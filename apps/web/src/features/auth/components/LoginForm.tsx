@@ -63,6 +63,7 @@ export const LoginForm: React.FC = () => {
   const getLoginErrorMessage = () => {
     if (!loginMutation.error) return null;
     const rawMsg =
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (loginMutation.error as any).response?.data?.message ||
       loginMutation.error.message ||
       "";

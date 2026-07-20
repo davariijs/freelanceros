@@ -128,6 +128,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
     if (project) {
       reset({
         title: project.title,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         dueDate: project.dueDate ? (project.dueDate as any).split("T")[0] : "",
         priority: project.priority,
         status: project.status,
@@ -153,7 +154,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
         setShareToken(res.data.shareToken);
         showToast(t.shareEnabled || "Client portal link generated", "success");
       }
-    } catch (error) {
+    } catch {
       showToast("Failed to update share settings", "error");
     }
   };

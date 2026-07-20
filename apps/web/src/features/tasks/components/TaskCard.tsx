@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Task } from "@/features/tasks/schemas/task.schema";
-import { useApp } from "@/context/AppContext";
 import { cn } from "@/lib/utils";
 import { Pencil } from "lucide-react";
 import { useDraggable } from "@dnd-kit/core";
@@ -12,7 +11,6 @@ interface TaskCardProps {
 }
 
 export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
-
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: task.id,

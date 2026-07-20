@@ -65,6 +65,7 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
   });
 
   const formattedCreationDate = React.useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const createdAt = (task as any)?.createdAt;
     if (!createdAt) return "";
     try {

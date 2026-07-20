@@ -29,7 +29,7 @@ router.get('/projects/:shareToken', async (req, res) => {
     }
 
     return res.status(200).json(project);
-  } catch (error) {
+  } catch {
     return res.status(500).json({ message: 'Internal server error' });
   }
 });

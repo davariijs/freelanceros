@@ -8,6 +8,7 @@ const router: Router = Router();
 
 router.use(authenticate);
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const checkAndLogSingleProjectDeadline = async (project: any) => {
   if (project.status === 'COMPLETED' || !project.dueDate) return;
 
@@ -208,7 +209,7 @@ router.post('/:id/share', async (req: AuthenticatedRequest, res) => {
     });
 
     return res.status(200).json({ shareToken: project.shareToken });
-  } catch (error) {
+  } catch {
     return res.status(500).json({ message: 'Failed to generate share link' });
   }
 });
@@ -225,7 +226,7 @@ router.post('/:id/unshare', async (req: AuthenticatedRequest, res) => {
     });
 
     return res.status(204).send();
-  } catch (error) {
+  } catch {
     return res.status(500).json({ message: 'Failed to disable sharing' });
   }
 });

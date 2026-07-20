@@ -19,7 +19,7 @@ export function CommandPaletteMockLanding({
   isOpen,
   onClose,
 }: CommandPaletteMockProps) {
-  const { t, dir, locale } = useApp();
+  const { t, dir } = useApp();
   const [query, setQuery] = React.useState("");
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const [isAutoDemo, setIsPaletteDemo] = React.useState(true);

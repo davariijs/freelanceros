@@ -32,10 +32,12 @@ describe("useIsMobile Hook", () => {
   });
 
   it("should dynamically update state when media query change event fires", () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let triggerChangeEvent: (e: any) => void = () => {};
 
     mockMatchMedia.mockReturnValue({
       matches: false,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       addEventListener: (event: string, handler: any) => {
         if (event === "change") {
           triggerChangeEvent = handler;

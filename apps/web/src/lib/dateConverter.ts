@@ -9,7 +9,7 @@ export function g2j(
     g_days_in_month[1] = 29;
   for (let i = 0; i < gm - 1; i++) d += g_days_in_month[i];
   const gy2 = gy - 1600;
-  let g_day_no =
+  const g_day_no =
     365 * gy2 +
     Math.floor((gy2 + 3) / 4) -
     Math.floor((gy2 + 99) / 100) +
@@ -50,7 +50,7 @@ export function j2g(
     jd -
     1;
   for (let i = 0; i < jm - 1; i++) j_day_no += i < 6 ? 31 : 30;
-  let g_day_no = j_day_no + 79;
+  const g_day_no = j_day_no + 79;
   let gy = 1600 + 400 * Math.floor(g_day_no / 146097);
   let g_day_no_rem = g_day_no % 146097;
   let leap = true;
