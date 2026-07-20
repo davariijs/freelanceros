@@ -46,7 +46,7 @@ export const Dialog: React.FC<DialogProps> = ({
         className={cn(
           "relative w-full max-w-md bg-white dark:bg-neutral-900 flex flex-col overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200",
           "md:rounded-2xl md:border md:border-neutral-200 md:dark:border-neutral-800 md:max-h-[85vh]",
-          "max-md:fixed max-md:inset-0 max-md:w-screen max-md:h-dvh max-md:rounded-none max-md:border-none",
+          "max-md:fixed max-md:inset-0 max-md:w-screen max-md:max-w-none max-md:h-dvh max-md:rounded-none max-md:border-none",
         )}
       >
         <div className="flex items-center justify-between p-4 md:p-6 shrink-0 border-b border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 z-10">

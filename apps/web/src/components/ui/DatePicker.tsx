@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
@@ -30,7 +31,14 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   const [isOpen, setIsOpen] = React.useState(false);
   const [viewYear, setViewYear] = React.useState(0);
   const [viewMonth, setViewMonth] = React.useState(0);
+  const [position, setPosition] = React.useState<{
+    top: number;
+    left: number;
+    width: number;
+  } | null>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const desktopPanelRef = React.useRef<HTMLDivElement>(null);
 
   const today = new Date();
   const isJalali = locale === "fa";
@@ -51,18 +59,44 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     }
   }, [value, locale, isJalali, isOpen]);
 
+  const updatePosition = React.useCallback(() => {
+    if (!buttonRef.current) return;
+    const rect = buttonRef.current.getBoundingClientRect();
+    setPosition({
+      top: rect.bottom + 8,
+      left: rect.left,
+      width: rect.width,
+    });
+  }, []);
+
+  React.useLayoutEffect(() => {
+    if (isOpen) updatePosition();
+  }, [isOpen, updatePosition]);
+
   React.useEffect(() => {
+    if (!isOpen) return;
+
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
+      const target = e.target as Node;
+      const clickedContainer = containerRef.current?.contains(target);
+      const clickedDesktopPanel = desktopPanelRef.current?.contains(target);
+      if (!clickedContainer && !clickedDesktopPanel) {
         setIsOpen(false);
       }
     };
+
+    const handleReposition = () => updatePosition();
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    window.addEventListener("scroll", handleReposition, true);
+    window.addEventListener("resize", handleReposition);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleReposition, true);
+      window.removeEventListener("resize", handleReposition);
+    };
+  }, [isOpen, updatePosition]);
 
   const totalDays = isJalali
     ? viewMonth < 7
@@ -162,6 +196,101 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     today.getDate(),
   );
 
+  const calendarBody = (
+    <>
+      <div
+        className={cn(
+          "flex items-center justify-between mb-4",
+          dir === "rtl" && "flex-row-reverse",
+        )}
+      >
+        <span className="text-sm font-bold">
+          {isJalali ? monthsFa[viewMonth - 1] : monthsEn[viewMonth - 1]}{" "}
+          {isJalali ? toPersianDigits(viewYear) : viewYear}
+        </span>
+        <div className="flex gap-1" dir="ltr">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
+            onClick={() => stepMonth("prev")}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
+            onClick={() => stepMonth("next")}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold text-neutral-400 mb-2">
+        {isJalali
+          ? ["شن", "۱ش", "۲ش", "۳ش", "۴ش", "۵ش", "جم"].map((d) => (
+              <div key={d}>{d}</div>
+            ))
+          : ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
+              <div key={d}>{d}</div>
+            ))}
+      </div>
+
+      <div className="grid grid-cols-7 gap-1 text-center">
+        {emptyDays.map((x) => (
+          <div key={`empty-${x}`} />
+        ))}
+        {daysArray.map((day) => {
+          const isSelected = value
+            ? isJalali
+              ? g2j(
+                  new Date(value).getFullYear(),
+                  new Date(value).getMonth() + 1,
+                  new Date(value).getDate(),
+                )[2] === day &&
+                g2j(
+                  new Date(value).getFullYear(),
+                  new Date(value).getMonth() + 1,
+                  new Date(value).getDate(),
+                )[1] === viewMonth
+              : new Date(value).getDate() === day &&
+                new Date(value).getMonth() === viewMonth - 1
+            : false;
+
+          const isToday = isJalali
+            ? todayJDay === day &&
+              todayJMonth === viewMonth &&
+              todayJYear === viewYear
+            : today.getDate() === day &&
+              today.getMonth() === viewMonth - 1 &&
+              today.getFullYear() === viewYear;
+
+          return (
+            <button
+              key={day}
+              type="button"
+              onClick={() => handleDaySelect(day)}
+              className={cn(
+                "h-8 w-8 rounded-lg text-xs font-semibold flex items-center justify-center transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800",
+                isSelected &&
+                  "bg-neutral-900 text-neutral-50 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-900",
+                isToday &&
+                  !isSelected &&
+                  "border border-neutral-400 dark:border-neutral-600",
+              )}
+            >
+              {isJalali ? toPersianDigits(day) : day}
+            </button>
+          );
+        })}
+      </div>
+    </>
+  );
+
   return (
     <div className={cn("relative w-full", className)} ref={containerRef}>
       <label className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
@@ -169,6 +298,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         {required && <span className="text-red-500 ms-1">*</span>}
       </label>
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
@@ -188,104 +318,26 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             className="fixed inset-0 z-40 bg-neutral-950/20 md:hidden"
             onClick={() => setIsOpen(false)}
           />
-          <div
-            className={cn(
-              "z-50 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 shadow-lg animate-in fade-in duration-200",
-              "absolute top-full left-0 right-0 mt-2 hidden md:block",
-              "max-md:fixed max-md:inset-0 max-md:m-auto max-md:h-fit max-md:w-72 max-md:block max-md:shadow-2xl",
-            )}
-          >
-            <div
-              className={cn(
-                "flex items-center justify-between mb-4",
-                dir === "rtl" && "flex-row-reverse",
-              )}
-            >
-              <span className="text-sm font-bold">
-                {isJalali ? monthsFa[viewMonth - 1] : monthsEn[viewMonth - 1]}{" "}
-                {isJalali ? toPersianDigits(viewYear) : viewYear}
-              </span>
-              <div className="flex gap-1" dir="ltr">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0"
-                  onClick={() => stepMonth("prev")}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0"
-                  onClick={() => stepMonth("next")}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold text-neutral-400 mb-2">
-              {isJalali
-                ? ["شن", "۱ش", "۲ش", "۳ش", "۴ش", "۵ش", "جم"].map((d) => (
-                    <div key={d}>{d}</div>
-                  ))
-                : ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
-                    <div key={d}>{d}</div>
-                  ))}
-            </div>
-
-            <div className="grid grid-cols-7 gap-1 text-center">
-              {emptyDays.map((x) => (
-                <div key={`empty-${x}`} />
-              ))}
-              {daysArray.map((day) => {
-                const isSelected = value
-                  ? isJalali
-                    ? g2j(
-                        new Date(value).getFullYear(),
-                        new Date(value).getMonth() + 1,
-                        new Date(value).getDate(),
-                      )[2] === day &&
-                      g2j(
-                        new Date(value).getFullYear(),
-                        new Date(value).getMonth() + 1,
-                        new Date(value).getDate(),
-                      )[1] === viewMonth
-                    : new Date(value).getDate() === day &&
-                      new Date(value).getMonth() === viewMonth - 1
-                  : false;
-
-                const isToday = isJalali
-                  ? todayJDay === day &&
-                    todayJMonth === viewMonth &&
-                    todayJYear === viewYear
-                  : today.getDate() === day &&
-                    today.getMonth() === viewMonth - 1 &&
-                    today.getFullYear() === viewYear;
-
-                return (
-                  <button
-                    key={day}
-                    type="button"
-                    onClick={() => handleDaySelect(day)}
-                    className={cn(
-                      "h-8 w-8 rounded-lg text-xs font-semibold flex items-center justify-center transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800",
-                      isSelected &&
-                        "bg-neutral-900 text-neutral-50 dark:bg-neutral-100 dark:text-neutral-900 hover:bg-neutral-900",
-                      isToday &&
-                        !isSelected &&
-                        "border border-neutral-400 dark:border-neutral-600",
-                    )}
-                  >
-                    {isJalali ? toPersianDigits(day) : day}
-                  </button>
-                );
-              })}
-            </div>
+          <div className="z-50 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 shadow-2xl animate-in fade-in duration-200 fixed inset-0 m-auto h-fit w-72 block md:hidden">
+            {calendarBody}
           </div>
+
+          {position &&
+            createPortal(
+              <div
+                ref={desktopPanelRef}
+                style={{
+                  position: "fixed",
+                  top: position.top,
+                  left: position.left,
+                  width: position.width,
+                }}
+                className="z-9999 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4 shadow-lg animate-in fade-in duration-200 hidden md:block"
+              >
+                {calendarBody}
+              </div>,
+              document.body,
+            )}
         </>
       )}
     </div>
