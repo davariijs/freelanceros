@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { LetterReveal } from "@/components/ui/LetterReveal";
 import { ShimmerButton } from "@/components/ui/ShimmerButton";
-import { SlideFillButton } from "@/components/ui/SlideFillButton";
 
 interface HeroContentProps {
   active: boolean;
@@ -13,18 +12,10 @@ interface HeroContentProps {
   title: string;
   subtitle: string;
   ctaPrimary: string;
-  ctaSecondary: string;
 }
 
 export const HeroContent = React.memo(
-  ({
-    active,
-    exit,
-    title,
-    subtitle,
-    ctaPrimary,
-    ctaSecondary,
-  }: HeroContentProps) => {
+  ({ active, exit, title, subtitle, ctaPrimary }: HeroContentProps) => {
     const subtitleVariants = {
       hidden: {
         opacity: 0,
@@ -111,7 +102,6 @@ export const HeroContent = React.memo(
           <Link href="/login" className="w-full sm:w-auto">
             <ShimmerButton label={ctaPrimary} />
           </Link>
-          <SlideFillButton label={ctaSecondary} />
         </motion.div>
       </motion.div>
     );

@@ -82,26 +82,7 @@ export function FloatingFooter() {
         <div
           style={{ transform: "translateZ(20px)" }}
           className="flex items-center gap-6 text-xs font-semibold"
-        >
-          <a
-            href="#"
-            className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
-          >
-            {isRtl ? "قوانین" : "Terms"}
-          </a>
-          <a
-            href="#"
-            className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
-          >
-            {isRtl ? "حریم خصوصی" : "Privacy"}
-          </a>
-          <a
-            href="#"
-            className="hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
-          >
-            {isRtl ? "پشتیبانی" : "Support"}
-          </a>
-        </div>
+        ></div>
       </motion.div>
     </div>
   );

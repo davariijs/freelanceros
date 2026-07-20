@@ -100,7 +100,6 @@ export function HomeView() {
               title="FreeOS"
               subtitle={t.heroSubtitle}
               ctaPrimary={t.accessDashboard}
-              ctaSecondary={t.learnMore}
             />
           </div>
         )}
@@ -237,18 +236,29 @@ export function HomeView() {
                     isRtl && "md:self-end",
                   )}
                 >
-                  <motion.button
-                    whileHover={{
-                      scale: 1.05,
-                      boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.25)",
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 15 }}
-                    className="px-6 py-3 bg-neutral-900 dark:bg-neutral-50 text-white dark:text-neutral-950 font-extrabold rounded-xl text-xs shadow-md border border-neutral-800 dark:border-neutral-200 cursor-pointer relative overflow-hidden group"
+                  <a
+                    href="https://github.com/davariijs/freelanceros/releases/download/v1.0.0/freeos.apk"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto"
                   >
-                    <span className="absolute inset-0 bg-linear-to-r from-emerald-500/10 to-sky-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                    <span className="relative z-10">Google Play</span>
-                  </motion.button>
+                    <motion.button
+                      whileHover={{
+                        scale: 1.05,
+                        boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.25)",
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 15,
+                      }}
+                      className="px-6 py-3 bg-neutral-900 dark:bg-neutral-50 text-white dark:text-neutral-950 font-extrabold rounded-xl text-xs shadow-md border border-neutral-800 dark:border-neutral-200 cursor-pointer relative overflow-hidden group w-full sm:w-auto"
+                    >
+                      <span className="absolute inset-0 bg-linear-to-r from-emerald-500/10 to-sky-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                      <span className="relative z-10">Android</span>
+                    </motion.button>
+                  </a>
                 </div>
               </motion.div>
 
