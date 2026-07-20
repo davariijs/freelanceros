@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: "A keyboard-first production-grade freelance operations system.",
   robots: "index, follow",
   alternates: {
-    canonical: "https://FreeOS.ai",
+    canonical: "https://freeos-web.vercel.app",
   },
   icons: {
     icon: "/svg/logo.svg",
