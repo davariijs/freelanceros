@@ -72,13 +72,18 @@ export default function ProjectsView() {
   };
 
   const filteredProjects = React.useMemo(() => {
-    return projects.filter((project) => {
+    const filtered = projects.filter((project) => {
       if (filters.status !== "ALL" && project.status !== filters.status)
         return false;
       if (filters.priority !== "ALL" && project.priority !== filters.priority)
         return false;
       return true;
     });
+
+    return filtered.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
   }, [filters, projects]);
 
   return (
