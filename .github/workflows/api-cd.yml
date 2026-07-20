@@ -15,8 +15,10 @@ on:
       - main
 
 jobs:
-  test:
+  database-migrate-and-test:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
       - uses: actions/checkout@v4
 
@@ -30,5 +32,11 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+
+      - run: pnpm --filter @freelanceos/database db:generate
+
+      - run: pnpm --filter @freelanceos/database build
+
+      - run: pnpm --filter @freelanceos/database db:migrate:deploy
 
       - run: pnpm --filter @freelanceos/api test
