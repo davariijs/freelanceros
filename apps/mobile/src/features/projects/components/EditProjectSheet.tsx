@@ -343,7 +343,7 @@ export const EditProjectSheet = React.forwardRef<
                         className="text-[10px] text-neutral-400 select-all"
                         numberOfLines={1}
                       >
-                        https://freeos.com/shared/{shareToken}
+                        https://freeos-web.vercel.app/shared/{shareToken}
                       </Text>
                     </View>
                     <TouchableOpacity
